@@ -1,0 +1,820 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+
+class Registro extends CI_Controller {
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->library('grocery_CRUD');
+    }
+
+    public function _viewOutPut($vista) {
+        $data['vista'] = $vista;
+        $data['controlador'] = 'Registro';
+        $this->load->view('plantilla/header');
+        $this->load->view('crud/contenido',$data);
+        $this->load->view('plantilla/footer');
+    }
+
+    public function __salida_output($output = null) {
+        $this->load->view('crud/crud.php', $output);
+    }
+
+    public function index()
+    {
+    }
+    //------------------ Modulo Cargo ----------------------------------------
+    function cargo(){
+        $this->_viewOutPut('cargoCrud');
+    }
+    function cargoCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Cargo');
+            $crud->set_table('cargo');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo Cargo ----------------------------------------
+
+    //------------------ Modulo Persona ----------------------------------------
+    function persona(){
+        $this->_viewOutPut('personaCrud');
+    }
+    function personaCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Persona');
+            $crud->set_table('persona');
+            $crud->columns('apellido_paterno','apellido_materno','nombres','fecha_nacimiento','celular','direccion','usuario','foto');
+            $crud->display_as('ci','CI');       
+            $crud->set_rules('email', 'Email', 'trim|valid_email|max_length[255]');
+            $crud->set_rules('nombres', 'Nombre(s)', 'trim|callback_alpha_dash_space');
+            $crud->set_rules('apellido_paterno', 'apellido_paterno', 'trim|callback_alpha_dash_space');
+            $crud->set_rules('apellido_materno', 'apellido_paterno', 'trim|callback_alpha_dash_space');
+            $crud->required_fields('nombres','apellido_paterno','email','ci','fecha_nacimiento','direccion','foto');
+
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi',
+                'Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));
+            $crud->field_type('sexo','dropdown',array('M'=>'MASCULINO', 'F'=>'FEMENINO'));
+
+
+            $crud->set_field_upload('foto','assets/uploads/fotos');
+            $crud->callback_before_upload(array($this,'image_callback_before_upload'));
+            $crud->order_by('id_persona','desc');
+
+            $crud->change_field_type('password', 'password');
+
+            $crud->callback_before_insert(array($this,'encrypt_password'));
+            $crud->callback_before_update(array($this,'encrypt_password'));
+
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    function encrypt_password($post_array, $primary_key = null){
+        $this->load->helper('security');
+        $post_array['password'] = do_hash($post_array['password'], 'sha1');
+        return $post_array;
+    }
+    function image_callback_before_upload($files_to_upload,$field_info)
+    {
+        foreach($files_to_upload as $value) {
+            $ext = pathinfo($value['name'], PATHINFO_EXTENSION);
+        }
+
+        $allowed_formats = array("jpg");
+        if(in_array($ext,$allowed_formats))
+        {
+            return true;
+        }
+        else
+        {
+            return 'Formato de imagen invalido';
+        }
+
+    }
+    function alpha_dash_space($str)
+    {
+        return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
+    }
+    //------------------ Fin Modulo persona ----------------------------------------
+     
+    //------------------ Modulo Persona_Cargo ----------------------------------------
+    function persona_cargo(){
+        $this->_viewOutPut('persona_cargoCrud');
+    }
+    function persona_cargoCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Asignacion');
+            $crud->set_table('persona_cargo');
+            $crud->columns('id_persona','fecha_asignacion','id_cargo','usuario','password');
+
+            $crud->display_as('id_persona','Persona');
+            $crud->display_as('id_cargo','Cargo');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+
+            //relacion con la tabla 1:n set_relation(id_campo_foraneo,tabla_foranea,nombre_campo_foraneo)
+            $crud->set_relation('id_cargo','cargo','{nombre}');
+            $crud->set_relation('id_persona','persona','{apellido_paterno} {apellido_materno} {nombres}');
+
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo Persona_Cargo -------------------------------------------
+
+    //------------------ Modulo Roles ----------------------------------------
+    function roles(){
+        $this->_viewOutPut('rolesCrud');
+    }
+    function rolesCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Roles');
+            $crud->set_table('roles');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo Roles ----------------------------------------
+
+    //------------------ Modulo peronsa_roles ----------------------------------------
+    function persona_roles(){
+        $this->_viewOutPut('persona_rolesCrud');
+    }
+    function persona_rolesCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Asignar Roles');
+            $crud->set_table('personas_roles');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            
+            $crud->display_as('id_persona','Persona');
+            $crud->display_as('id_rol','Rol');
+            $crud->set_relation('id_rol','roles','{nombre}');
+            $crud->set_relation('id_persona','persona','{apellido_paterno} {apellido_materno} {nombres}');
+
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo peronsa_roles ----------------------------------------    
+    
+    //------------------ Modulo menus_principales ----------------------------------------
+     function menus_principales(){
+        $this->_viewOutPut('menus_principalesCrud');
+    }
+    function menus_principalesCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Menus Principales');
+            $crud->set_table('menus_principales');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo menus_principales ----------------------------------------   
+
+    //------------------ Modulo Menus ----------------------------------------
+    function menus(){
+        $this->_viewOutPut('menusCrud');
+    }
+    function menusCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Menus');
+            $crud->set_table('menus');
+            $crud->add_fields('nombre', 'directorio', 'icono', 'imagen','color','orden','estado');
+            $crud->columns('nombre', 'directorio', 'icono', 'imagen','color','orden','estado');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo Menus ----------------------------------------   
+
+    //------------------ Modulo roles_menus_principales ----------------------------------------
+    function roles_menus_principales(){
+        $this->_viewOutPut('roles_menus_principalesCrud');
+    }
+    function roles_menus_principalesCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Roles Menus Principales');
+            $crud->set_table('roles_menus_principales');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            
+            $crud->display_as('id_persona','Persona');
+            $crud->display_as('id_rol','Rol');
+            $crud->set_relation('id_rol','roles','{nombre}');
+            $crud->set_relation('id_menu_principal','menus_principales','{nombre}');
+
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo roles_menus_principales ----------------------------------------      
+
+
+    //------------------ Modulo arbitro ----------------------------------------
+    function arbitro(){
+        $this->_viewOutPut('arbitroCrud');
+    }
+    function arbitroCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Arbitro');
+            $crud->set_table('arbitro');
+            $crud->add_fields('id_persona', 'id_catarbitro', 'disciplina', 'observaciones','estado');
+            $crud->columns('id_persona','id_catarbitro','disciplina');
+            $crud->display_as('id_persona','Persona');
+            $crud->display_as('id_catarbitro','Categoria Arbitro');
+            $crud->set_relation('id_persona','persona','{apellido_paterno} {apellido_materno} {nombres}');
+            $crud->set_relation('id_catarbitro','categoria_arbitro','{nombre}');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->field_type('disciplina','dropdown',array('FÚTBOL'=>'FÚTBOL', 'FUTSAL'=>'FUTSAL'));
+
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo arbitro ----------------------------------------      
+
+    //------------------ Modulo categoria_arbitro ----------------------------------------
+    function categoria_arbitro(){
+        $this->_viewOutPut('categoria_arbitroCrud');
+    }
+    function categoria_arbitroCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Categoria Arbitro');
+            $crud->set_table('categoria_arbitro');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo arbitro ----------------------------------------       
+
+    //------------------ Modulo partidos_arbitro ----------------------------------------
+    function partidos_arbitro(){
+        $this->_viewOutPut('partidos_arbitroCrud');
+    }
+    function partidos_arbitroCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Partidos arbitro');
+            $crud->set_table('partidos_arbitro');
+
+            $crud->set_primary_key('id_arbitro','v_partidos_arbitro');
+            $crud->display_as('id_arbitro','Arbitro');
+            $crud->set_relation('id_arbitro','v_partidos_arbitro','{arbitro}');
+            
+            $crud->field_type('cargo','dropdown',array('REFERI'=>'REFERI', 'REFERI ASISTENTE'=>'REFERI ASISTENTE'));
+
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    /*    CREATE VIEW v_partidos_arbitro as 
+          SELECT CONCAT(persona.apellido_paterno,' ',persona.apellido_materno,' ',persona.nombres) AS arbitro, arbitro.id_arbitro, persona.id_persona
+          FROM persona, arbitro, partidos_arbitro
+		  WHERE persona.id_persona=arbitro.id_persona
+          AND   partidos_arbitro.id_arbitro=arbitro.id_arbitro */
+
+    //------------------ Fin Modulo partidos_arbitro ----------------------------------------   
+    
+     //------------------ Modulo planillero ----------------------------------------
+    function planillero(){
+        $this->_viewOutPut('planilleroCrud');
+    }
+    function planilleroCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Planillero');
+            $crud->set_table('planillero');
+            $crud->display_as('id_persona','Persona');
+            $crud->set_relation('id_persona','persona','{apellido_paterno} {apellido_materno} {nombres}');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo planillero ----------------------------------------       
+
+     //------------------ Modulo jugador ----------------------------------------
+     function jugador(){
+        $this->_viewOutPut('jugadorCrud');
+    }
+    function jugadorCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Jugador');
+            $crud->set_table('jugador');
+            $crud->columns('id_persona','n_registro_fbf','lfpb_asociacion_liga_provincial','categoria','club','posicion');
+            $crud->display_as('id_persona','Persona');
+            $crud->set_relation('id_persona','persona','{apellido_paterno} {apellido_materno} {nombres}');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->field_type('posicion','dropdown',array('Arquero'=>'Arquero', 'Defensa'=>'Defensa','Medio campo'=>'Medio campo','Carrilero o lateral'=>'Carrilero o lateral','Volante extremo'=>'Volante extremo','Segundo delantero'=>'Segundo delantero','Centro delantero'=>'Centro delantero','Mixto'=>'Mixto'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo jugador ----------------------------------------         
+
+     //------------------ Modulo categoria ----------------------------------------
+     function categoria(){
+        $this->_viewOutPut('categoriaCrud');
+    }
+    function categoriaCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Categoria');
+            $crud->set_table('categoria');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo categoria ----------------------------------------      
+      
+    //------------------ Modulo jugador_categoria ----------------------------------------
+    function jugador_categoria(){
+        $this->_viewOutPut('jugador_categoriaCrud');
+    }
+    function jugador_categoriaCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Jugador categoria');
+            $crud->set_table('jugador_categoria');
+            $crud->set_primary_key('id_jugador','v_jugador_categoria');
+            $crud->set_relation('id_jugador','v_jugador_categoria','{jugador}');
+            $crud->display_as('id_jugador','Jugador');
+            $crud->display_as('id_categoria','Categoria');
+            $crud->set_relation('id_categoria','categoria','{nombre}');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+        /*    CREATE VIEW v_jugador_categoria as 
+          		SELECT CONCAT(persona.apellido_paterno,' ',persona.apellido_materno,' ',persona.nombres) AS jugador, jugador.id_jugador, persona.id_persona, categoria.id_categoria
+                FROM persona, jugador, jugador_categoria,categoria
+                WHERE persona.id_persona=jugador.id_persona
+                AND   jugador_categoria.id_jugador=jugador.id_jugador 
+                AND   jugador_categoria.id_categoria=categoria.id_categoria*/
+    //------------------ Fin Modulo arbitro ----------------------------------------    
+
+    //------------------ Modulo equipo ----------------------------------------
+      function equipo(){
+        $this->_viewOutPut('equipoCrud');
+    }
+    function equipoCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Equipo');
+            $crud->set_table('equipo');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->set_field_upload('escudo','assets/uploads/equipo');
+            $crud->callback_before_upload(array($this,'image_callback_before_upload'));
+            $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi',
+            'Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo equipo ----------------------------------------    
+    
+    //------------------ Modulo equipo ----------------------------------------
+    function equipo_jugador(){
+        $this->_viewOutPut('equipo_jugadorCrud');
+    }
+    function equipo_jugadorCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Equipo jugador');
+            $crud->set_table('equipo_jugador');
+            $crud->set_primary_key('id_jugador','v_jugador_categoria');
+            $crud->set_relation('id_jugador','v_jugador_categoria','{jugador}');
+            $crud->display_as('id_jugador','Jugador');
+            $crud->display_as('id_equipo','Equipo');
+            $crud->set_relation('id_equipo','equipo','{nombre_equipo}');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo equipo ----------------------------------------    
+
+    //------------------ Modulo club ----------------------------------------
+    function club(){
+        $this->_viewOutPut('clubCrud');
+    }
+    function clubCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Club');
+            $crud->set_table('club');
+            $crud->display_as('id_equipo','Equipo');
+            $crud->set_relation('id_equipo','equipo','{nombre_equipo}');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo club ----------------------------------------        
+
+    //------------------ Modulo transferencia ----------------------------------------
+    function transferencia(){
+        $this->_viewOutPut('transferenciaCrud');
+    }
+    function transferenciaCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Transferencias');
+            $crud->set_table('transferencias');
+            $crud->set_relation('id_equipo','equipo','{nombre_equipo}');
+            $crud->display_as('id_equipo','Equipo');
+
+            $crud->set_relation('id_equipo_destino','equipo','{nombre_equipo}');
+            $crud->display_as('id_equipo_destino','Equipo');
+
+            $crud->set_primary_key('id_jugador','v_jugador_categoria');
+            $crud->set_relation('id_jugador','v_jugador_categoria','{jugador}');
+            $crud->display_as('id_jugador','Jugador');
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo transferencia ----------------------------------------      
+    
+     //------------------ Modulo torneo ----------------------------------------
+     function torneo(){
+        $this->_viewOutPut('torneoCrud');
+    }
+    function torneoCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Torneo');
+            $crud->set_table('torneo');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo torneo ----------------------------------------    
+    
+     //------------------ Modulo torneo_equipo ----------------------------------------
+     function torneo_equipo(){
+        $this->_viewOutPut('torneo_equipoCrud');
+    }
+    function torneo_equipoCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Torneo Equipo');
+            $crud->set_table('torneo_equipo');
+            $crud->set_relation('id_equipo','equipo','{nombre_equipo}');
+            $crud->display_as('id_equipo','Equipo');
+            $crud->set_relation('id_torneo','torneo','{nombre}');
+            $crud->display_as('id_torneo','Torneo');
+
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo torneo_equipo ----------------------------------------    
+
+     //------------------ Modulo costos_torneo ----------------------------------------
+     function costos_torneo(){
+        $this->_viewOutPut('costos_torneoCrud');
+    }
+    function costos_torneoCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Costos Torneo');
+            $crud->set_table('costos_torneo');
+            $crud->set_relation('id_concepto','concepto','{nombre}');
+            $crud->display_as('id_concepto','Concepto');
+            $crud->set_relation('id_torneo','torneo','{nombre}');
+            $crud->display_as('id_torneo','Torneo');
+
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo costos_torneo ---------------------------------------- 
+    
+     //------------------ Modulo concepto ----------------------------------------
+     function concepto(){
+        $this->_viewOutPut('conceptoCrud');
+    }
+    function conceptoCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Concepto');
+            $crud->set_table('concepto');
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo concepto ---------------------------------------- 
+ 
+     //------------------ Modulo transacciones ----------------------------------------
+     function transacciones(){
+        $this->_viewOutPut('transaccionesCrud');
+    }
+    function transaccionesCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Transacciones');
+            $crud->set_table('transacciones');
+
+            $crud->set_primary_key('id_torneoEquipo','v_torneo_equipo');
+            $crud->set_relation('id_torneoequipo','v_torneo_equipo','{equipo_torneo}');
+            $crud->display_as('id_torneoequipo','Equipo Torneo');
+
+            
+            $crud->set_primary_key('id_costostorneo','v_costo_torneo');
+            $crud->set_relation('id_costostorneo','v_costo_torneo','{torneo_costo}');
+            $crud->display_as('id_costostorneo','Costo Torneo');
+
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+        /*      CREATE VIEW v_torneo_equipo as 
+          		SELECT torneo_equipo.id_torneoEquipo,CONCAT(equipo.nombre_equipo,' -> ',torneo.nombre) AS equipo_torneo
+                FROM torneo_equipo, equipo, torneo
+                WHERE torneo_equipo.id_equipo=equipo.id_equipo
+                AND	  torneo_equipo.id_torneo=torneo.id_torneo
+                
+                CREATE VIEW v_costo_torneo as 
+          		SELECT costos_torneo.id_costostorneo,CONCAT('Bs. ',costos_torneo.costo,' - ',concepto.nombre,' -> ',torneo.nombre) AS torneo_costo
+                FROM costos_torneo, torneo, concepto
+                WHERE costos_torneo.id_torneo=torneo.id_torneo
+                AND	  costos_torneo.id_concepto=concepto.id_concepto*/
+
+
+    //------------------ Fin Modulo transacciones ---------------------------------------- 
+    
+     //------------------ Modulo estadio ----------------------------------------
+     function estadio(){
+        $this->_viewOutPut('estadioCrud');
+    }
+    function estadioCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Estadio');
+            $crud->set_table('estadio');
+            $crud->set_field_upload('foto','assets/uploads/estadio');
+            $crud->callback_before_upload(array($this,'image_callback_before_upload'));
+            $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi',
+            'Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));            
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+
+            $crud->display_as('nombreestadio','Nombre Estadio');
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo estadio ---------------------------------------- 
+
+    //------------------ Modulo estadio ---------------------------------------- 
+    public function partidos()
+    {
+        $this->_viewOutPut('partidosCrud');
+    }
+
+    public function get_equipos_by_torneo($id_torneo)
+    {
+        $this->db->select('torneo_equipo.id_torneoEquipo, equipo.nombre_equipo');
+        $this->db->from('torneo_equipo');
+        $this->db->join('equipo', 'equipo.id_equipo = torneo_equipo.id_equipo');
+        $this->db->join('torneo', 'torneo.id_torneo = torneo_equipo.id_torneo');
+        $this->db->where('torneo_equipo.id_torneo', $id_torneo);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    public function get_planillero()
+    {
+        $this->db->select('planillero.id_planillero, persona.nombres, persona.apellido_paterno, persona.apellido_materno');
+        $this->db->from('planillero');
+        // $this->db->join('planillero', 'planillero.id_planillero = partidos.id_planillero');
+        $this->db->join('persona', 'persona.id_persona = planillero.id_persona');
+        // $this->db->where('torneo_equipo.id_torneo', $id_torneo);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    public function partidosCrud()
+    {
+
+
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Partido');
+            $crud->set_table('partidos');
+
+            // print_r('<pre>');
+            // print_r($this->get_equipos_by_torneo(1));
+            $equipo = $this->get_equipos_by_torneo(1);
+
+            foreach ($equipo as $key => $value) {
+                $arraye1[$value['id_torneoEquipo']] = $value['nombre_equipo'];
+                $arraye2[$value['id_torneoEquipo']] = $value['nombre_equipo'];
+            }
+
+
+            $planillero = $this->get_planillero();
+            // print_r($planillero);
+            // exit();
+            foreach ($planillero as $key => $value) {
+                $plani[$value['id_planillero']] = $value['nombres'].' '.$value['apellido_paterno'].' '.$value['apellido_materno'];
+            }
+            // print_r($plani);
+
+            // $crud->set_relation_n_n('PlanilleroNombre', 'planillero', 'persona', 'id_planillero', 'id_persona', '{nombres} {apellido_paterno} {apellido_materno}');
+            $crud->field_type('id_planillero','dropdown', $plani);
+            $crud->field_type('id_torneoequipo1','dropdown', $arraye1);
+            $crud->display_as('id_torneoequipo1','Equipo Local');
+            $crud->field_type('id_torneoequipo2','dropdown', $arraye1);
+            $crud->display_as('id_torneoequipo2','Equipo Visitante');
+            $crud->set_relation('id_jornadas','jornadas','{fecha} {año} {horas}');
+            $crud->set_relation('id_estadio','estadio','{nombreestadio}'.' - '.' {ciudad}');
+            $crud->set_relation('id_partarbitro','partidos_arbitro','{cargo}');
+
+            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+
+            // $crud->field_type('PlanilleroNombre','dropdown',array($crud->set_relation_n_n('PlanilleroNombre', 'planillero', 'persona', 'id_planillero', 'id_persona', 'nombres','disciplinas')));
+            // $crud->set_relation_n_n('id_planillero','planillero','{nombre}');
+            // $crud->set_relation('id_persona','persona','{apellido_paterno} {apellido_materno} {nombres}');
+
+
+            // $crud->set_field_upload('foto','assets/uploads/partidos');
+            // $crud->callback_before_upload(array($this,'image_callback_before_upload'));
+            // $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi',
+            // 'Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));            
+            // $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+
+            // $crud->display_as('nombreestadio','Nombre Estadio');
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo estadio ---------------------------------------- 
+    
+    
+
+    //------------------------- View  ------------------------------------------------------
+    public function salida($data)
+    {
+        $this->load->view('plantilla/header');
+        $this->load->view($data['vista'],$data);
+        $this->load->view('plantilla/footer');
+    }
+
+
+}
