@@ -1,10 +1,28 @@
 <span id="type-container" class=" hide">
     <span id="" class="type-row">
         <a class="remove-type" targetDiv="" data-id="0" href="javascript: void(0)" title="Anotar gol">
-            <i class="text-black fa fa-fw fa-soccer-ball-o"></i>
+            <i class="text-black fa fa-fw fa-soccer-ball-o coso"></i>
         </a>
     </span>
 </span>
+
+
+
+<style>
+  .coso:before{
+    
+    border-radius:50%;
+    transform: scale (0);
+  }
+  .coso:hover:before{
+    font-family: FontAwesome;
+    content: "\f1f8 ";
+    color:red;
+    transform: scale (1);
+    transition: .1s ease-in-out;
+  }
+</style>
+
 
 <section class="content">
     <div class="row">
@@ -15,20 +33,7 @@
 
         <script>
             jQuery(document).ready(function () {
-                // window.mes=90;  
                 var doc = $(document);
-                // var mes;
-                // eso = 0 
-                // console.log(eso);
-
-                // $('td a.esito').on("click", function(e){
-                //     eso = jQuery(this).attr('id');
-                //     console.log(eso);
-                //     eso = 34;
-                //     console.log(eso);
-                // });
-                // console.log(eso);
-                
                 // $(document).on("click", "td a.add-type", function(e){
                 $('td a.add-type').on("click", function(e){
                     e.preventDefault();
@@ -169,19 +174,7 @@
         });
     }
 </script> -->
-        
-
-<style type="text/css">
-.edit_hover_class a{
-    display:none;
-}
-.edit_hover_class:hover a {
-  display:block;
-
-}
-</style>
-
-
+    
 
 
 
