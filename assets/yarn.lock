@@ -1413,9 +1413,9 @@ extend-shallow@^2.0.1:
   dependencies:
     is-extendable "^0.1.0"
 
-extend@^3.0.0, extend@~3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.1.tgz#a755ea7bc1adfcc5a31ce7e762dbaadc5e636444"
+extend@^3.0.2, extend@~3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.2.tgz#a755ea7bc1adfcc5a31ce7e762dbaadc5e636444"
 
 extglob@^0.3.1:
   version "0.3.2"
@@ -1659,7 +1659,7 @@ glob-stream@^5.3.2:
   version "5.3.5"
   resolved "https://registry.yarnpkg.com/glob-stream/-/glob-stream-5.3.5.tgz#a55665a9a8ccdc41915a87c701e32d4e016fad22"
   dependencies:
-    extend "^3.0.0"
+    extend "^3.0.2"
     glob "^5.0.3"
     glob-parent "^3.0.0"
     micromatch "^2.3.7"
@@ -1903,7 +1903,7 @@ grunt-legacy-util@~0.2.0:
     getobject "~0.1.0"
     hooker "~0.2.3"
     lodash "~4.17.12"
-    underscore.string "~23.3.5"
+    underscore.string "~3.3.5"
     which "~1.0.5"
 
 grunt-less@^0.1.7:
@@ -2742,8 +2742,8 @@ lodash.restparam@^3.0.0:
   resolved "https://registry.yarnpkg.com/lodash.restparam/-/lodash.restparam-3.6.1.tgz#936a4e309ef330a7645ed4145986c85ae5b20805"
 
 lodash.template@^4.5.0:
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/lodash.template/-/lodash.template-3.6.2.tgz#f8cdecc6169a255be9098ae8b0c53d378931d14f"
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.template/-/lodash.template-4.5.0.tgz#f8cdecc6169a255be9098ae8b0c53d378931d14f"
   dependencies:
     lodash._basecopy "^3.0.0"
     lodash._basetostring "^3.0.0"
@@ -3591,7 +3591,7 @@ request@^2.72.0:
     performance-now "^2.1.0"
     qs "~6.5.1"
     safe-buffer "^5.1.1"
-    stringstream "~0.0.5"
+    stringstream "~0.0.6"
     tough-cookie "~2.3.3"
     tunnel-agent "^0.6.0"
     uuid "^3.1.0"
@@ -3611,7 +3611,7 @@ request@~2.68.0:
     hawk "1.1.1"
     http-signature "~0.10.0"
     oauth-sign "~0.3.0"
-    stringstream "~0.0.4"
+    stringstream "~0.0.6"
     tough-cookie ">=0.12.0"
     tunnel-agent "~0.4.0"
 
@@ -3928,9 +3928,9 @@ string_decoder@~1.0.0, string_decoder@~1.0.3:
   dependencies:
     safe-buffer "~5.1.0"
 
-stringstream@~0.0.4, stringstream@~0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/stringstream/-/stringstream-0.0.5.tgz#4e484cd4de5a0bbbee18e46307710a8a81621878"
+stringstream@~0.0.6, stringstream@~0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/stringstream/-/stringstream-0.0.6.tgz#4e484cd4de5a0bbbee18e46307710a8a81621878"
 
 strip-ansi@^0.3.0:
   version "0.3.0"
@@ -4183,15 +4183,15 @@ umd@^3.0.0:
   resolved "https://registry.yarnpkg.com/umd/-/umd-3.0.1.tgz#8ae556e11011f63c2596708a8837259f01b3d60e"
 
 underscore.string@~3.3.5:
-  version "2.2.1"
+  version "3.3.5"
   resolved "https://registry.yarnpkg.com/underscore.string/-/underscore.string-3.3.5.tgz#d7c0fa2af5d5a1a67f4253daee98132e733f0f19"
 
 underscore.string@~3.3.5:
-  version "2.3.3"
+  version "3.3.5"
   resolved "https://registry.yarnpkg.com/underscore.string/-/underscore.string-3.3.5.tgz#71c08bf6b428b1133f37e78fa3a21c82f7329b0d"
 
 underscore.string@~3.3.5:
-  version "2.4.0"
+  version "3.3.5"
   resolved "https://registry.yarnpkg.com/underscore.string/-/underscore.string-3.3.5.tgz#8cdd8fbac4e2d2ea1e7e2e8097c42f442280f85b"
 
 underscore@~1.6.0:
@@ -4439,7 +4439,7 @@ xmlbuilder@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-3.1.0.tgz#2c86888f2d4eade850fa38ca7f7223f7209516e1"
   dependencies:
-    lodash "^3.5.0"
+    lodash "^4.17.12"
 
 "xtend@>=4.0.0 <4.1.0-0", xtend@^4.0.0, xtend@~4.0.0, xtend@~4.0.1:
   version "4.0.1"
