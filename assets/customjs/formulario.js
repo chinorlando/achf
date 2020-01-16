@@ -304,12 +304,12 @@ function view_trasferencia(id_jugador) {
         // console.log(date);
         $('.transferencias').html(date.jug_tr);
         $('#modal_form').modal('show'); // show bootstrap modal
-        $('input[name=proviene]').val(date.id_equipo);
+        $('input[name=proviene]').val(date.id_club);
         $('input[name=proviene_nombre]').val(date.equipo_actual);
         $('input[name=id_jugador]').val(date.id_jugador);
 
-        $.each(date.equipos, function(index, val) {
-            $('select[name=destino]').append('<option value="'+val.id_equipo+'">'+val.nombre_equipo +'</option>');
+        $.each(date.clubs, function(index, val) {
+            $('select[name=destino]').append('<option value="'+val.id_club+'">'+val.nombre_club +'</option>');
         });
 
         

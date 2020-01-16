@@ -42,6 +42,8 @@ class Jugador extends CI_Controller {
     {
         // print_r($title);
         $list = $this->dbase->get_datatables_jugador();
+        // print_r($list);
+        // exit();
         $data = array();
         $no = isset($_POST['start'])? $_POST['start'] : 0;
         foreach ($list as $d) {
@@ -54,8 +56,8 @@ class Jugador extends CI_Controller {
             $row[] = $d->apellido_paterno;
             $row[] = $d->apellido_materno;
             $row[] = $d->posicion;
-            $row[] = $d->categoria;
-            $row[] = $d->club;
+            $row[] = $d->nombre_categoria;
+            $row[] = $d->nombre_club;
             $row[] = ($d->estado==1)? 'Activo':'Inactivo';
 
             if ($title == 'Transferencia') {
@@ -178,13 +180,14 @@ class Jugador extends CI_Controller {
         // exit();
 
 
-        $equipos = $this->dbase->get_equipos();
-        $id_equipo_actual_jugador = $this->dbase->get_equipo_actual($this->input->post('id_jugador'));
-        $equipo_actual_jugador = $this->db->get_where('equipo', array('id_equipo' => $id_equipo_actual_jugador->id_equipo_destino))->row()->nombre_equipo;
+        // $equipos = $this->dbase->get_equipos();
+        $clubs = $this->dbase->get_clubs();
+        $id_club_actual_jugador = $this->dbase->get_club_actual($this->input->post('id_jugador'));
+        $club_actual_jugador = $this->db->get_where('club', array('id_club' => $id_club_actual_jugador->id_club_destino))->row()->nombre_club;
 
-        // print_r($equipos);
+        // print_r($clubs);
 
-        // print_r($equipo_actual_jugador);
+        // print_r($club_actual_jugador);
 
         // exit();
 
@@ -201,16 +204,16 @@ class Jugador extends CI_Controller {
                           $transferencia->fecha
                         .'</td>
                         <td>'.
-                          $transferencia->nombre_equipo_proviene
+                          $transferencia->nombre_club_proviene
                         .'</td>
                         <td>'.
-                          $transferencia->nombre_equipo_destino
+                          $transferencia->nombre_club_destino
                         .'</td>
                       </tr>';
                   }
         $jug_tr .= '</tbody>
             </table>';
-        echo json_encode(array('jug_tr' => $jug_tr, 'id_equipo' => $id_equipo_actual_jugador->id_equipo_destino, 'equipo_actual' => $equipo_actual_jugador, 'equipos' => $equipos, 'id_jugador'=>$this->input->post('id_jugador')));
+        echo json_encode(array('jug_tr' => $jug_tr, 'id_club' => $id_club_actual_jugador->id_club_destino, 'equipo_actual' => $club_actual_jugador, 'clubs' => $clubs, 'id_jugador'=>$this->input->post('id_jugador')));
     }
 
     public function categorias()
@@ -234,8 +237,8 @@ class Jugador extends CI_Controller {
         $dataTransferencia = array(
             'fecha' => date("Y/m/d"),
             'id_jugador' => $id_jugador,
-            'id_equipo' => $proviene,
-            'id_equipo_destino' => $destino,
+            'id_club' => $proviene,
+            'id_club_destino' => $destino,
         );
 
         // print_r($dataTransferencia);

@@ -153,39 +153,61 @@ class MY_Model extends CI_Model
 
     public function get_datatables_jug()
     {
-        $this->db->select('jugador.id_jugador, persona.id_persona, persona.nombres, persona.apellido_paterno, persona.apellido_materno, jugador.posicion, jugador.categoria, jugador.club, jugador.estado');
+        $this->db->select('jugador.id_jugador, persona.id_persona, persona.nombres, persona.apellido_paterno, persona.apellido_materno, inscripcionjugador.posicion, categoria.nombre as nombre_categoria, club.nombre_club, jugador.estado');
         $this->db->from('jugador');
         $this->db->join('persona', 'persona.id_persona = jugador.id_persona');
+        $this->db->join('inscripcionjugador', 'inscripcionjugador.id_jugador = jugador.id_jugador');
+        $this->db->join('equipo', 'equipo.id_equipo = inscripcionjugador.id_equipo');
+        $this->db->join('categoria', 'categoria.id_categoria = equipo.id_categoria');
+        $this->db->join('club', 'club.id_club = equipo.id_club');
         // $query = $this->db->get();
         // return $query->result();
     }
 
     public function get_transferencias($id_jugador)
     {
-        $this->db->select('transferencias.fecha, ep.nombre_equipo as nombre_equipo_proviene, ed.nombre_equipo as nombre_equipo_destino');
+        $this->db->select('transferencias.fecha, cp.nombre_club as nombre_club_proviene, cd.nombre_club as nombre_club_destino');
         $this->db->from('transferencias');
-        // $this->db->join('club cp', 'cp.id_club = transferencias.id_club');
-        // $this->db->join('club cd', 'cd.id_club = transferencias.id_club_destino');
-        $this->db->join('equipo ep', 'ep.id_equipo = transferencias.id_equipo');
-        $this->db->join('equipo ed', 'ed.id_equipo = transferencias.id_equipo_destino');
+        $this->db->join('club cp', 'cp.id_club = transferencias.id_club');
+        $this->db->join('club cd', 'cd.id_club = transferencias.id_club_destino');
+        // $this->db->join('equipo ep', 'ep.id_equipo = transferencias.id_equipo');
+        // $this->db->join('equipo ed', 'ed.id_equipo = transferencias.id_equipo_destino');
         $this->db->where('id_jugador', $id_jugador);
         $this->db->order_by('fecha', 'desc');
         $query = $this->db->get();
         return $query->result();
     }
 
-    public function get_equipos()
+    // public function get_equipos()
+    // {
+    //     $this->db->select('id_equipo, nombre_equipo');
+    //     $this->db->from('equipo');
+    //     $this->db->order_by('nombre_equipo', 'asc');
+    //     $query = $this->db->get();
+    //     return $query->result();
+    // }
+    public function get_clubs()
     {
-        $this->db->select('id_equipo, nombre_equipo');
-        $this->db->from('equipo');
-        $this->db->order_by('nombre_equipo', 'asc');
+        $this->db->select('id_club, nombre_club');
+        $this->db->from('club');
+        $this->db->order_by('nombre_club', 'asc');
         $query = $this->db->get();
         return $query->result();
     }
 
-    public function get_equipo_actual($id_jugador)
+    // public function get_equipo_actual($id_jugador)
+    // {
+    //     $this->db->select('id_equipo_destino');
+    //     $this->db->from('transferencias');
+    //     $this->db->order_by('fecha', 'desc');
+    //     $this->db->limit(1);
+    //     $this->db->where('id_jugador', $id_jugador);
+    //     $query = $this->db->get();
+    //     return $query->row();
+    // }
+    public function get_club_actual($id_jugador)
     {
-        $this->db->select('id_equipo_destino');
+        $this->db->select('id_club_destino');
         $this->db->from('transferencias');
         $this->db->order_by('fecha', 'desc');
         $this->db->limit(1);
