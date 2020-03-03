@@ -378,6 +378,26 @@ class MY_Model extends CI_Model
     }
     //////////////guardado de amarillas, rojas y goles end //////////////////////////
 
+    //////////////eliminacion de amarillas, rojas y goles end //////////////////////////
+    public function delete_accion($id_partido, $id_jugador, $accion)
+    {
+        // $this->db->from('matricula');
+        // $this->db->join('gestionperiodo', 'gestionperiodo.id_gestionperiodo = matricula.id_gestionperiodo');
+        // $this->db->order_by('matricula.id_gestionperiodo', 'desc');
+        // $this->db->limit(1);
+        // $query = $this->db->get();
+        // return $query->row();
+
+
+        $this->db->order_by('id_resultadopartido', 'desc');
+        $this->db->limit(1);
+        $this->db->where('id_jugador', $id_jugador);
+        $this->db->where('id_partidos', $id_partido);
+        $this->db->where('accion', $accion);
+        $this->db->delete('resultado_partido');
+    }
+    //////////////eliminacion de amarillas, rojas y goles end //////////////////////////
+
 
 
 

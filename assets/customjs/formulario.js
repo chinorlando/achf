@@ -474,3 +474,6 @@ function edit_alumno() {
         
 //     });
 
+function anotal_gol(asd, asd) {
+    alert(eso);
+}

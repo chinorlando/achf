@@ -6,3 +6,5 @@ join jugador on jugador.id_persona = persona.id_persona
 JOIN jugador_categoria on jugador_categoria.id_jugador = jugador.id_jugador
 join categoria on categoria.id_categoria = jugador_categoria.id_categoria
 
+----------sirve
+CREATE VIEW v_ficha_kardex as SELECT persona.id_persona, persona.nacionalidad, persona.ciudad, jugador.estado, persona.nombres, persona.apellido_paterno, persona.apellido_materno, persona.foto, persona.fecha_nacimiento, persona.sexo, jugador.id_jugador, club.nombre_club, categoria.nombre as nombre_categoria, jugador.lfpb_asociacion_liga_provincial, jugador.n_registro_fbf, jugador.estado_civil, jugador.nombre_padre, jugador.nombre_madre, jugador.c_i, persona.dirección, inscripcionjugador.posicion, jugador.estatura, inscripcionjugador.peso from persona join jugador on jugador.id_persona = persona.id_persona JOIN inscripcionjugador on inscripcionjugador.id_jugador = jugador.id_jugador JOIN equipo on equipo.id_equipo = inscripcionjugador.id_equipo JOIN categoria on categoria.id_categoria = equipo.id_categoria JOIN club on club.id_club = equipo.id_club

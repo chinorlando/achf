@@ -358,13 +358,23 @@ class Planillero extends CI_Controller {
                       $cent .= '<tr>';
                         $cent .= '<td><a href="pages/examples/invoice.html">'.$value->dorsal.'</a></td>';
                         $cent .= '<td>'.$value->posicion.'</td>';
-                        $cent .= '<td><span class="label label-warning">A</span> <span class="label label-warning">A</span></td>';
-                        $cent .= '<td><span class="label label-danger">R</span> </td>';
+                        $cent .= '<td>
+                                    <span class="yellow_container'.$value->id_jugador.'">
+                                    </span>
+                                    <a id="'.$value->id_jugador.'" id_part="'.$id_partido.'" class="obt_valor add-type-yellow pull-right" href="javascript: void(0)" tittle="Click to add more" onclick="anotar_amarilla('.$id_partido.','.$value->id_jugador.')"><i class="glyphicon glyphicon-plus-sign"></i>
+                                    </a>
+                                  </td>';
+                        $cent .= '<td>
+                                    <span class="red_container'.$value->id_jugador.'">
+                                    </span>
+                                    <a id="'.$value->id_jugador.'" id_part="'.$id_partido.'" class="obt_valor add-type-red pull-right" href="javascript: void(0)" tittle="Click to add more" onclick="anotar_roja('.$id_partido.','.$value->id_jugador.')"><i class="glyphicon glyphicon-plus-sign"></i>
+                                    </a>
+                                  </td>';
 
                         $cent .= '<td> 
                                     <span class="eso goal_container'.$value->id_jugador.'">
                                     </span>
-                                    <a id="'.$value->id_jugador.'" class="obt_valor add-type pull-right" href="javascript: void(0)" tittle="Click to add more"><i class="glyphicon glyphicon-plus-sign"></i>
+                                    <a id="'.$value->id_jugador.'" id_part="'.$id_partido.'" class="obt_valor add-type pull-right" href="javascript: void(0)" tittle="Click to add more" onclick="anotar_gol('.$id_partido.','.$value->id_jugador.')"><i class="glyphicon glyphicon-plus-sign"></i>
                                     </a>
                                 </td>';
 
@@ -408,6 +418,15 @@ class Planillero extends CI_Controller {
             'minuto' => 12,
         ];
         $this->dbase->guardar_accion_model($acciones);
+        echo json_encode(array('status'=>TRUE));
+    }
+
+    public function eliminar_accion()
+    {
+        $id_partido = $this->input->post('id_partido');
+        $id_jugador = $this->input->post('id_jugador');
+        $accion = $this->input->post('accion');
+        $this->dbase->delete_accion($id_partido, $id_jugador, $accion);
         echo json_encode(array('status'=>TRUE));
     }
 

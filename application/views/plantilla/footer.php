@@ -213,6 +213,7 @@
 <script src="<?php echo base_url() ?>assets/plugins/input-mask/jquery.inputmask.extensions.js"></script>
 <!-- date-range-picker -->
 <script src="<?php echo base_url() ?>assets/bower_components/moment/min/moment.min.js"></script>
+<script src="<?php echo base_url() ?>assets/customjs/js.js"></script>
 <script src="<?php echo base_url() ?>assets/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
 <!-- bootstrap datepicker -->
 <script src="<?php echo base_url() ?>assets/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
@@ -297,6 +298,13 @@
       showInputs: false
     })
   })
+</script>
+<script type="text/javascript">
+    var CFG = {
+        url: '<?php echo $this->config->item("base_url");?>',
+        name: '<?php echo $this->security->get_csrf_token_name();?>',
+        token: '<?php echo $this->security->get_csrf_hash();?>'
+    };
 </script>
 </body>
 </html>
