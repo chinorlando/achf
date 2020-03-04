@@ -324,9 +324,6 @@ class Planillero extends CI_Controller {
     {
         // verifica si existe datos del partido actual
         if ($this->dbase->verificar_partido($id_partido)>= 1) {
-            print_r('expression');
-            exit();
-        } else {
             $jugad_equi1 = $this->dbase->get_jugadores_por_equipo($id_e1);
             $jugad_equi2 = $this->dbase->get_jugadores_por_equipo($id_e2);
             // print_r('<pre>');
@@ -362,6 +359,104 @@ class Planillero extends CI_Controller {
                       foreach ($equipo as $value) {
                           $cent .= '<tr>';
                             $cent .= '<td><a href="pages/examples/invoice.html">'.$value->dorsal.'</a></td>';
+                            $cent .= '<td>'.$value->posicion.'</td>';
+                            $cent .= '<td>
+                                        <span class="yellow_container'.$value->id_jugador.'">';
+                                            $amarillas = $this->dbase->get_yellow_jugador($value->id_jugador, $id_partido, 1);
+                                            // print_r('<pre>');
+                                            // print_r($amarillas);
+                                            // exit();
+                                            foreach ($amarillas as $amarilla) {
+                                                $cent.='<span id="type-container-yellow" class="">
+                                                    <span id="" class="type-row-yellow ">
+                                                        <a class="remove-type-yellow eso_ye" targetDiv="" data-id="0" href="javascript: void(0)" title="Eliminar amarilla"
+                                                            id_jugador-ye="'.$amarilla->id_jugador.'"
+                                                            id_partido-ye="'.$amarilla->id_partidos.'"
+                                                            onclick="eliminar_amarilla()">
+                                                            <i class=""><span class="label label-warning coso">A</span></i>
+                                                        </a>
+                                                    </span>
+                                                </span>';
+                                            }
+                                        $cent.='</span>
+                                        <a id="'.$value->id_jugador.'" id_part="'.$id_partido.'" class="obt_valor add-type-yellow pull-right" href="javascript: void(0)" tittle="Click to add more" onclick="anotar_amarilla('.$id_partido.','.$value->id_jugador.')"><i class="glyphicon glyphicon-plus-sign"></i>
+                                        </a>
+                                      </td>';
+                            $cent .= '<td>
+                                        <span class="red_container'.$value->id_jugador.'">
+                                        </span>
+                                        <a id="'.$value->id_jugador.'" id_part="'.$id_partido.'" class="obt_valor add-type-red pull-right" href="javascript: void(0)" tittle="Click to add more" onclick="anotar_roja('.$id_partido.','.$value->id_jugador.')"><i class="glyphicon glyphicon-plus-sign"></i>
+                                        </a>
+                                      </td>';
+
+                            $cent .= '<td> 
+                                        <span class="eso goal_container'.$value->id_jugador.'">
+                                        </span>
+                                        <a id="'.$value->id_jugador.'" id_part="'.$id_partido.'" class="obt_valor add-type pull-right" href="javascript: void(0)" tittle="Click to add more" onclick="anotar_gol('.$id_partido.','.$value->id_jugador.')"><i class="glyphicon glyphicon-plus-sign"></i>
+                                        </a>
+                                    </td>';
+
+                            // $cent .= '<td><span class="aniadirgol"></span> <a class="add-type pull-right gol" href="javascript: void(0)" title="Anotar gol" onclick="anotar_gol('.$id_partido.','.$value->id_jugador.')"><i class="glyphicon glyphicon-plus-sign"></i></a></td>';
+                          $cent .= '</tr>';
+                      }
+                      
+                      $cent .= '</tbody>';
+                    $cent .= '</table>';
+                  $cent .= '</div>';
+                $cent .= '</div>';
+                $cent .= '<div class="box-footer clearfix">';
+                  $cent .= '<a href="javascript:void(0)" class="btn btn-sm btn-info btn-flat pull-left">Place New Order</a>';
+                  $cent .= '<a href="javascript:void(0)" class="btn btn-sm btn-default btn-flat pull-right">View All Orders</a>';
+                $cent .= '</div>';
+              $cent .= '</div>';
+              $cent .= '</div>';
+            }
+            $data['vista']  = 'v_jugadores_partido';
+            $data['jugadores_equipo1'] = $cent;
+            $this->load->view('plantilla/header');
+            $this->load->view($data['vista'],$data);
+            $this->load->view('plantilla/footer');
+        } else {
+            $jugad_equi1 = $this->dbase->get_jugadores_por_equipo($id_e1);
+            $jugad_equi2 = $this->dbase->get_jugadores_por_equipo($id_e2);
+            // print_r('<pre>');
+            // print_r($jugad_equi1);
+            // exit();
+            $equipos = [$jugad_equi1, $jugad_equi2];
+            $cent = '';
+
+            
+
+
+
+            foreach ($equipos as $key => $equipo) {
+                $cent .= '<div class="col-md-6">';
+                $cent .= '<div class="box box-info">';
+                $cent .= '<div class="box-header with-border">';
+                  $cent .= '<h3 class="box-title">Latest Orders</h3>';
+
+                  $cent .= '<div class="box-tools pull-right">';
+                    $cent .= '<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>';
+                    $cent .= '</button>';
+                    $cent .= '<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>';
+                  $cent .= '</div>';
+                $cent .= '</div>';
+                $cent .= '<div class="box-body">';
+                  $cent .= '<div class="table-responsive">';
+                    $cent .= '<table class="table no-margin">';
+                      $cent .= '<thead>';
+                      $cent .= '<tr>';
+                        $cent .= '<th>Dorsal</th>';
+                        $cent .= '<th>Posicion</th>';
+                        $cent .= '<th>Amarillas</th>';
+                        $cent .= '<th>Rojas</th>';
+                        $cent .= '<th>Goles</th>';
+                      $cent .= '</tr>';
+                      $cent .= '</thead>';
+                      $cent .= '<tbody>';
+                      foreach ($equipo as $value) {
+                          $cent .= '<tr>';
+                            $cent .= '<td><a href="#">'.$value->dorsal.'</a></td>';
                             $cent .= '<td>'.$value->posicion.'</td>';
                             $cent .= '<td>
                                         <span class="yellow_container'.$value->id_jugador.'">
@@ -412,11 +507,13 @@ class Planillero extends CI_Controller {
         $id_partido = $this->input->post('id_partido');
         $id_jugador = $this->input->post('id_jugador');
         $accion = $this->input->post('accion');
+        // $targetDiv = $this->input->post('targetdiv');
         $acciones = [
             'id_jugador'=> $id_jugador,
             'id_partidos'=> $id_partido,
             'accion'=> $accion,
             'minuto' => 12,
+            // 'targetDiv' => $targetDiv,
         ];
         $this->dbase->guardar_accion_model($acciones);
         echo json_encode(array('status'=>TRUE));
@@ -429,6 +526,19 @@ class Planillero extends CI_Controller {
         $accion = $this->input->post('accion');
         $this->dbase->delete_accion($id_partido, $id_jugador, $accion);
         echo json_encode(array('status'=>TRUE));
+    }
+
+    public function verifica_siyaexiste()
+    {
+        $id_partido = $this->input->post('id_partido');
+        if ($this->dbase->verificar_partido($id_partido)>=1) {
+            // EXISTE 
+            echo json_encode(array('status'=>TRUE));
+        } else {
+            // NO EXISTE
+            echo json_encode(array('status'=>FALSE));
+        }
+        
     }
 
 

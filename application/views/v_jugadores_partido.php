@@ -1,28 +1,38 @@
 <span id="type-container" class="hide">
     <span id="" class="type-row">
         <a class="remove-type" targetDiv="" data-id="0" href="javascript: void(0)" title="Eliminar gol"
-            onclick="eliminar_gol()">
+            onclick="eliminar_gol()"
+            id_jugador=""
+            id_partido="">
             <i class="text-black fa fa-fw fa-soccer-ball-o coso"></i>
         </a>
     </span>
 </span>
 
-<span id="type-container-yellow" class="hide">
+<!-- id_jugador="a"
+            id_partido="b" -->
+<!-- <span id="type-container-yellow" class="hide">
     <span id="" class="type-row-yellow">
         <a class="remove-type-yellow" targetDiv="" data-id="0" href="javascript: void(0)" title="Eliminar amarilla"
-            onclick="eliminar_yellow()">
-            <!-- <i class="text-black fa fa-fw fa-soccer-ball-o coso"></i> -->
-            <!-- <span class="text-black fa fa-fw label-warning"> </span>
-            <span class="label"> </span> -->
+            onclick="eliminar_amarilla()">
+            <i class=""><span class="label label-warning coso">A</span></i>
+        </a>
+    </span>
+</span> -->
+<span id="type-container-yellow" class="hide">
+    <span name="" id="" class="type-row-yellow">
+        <a class="remove-type-yellow" targetDiv="" data-id="0" href="javascript: void(0)" title="Eliminar amarilla"
+            onclick="eliminar_amarilla()">
             <i class=""><span class="label label-warning coso">A</span></i>
         </a>
     </span>
 </span>
 
+
 <span id="type-container-red" class="hide">
     <span id="" class="type-row-red">
         <a class="remove-type-red" targetDiv="" data-id="0" href="javascript: void(0)" title="Eliminar roja"
-            onclick="eliminar_red()">
+            onclick="eliminar_roja()">
             <!-- <i class="text-black fa fa-fw fa-soccer-ball-o coso"></i> -->
             <!-- <img src="https://img.icons8.com/officel/30/000000/foul.png"> -->
             <i class=""><span class="label label-danger coso">R</span></i>
@@ -56,6 +66,7 @@
 
 
 <script>
+    var type_div;
 jQuery(document).ready(function () {
     var doc = $(document);
     // goles
@@ -130,6 +141,7 @@ jQuery(document).ready(function () {
             var targetDiv = jQuery(this).attr('targetDiv');
             //if (id == 0) {
             //var trID = jQuery(this).parents("tr").attr('id');
+            console.log(targetDiv);
             jQuery('#' + targetDiv).remove();
             // }
             return true;
@@ -189,17 +201,17 @@ jQuery(document).ready(function () {
 
 function anotar_gol(id_partido, id_jugador) {
     accion = 3;
-    anotar_accion(id_partido, id_jugador, accion)
+    anotar_accion(id_partido, id_jugador, accion);
 }
 
 function anotar_amarilla(id_partido, id_jugador) {
     accion = 1;
-    anotar_accion(id_partido, id_jugador, accion)
+    anotar_accion(id_partido, id_jugador, accion);
 }
 
 function anotar_roja(id_partido, id_jugador) {
     accion = 2;
-    anotar_accion(id_partido, id_jugador, accion)
+    anotar_accion(id_partido, id_jugador, accion);
 }
 
 function anotar_accion(id_partido, id_jugador, accion) {
@@ -231,8 +243,32 @@ function eliminar_gol() {
 
 function eliminar_amarilla() {
     accion = 1;
+    // $.post(CFG.url + 'planillero/verifica_siyaexiste',
+    //     {
+    //       id_partido = $('.remove-type-yellow').attr("id_partido");
+    //       id_partido: id_partido,
+    //     },
+    //     function(data, textStatus, xhr) {
+    //       // var paralelos = $.parseJSON(data);
+    //       console.log('asdfa');
+    //     }
+    //   );
+
     id_jugador = $(this).attr("id_jugador");
     id_partido = $(this).attr("id_partido");
+    console.log(id_jugador);
+    if(typeof id_jugador === 'undefined' || id_partido === 'undefined'){
+        id_jugador = $('.eso_ye').attr("id_jugador-ye");
+        id_partido = $('.eso_ye').attr("id_partido-ye");
+        console.log(id_jugador+'---');
+    } else {
+        id_jugador = $(this).attr("id_jugador");
+        id_partido = $(this).attr("id_partido");
+    }
+
+    // id_jugador = $('.remove-type-yellow').attr("id_jugador");
+    // id_partido = $('.remove-type-yellow').attr("id_partido");
+    console.log(accion+'-'+id_jugador+'-'+id_partido);
     eliminar_accion(accion, id_jugador, id_partido);
 }
 
