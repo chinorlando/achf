@@ -398,6 +398,16 @@ class MY_Model extends CI_Model
     }
     //////////////eliminacion de amarillas, rojas y goles end //////////////////////////
 
+    //// editar planilla
+    public function verificar_partido($id_partido)
+    {
+        $this->db->from('partidos');
+        $this->db->where('id_partidos', $id_partido);
+        $query = $this->db->get();
+        return $query->num_rows();
+    }
+    //// editar planilla
+
 
 
 

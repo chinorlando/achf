@@ -55,131 +55,131 @@
 </section>
 
 
-        <script>
-            jQuery(document).ready(function () {
-                var doc = $(document);
-                // goles
-                // $(document).on("click", "td a.add-type", function(e){
-                $('td a.add-type').on("click", function(e){
-                    e.preventDefault();
-                    var content = jQuery('#type-container .type-row'),
-                        element = null;
-                    for (var i = 0; i < 1; i++) {
-                        element = content.clone();
-                        var type_div = 'teams_' + jQuery.now();
-                        element.attr('id', type_div);
-                        element.find('.remove-type').attr('targetDiv', type_div);
-                        valorDeId = jQuery(this).attr('id');
+<script>
+jQuery(document).ready(function () {
+    var doc = $(document);
+    // goles
+    // $(document).on("click", "td a.add-type", function(e){
+    $('td a.add-type').on("click", function(e){
+        e.preventDefault();
+        var content = jQuery('#type-container .type-row'),
+            element = null;
+        for (var i = 0; i < 1; i++) {
+            element = content.clone();
+            var type_div = 'teams_' + jQuery.now();
+            element.attr('id', type_div);
+            element.find('.remove-type').attr('targetDiv', type_div);
+            valorDeId = jQuery(this).attr('id');
 
-                        //////////
-                        id_jugador = jQuery(this).attr('id');
-                        element.find('.remove-type').attr('id_jugador', id_jugador);
+            //////////
+            id_jugador = jQuery(this).attr('id');
+            element.find('.remove-type').attr('id_jugador', id_jugador);
 
-                        id_partido = jQuery(this).attr('id_part');
-                        element.find('.remove-type').attr('id_partido', id_partido);
-                        //////////
-                        element.appendTo('.goal_container'+valorDeId);
+            id_partido = jQuery(this).attr('id_part');
+            element.find('.remove-type').attr('id_partido', id_partido);
+            //////////
+            element.appendTo('.goal_container'+valorDeId);
 
-                    }
-                });
+        }
+    });
 
-                $(document).on("click", 'a.remove-type', function(e){
-                    var didConfirm = confirm("Are you sure You want to delete");
-                    if (didConfirm == true) {
-                        var id = jQuery(this).attr('data-id');
-                        var targetDiv = jQuery(this).attr('targetDiv');
-                        //if (id == 0) {
-                        //var trID = jQuery(this).parents("tr").attr('id');
-                        jQuery('#' + targetDiv).remove();
-                        // }
-                        return true;
-                    } else {
-                        return false;
-                    }
-                });
-                // goles end
+    $(document).on("click", 'a.remove-type', function(e){
+        var didConfirm = confirm("Are you sure You want to delete");
+        if (didConfirm == true) {
+            var id = jQuery(this).attr('data-id');
+            var targetDiv = jQuery(this).attr('targetDiv');
+            //if (id == 0) {
+            //var trID = jQuery(this).parents("tr").attr('id');
+            jQuery('#' + targetDiv).remove();
+            // }
+            return true;
+        } else {
+            return false;
+        }
+    });
+    // goles end
 
-                // yellow begin
-                $('td a.add-type-yellow').on("click", function(e){
-                    e.preventDefault();
-                    var content = jQuery('#type-container-yellow .type-row-yellow'),
-                        element = null;
-                    for (var i = 0; i < 1; i++) {
-                        element = content.clone();
-                        var type_div = 'teams_' + jQuery.now();
-                        element.attr('id', type_div);
-                        element.find('.remove-type-yellow').attr('targetDiv', type_div);
-                        valorDeId = jQuery(this).attr('id');
+    // yellow begin
+    $('td a.add-type-yellow').on("click", function(e){
+        e.preventDefault();
+        var content = jQuery('#type-container-yellow .type-row-yellow'),
+            element = null;
+        for (var i = 0; i < 1; i++) {
+            element = content.clone();
+            var type_div = 'teams_' + jQuery.now();
+            element.attr('id', type_div);
+            element.find('.remove-type-yellow').attr('targetDiv', type_div);
+            valorDeId = jQuery(this).attr('id');
 
-                        //////////
-                        id_jugador = jQuery(this).attr('id');
-                        element.find('.remove-type-yellow').attr('id_jugador', id_jugador);
+            //////////
+            id_jugador = jQuery(this).attr('id');
+            element.find('.remove-type-yellow').attr('id_jugador', id_jugador);
 
-                        id_partido = jQuery(this).attr('id_part');
-                        element.find('.remove-type-yellow').attr('id_partido', id_partido);
-                        //////////
-                        element.appendTo('.yellow_container'+valorDeId);
+            id_partido = jQuery(this).attr('id_part');
+            element.find('.remove-type-yellow').attr('id_partido', id_partido);
+            //////////
+            element.appendTo('.yellow_container'+valorDeId);
 
-                    }
-                });
+        }
+    });
 
-                $(document).on("click", 'a.remove-type-yellow', function(e){
-                    var didConfirm = confirm("Are you sure You want to delete");
-                    if (didConfirm == true) {
-                        var id = jQuery(this).attr('data-id');
-                        var targetDiv = jQuery(this).attr('targetDiv');
-                        //if (id == 0) {
-                        //var trID = jQuery(this).parents("tr").attr('id');
-                        jQuery('#' + targetDiv).remove();
-                        // }
-                        return true;
-                    } else {
-                        return false;
-                    }
-                });
-                // yellow end
+    $(document).on("click", 'a.remove-type-yellow', function(e){
+        var didConfirm = confirm("Are you sure You want to delete");
+        if (didConfirm == true) {
+            var id = jQuery(this).attr('data-id');
+            var targetDiv = jQuery(this).attr('targetDiv');
+            //if (id == 0) {
+            //var trID = jQuery(this).parents("tr").attr('id');
+            jQuery('#' + targetDiv).remove();
+            // }
+            return true;
+        } else {
+            return false;
+        }
+    });
+    // yellow end
 
-                // red begin
-                $('td a.add-type-red').on("click", function(e){
-                    e.preventDefault();
-                    var content = jQuery('#type-container-red .type-row-red'),
-                        element = null;
-                    for (var i = 0; i < 1; i++) {
-                        element = content.clone();
-                        var type_div = 'teams_' + jQuery.now();
-                        element.attr('id', type_div);
-                        element.find('.remove-type-red').attr('targetDiv', type_div);
-                        valorDeId = jQuery(this).attr('id');
+    // red begin
+    $('td a.add-type-red').on("click", function(e){
+        e.preventDefault();
+        var content = jQuery('#type-container-red .type-row-red'),
+            element = null;
+        for (var i = 0; i < 1; i++) {
+            element = content.clone();
+            var type_div = 'teams_' + jQuery.now();
+            element.attr('id', type_div);
+            element.find('.remove-type-red').attr('targetDiv', type_div);
+            valorDeId = jQuery(this).attr('id');
 
-                        //////////
-                        id_jugador = jQuery(this).attr('id');
-                        element.find('.remove-type-red').attr('id_jugador', id_jugador);
+            //////////
+            id_jugador = jQuery(this).attr('id');
+            element.find('.remove-type-red').attr('id_jugador', id_jugador);
 
-                        id_partido = jQuery(this).attr('id_part');
-                        element.find('.remove-type-red').attr('id_partido', id_partido);
-                        //////////
-                        element.appendTo('.red_container'+valorDeId);
+            id_partido = jQuery(this).attr('id_part');
+            element.find('.remove-type-red').attr('id_partido', id_partido);
+            //////////
+            element.appendTo('.red_container'+valorDeId);
 
-                    }
-                });
+        }
+    });
 
-                $(document).on("click", 'a.remove-type-red', function(e){
-                    var didConfirm = confirm("Are you sure You want to delete");
-                    if (didConfirm == true) {
-                        var id = jQuery(this).attr('data-id');
-                        var targetDiv = jQuery(this).attr('targetDiv');
-                        //if (id == 0) {
-                        //var trID = jQuery(this).parents("tr").attr('id');
-                        jQuery('#' + targetDiv).remove();
-                        // }
-                        return true;
-                    } else {
-                        return false;
-                    }
-                });
-                // red end
+    $(document).on("click", 'a.remove-type-red', function(e){
+        var didConfirm = confirm("Are you sure You want to delete");
+        if (didConfirm == true) {
+            var id = jQuery(this).attr('data-id');
+            var targetDiv = jQuery(this).attr('targetDiv');
+            //if (id == 0) {
+            //var trID = jQuery(this).parents("tr").attr('id');
+            jQuery('#' + targetDiv).remove();
+            // }
+            return true;
+        } else {
+            return false;
+        }
+    });
+    // red end
 
-            });
+});
 
 /**
 * 1 amarilla
@@ -266,8 +266,7 @@ function eliminar_accion(accion, id_jugador, id_partido) {
 
 
 
-        </script>
-    
+</script>
 
 
 
