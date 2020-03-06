@@ -378,23 +378,15 @@ class MY_Model extends CI_Model
     }
     //////////////guardado de amarillas, rojas y goles end //////////////////////////
 
-    //////////////eliminacion de amarillas, rojas y goles end //////////////////////////
-    public function delete_accion($id_partido, $id_jugador, $accion)
-    {
-        $this->db->order_by('id_resultadopartido', 'desc');
-        $this->db->limit(1);
-        $this->db->where('id_jugador', $id_jugador);
-        $this->db->where('id_partidos', $id_partido);
-        $this->db->where('accion', $accion);
-        $this->db->delete('resultado_partido');
-    }
-    //////////////eliminacion de amarillas, rojas y goles end //////////////////////////
+    
 
     //// editar planilla
-    public function verificar_partido($id_partido)
+    public function verificar_partido($id_partido, $id_jugador, $accion)
     {
-        $this->db->from('partidos');
+        $this->db->from('resultado_partido');
         $this->db->where('id_partidos', $id_partido);
+        $this->db->where('id_jugador', $id_jugador);
+        $this->db->where('accion', $accion);
         $query = $this->db->get();
         return $query->num_rows();
     }
@@ -410,6 +402,18 @@ class MY_Model extends CI_Model
         $query = $this->db->get();
         return $query->result();
     }
+
+    //////////////eliminacion de amarillas, rojas y goles end //////////////////////////
+    public function delete_accion($id_partido, $id_jugador, $accion)
+    {
+        $this->db->order_by('id_resultadopartido', 'desc');
+        $this->db->limit(1);
+        $this->db->where('id_jugador', $id_jugador);
+        $this->db->where('id_partidos', $id_partido);
+        $this->db->where('accion', $accion);
+        $this->db->delete('resultado_partido');
+    }
+    //////////////eliminacion de amarillas, rojas y goles end //////////////////////////
 
 
 
