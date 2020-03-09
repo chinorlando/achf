@@ -110,3 +110,17 @@ create table calendario(
 	id_calendario
 
 );
+
+
+CREATE TABLE games(
+	id_games int primary key auto_increment,
+	-- date datetime,                   
+	id_equipo_h int, 
+    id_equipo_a int, 
+    hscore tinyint,
+    ascore tinyint,
+    id_partidos int,
+    constraint fk_games_equipo_h foreign key (id_equipo_h) references equipo(id_equipo),
+    constraint fk_games_equipo_a foreign key (id_equipo_a) references equipo(id_equipo),
+    constraint fk_games_partido foreign key (id_partidos) references partidos(id_partidos)
+);

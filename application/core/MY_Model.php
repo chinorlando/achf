@@ -415,6 +415,73 @@ class MY_Model extends CI_Model
     }
     //////////////eliminacion de amarillas, rojas y goles end //////////////////////////
 
+    /////////////////////// tabla de posiciones ////////////////////
+    public function obtener_goles($id_partido, $equipo)
+    {
+        $sql = "select count(*) as score
+                from resultado_partido
+                join inscripcionjugador on inscripcionjugador.id_jugador = resultado_partido.id_jugador
+                join equipo on equipo.id_equipo = inscripcionjugador.id_equipo
+                join club on club.id_club = equipo.id_club
+                where resultado_partido.id_partidos = ? and club.id_club = ? and resultado_partido.accion = 3";
+        $query = $this->db->query($sql, array($id_partido, $equipo)); 
+        return $query->result();
+    }
+
+    public function save_game($game)
+    {
+        $this->db->insert('games', $game);
+    }
+
+    public function get_nombre_club($id_equipo)
+    {
+        $this->db->from('equipo');
+        $this->db->join('club', 'club.id_club = equipo.id_club');
+        $this->db->where('equipo.id_equipo', $id_equipo);
+        $query = $this->db->get();
+        return $query->row();
+    }
+
+    public function get_table()
+    {
+        $sql = "SELECT
+              nombre_club AS equipo, Sum(P) AS PJ,Sum(W) AS G,Sum(D) AS E,Sum(L) AS P,
+              SUM(F) as GF,SUM(A) AS GC,SUM(GD) AS GD,SUM(Pts) AS Pts
+            FROM(
+              SELECT
+                id_equipo_h,
+                1 P,
+                IF(hscore > ascore,1,0) W,
+                IF(hscore = ascore,1,0) D,
+                IF(hscore < ascore,1,0) L,
+                hscore F,
+                ascore A,
+                hscore-ascore GD,
+                CASE WHEN hscore > ascore THEN 3 WHEN hscore = ascore THEN 1 ELSE 0 END PTS
+              FROM games
+              UNION ALL
+              SELECT
+                id_equipo_a,
+                1,
+                IF(hscore < ascore,1,0),
+                IF(hscore = ascore,1,0),
+                IF(hscore > ascore,1,0),
+                ascore,
+                hscore,
+                ascore-hscore GD,
+                CASE WHEN hscore < ascore THEN 3 WHEN hscore = ascore THEN 1 ELSE 0 END
+              FROM games
+            ) as tot
+            JOIN equipo t ON tot.id_equipo_h=t.id_equipo
+            JOIN club cl on cl.id_club = t.id_club
+
+            GROUP BY Equipo
+            ORDER BY SUM(Pts) DESC ";
+        $query = $this->db->query($sql); 
+        return $query->result();
+    }
+    /////////////////////// tabla de posiciones ////////////////////
+
 
 
 

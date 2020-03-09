@@ -26,6 +26,14 @@
     if (accion == 1) {
       $(".player_"+id_jugador+" option:selected").each(function() {
         list_id.push(this.value);
+        ye = list_id.length;
+        console.log(list_id.length);
+        if (ye==2) {
+          $(".player_g_"+id_jugador).prop('disabled', true);
+          // aniadir_accion(id_jugador, id_partido, 2);
+        } else {
+          $(".player_g_"+id_jugador).prop('disabled', false);
+        }
     });
   } else if (accion == 2) {
       $(".player_r_"+id_jugador+" option:selected").each(function() {
@@ -36,6 +44,8 @@
         list_id.push(this.value);
     });
   }
+
+  
 
 
   // console.log(id_jugador);
@@ -76,6 +86,26 @@
     } else {
         console.log('añadir');
         $.ajax({
+              url: CFG.url + 'planillero/guardar_accion',
+              type: "POST",
+              cache: true,
+              data: {id_jugador: id_jugador, id_partido: id_partido, accion: accion},
+              success: function(data) {
+                var vf = $.parseJSON(data);
+                console.log(vf.status);
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error al obtener datos.');
+            }
+        });
+    }
+});
+});
+
+
+  function aniadir_accion(id_jugador, id_partido, accion) {
+    $.ajax({
           url: CFG.url + 'planillero/guardar_accion',
           type: "POST",
           cache: true,
@@ -83,15 +113,42 @@
           success: function(data) {
             var vf = $.parseJSON(data);
             console.log(vf.status);
+            // $('.player_r_'+id_jugador+' option[value=1]').prop('selected', 'selected');
+            // $selectedOptions.prop("checked", true);
+            // $(".player_r_"+id_jugador).prop("checked", true);
+            // $('.player_r_'+id_jugador+' select option[value="1"]').prop("selected", true);
+            // $(".player_r_"+id_jugador+" option:selected").attr("selected", true);
+            // console.log($(".player_r_"+id_jugador+" option:selected").attr("selected", true));
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
             alert('Error al obtener datos.');
         }
     });
-    }
-});
-});
+  }
+
+
+  function finalizar_partido(id_partido, id_e1, id_e2) {
+    // alert(id_partido+'-'+id_e1+'-'+id_e2);
+    $.ajax({
+        type: "POST",
+        data: {id_partido:id_partido, id_e1:id_e1, id_e2:id_e2},
+        url: CFG.url+'planillero/end_partido',
+        dataType: "JSON",
+        success: function(data)
+        {
+            if(data.status)
+            {
+                alert('Se finalizó el partido.');
+            }
+            
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error al intentar finalizar partido');
+        }
+    });
+  }
 </script>
 
 <!-- <script>
