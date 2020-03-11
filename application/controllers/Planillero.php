@@ -817,6 +817,12 @@ class Planillero extends CI_Controller {
 
     public function get_planillero()
     {
+        for ($i=0; $i < 10; $i++) { 
+            $existe = $this->db->get_where('arbitro_partido', array('id_partidos' => $i,))->row()->id_arbitropartido;
+            print_r($eso);
+            print_r('<br>');
+        }
+            # code...
         
         // print_r($eso);
         // exit();
