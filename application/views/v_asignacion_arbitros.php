@@ -53,7 +53,7 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <input type="text" name="id_partido" id="id_partido">
+                  <input type="text" name="id_partido" id="id_partido" hidden="hidden">
                   <label>Árbitro Principal</label>
                   <select class="form-control select2" name="arbitro_principal" id="arbitro_principal" style="width: 100%;">
                     
@@ -101,23 +101,6 @@
   $(document).ready(function(){
     llenararbitros();
   });
-  // $.get(CFG.url + "profile/get_cargo", function(data) {
-  //   var tr = $.parseJSON(data);
-  //   $.each(tr, function(index, val) {
-  //     $("#cargo").append(
-  //       '<option value="' + val.id_cargo + '">' + val.nombre_cargo + "</option>"
-  //     );
-  //   });
-  // });
-
-  // $.get(CFG.url + "profile/get_rol", function(data) {
-  //   var tr = $.parseJSON(data);
-  //   $.each(tr, function(index, val) {
-  //     $("#rol").append(
-  //       '<option value="' + val.id_rol + '">' + val.nombre + "</option>"
-  //     );
-  //   });
-  // });
 
   function add_arbitros(id_partido) {
     save_method = "add";

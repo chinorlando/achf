@@ -842,8 +842,6 @@ class Planillero extends CI_Controller {
 
     public function add_arbitro()
     {
-
-
         $arb_pri = $this->input->post('arbitro_principal');
         $arb_as1 = $this->input->post('arbitro_asistente_1');
         $arb_as2 = $this->input->post('arbitro_asistente_2');
@@ -868,6 +866,25 @@ class Planillero extends CI_Controller {
         $planillero = $this->dbase->get_planille($id)->id_planillero;
 
         echo json_encode(array('arbitro'=>$arbitro, 'plani'=>$planillero, 'id_partido'=>$id));
+    }
+
+    public function update_arbitro()
+    {
+        $arb_pri = $this->input->post('arbitro_principal');
+        $arb_as1 = $this->input->post('arbitro_asistente_1');
+        $arb_as2 = $this->input->post('arbitro_asistente_2');
+        $id_partido = $this->input->post('id_partido');
+        $plani = $this->input->post('planillero');
+
+        $this->dbase->delete_arbitro($id_partido);
+        
+        $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_pri]);
+        $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as1]);
+        $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as2]);
+
+        $this->dbase->update_planillero($id_partido, array('id_planillero' => $plani));
+
+        echo json_encode(array("status" => TRUE));
     }
 
 

@@ -553,6 +553,12 @@ class MY_Model extends CI_Model
         // return $query->result();
     }
 
+    public function delete_arbitro($id_partido)
+    {
+        $this->db->where('id_partidos', $id_partido);
+        $this->db->delete('arbitro_partido');
+    }
+
 
 
 
