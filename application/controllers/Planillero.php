@@ -330,9 +330,29 @@ class Planillero extends CI_Controller {
             // exit();
             $equipos = [$jugad_equi1, $jugad_equi2];
             $cent = '';
-            $cent = '<div class="row">';
+            // $cent = '<div class="row partido_vs">';
 
             // $nombre_club = $this->dbase->get_nombre_club();
+            $estado = $this->db->get_where('partidos', array(
+                'id_partidos' => $id_partido,
+            ))->row()->estado;
+
+            // print_r($estado);
+            // exit();
+
+
+
+            if ($estado == 1 || $estado == null) {
+                $ena = "";
+            } else {
+                $ena = "disabled";
+                $cent .= '<div class="callout callout-warning ">
+                  <h4>Partido Fonalizado</h4>
+                </div>';
+            }
+
+            
+
 
             foreach ($equipos as $key => $equipo) {
             //     print_r('<pre>');
@@ -371,7 +391,7 @@ class Planillero extends CI_Controller {
                             $cent .= '<td><a href="pages/examples/invoice.html">'.$value->dorsal.'</a></td>';
                             $cent .= '<td>'.$value->posicion.'</td>';
                             $cent .= '<td>';
-                                        $cent .= '<select
+                                        $cent .= '<select '.$ena.' 
                                           class="form-control select2 player player_'.$value->id_jugador.'"
                                           data-placeholder="Select a State"
                                           style="width: 80%;"
@@ -404,7 +424,7 @@ class Planillero extends CI_Controller {
                                         $cent .= '</select>
                                       </td>';
                             $cent .= '<td>';
-                                        $cent .= '<select
+                                        $cent .= '<select '.$ena.'
                                           class="form-control select2 player player_r_'.$value->id_jugador.'"
                                           data-placeholder="Select a State"
                                           style="width: 80%;"
@@ -431,7 +451,7 @@ class Planillero extends CI_Controller {
                                       </td>';
 
                             $cent .= '<td>';
-                                        $cent .= '<select
+                                        $cent .= '<select '.$ena.'
                                           class="form-control select2 player player_g_'.$value->id_jugador.'"
                                           data-placeholder="Select a State"
                                           style="width: 80%;"
@@ -488,7 +508,7 @@ class Planillero extends CI_Controller {
               $cent .= '</div>';
               $cent .= '</div>';
             }
-            $cent .= '<button class="btn btn-success" onclick="finalizar_partido('.$id_partido.','.$id_e1.','.$id_e2.')"><i class="glyphicon glyphicon-plus"></i> Finalizar Partido</button>';
+            $cent .= '<button '.$ena.' class="btn btn-success" onclick="finalizar_partido('.$id_partido.','.$id_e1.','.$id_e2.')"><i class="glyphicon glyphicon-plus"></i> Finalizar Partido</button>';
             $cent .= '</div>';
             $data['vista']  = 'v_jugadores_partido';
             $data['jugadores_equipo1'] = $cent;
@@ -727,6 +747,7 @@ class Planillero extends CI_Controller {
         $id_e2 = $this->input->post('id_e2');
         $ids_e = [$id_e1, $id_e2];
         $sw = TRUE;
+        $this->dbase->update_partido($id_partido);
         foreach ($ids_e as $equipo) {
             $es = $this->dbase->obtener_goles($id_partido, $equipo);
             if ($sw) {
@@ -767,6 +788,70 @@ class Planillero extends CI_Controller {
         $this->load->view($data['vista'],$data);
         $this->load->view('plantilla/footer');
     }
+
+    public function asignacion_arbitros()
+    {
+        $partidos = $this->dbase->get_partidos();
+        $opcion = 'Asignacion de arbitros';
+        $data = array(
+            'opcion'            => $opcion,
+            'controllerajax'    => 'Planillero',
+            'titulo_navegation' => $this->window->titulo_navegacion('Empresa',$opcion),
+            'partidos' => $partidos,
+        );
+
+        $data['vista']  = 'v_asignacion_arbitros';
+        // $data['tablas_posiciones']  = $tabla;
+        $this->load->view('plantilla/header');
+        $this->load->view($data['vista'],$data);
+        $this->load->view('plantilla/footer');
+    }
+
+    public function get_arbitro()
+    {
+        $tipo_arbitro = $this->input->post('tipo_arbitro');
+        // $correo = $this->dbase->get_arbitro_principal('cuenta', array('id_cuenta' => $id_cuenta))->row()->email;
+        $arbitro = $this->dbase->get_arbitro($tipo_arbitro);
+        echo json_encode(array("status" => TRUE, "arbitro" => $arbitro));
+    }
+
+    public function get_planillero()
+    {
+        
+        // print_r($eso);
+        // exit();
+
+        $planillero = $this->dbase->get_planillero();
+        echo json_encode(array("status" => TRUE, "planillero" => $planillero));
+    }
+
+    public function add_arbitro()
+    {
+
+
+        $arb_pri = $this->input->post('arbitro_principal');
+        $arb_as1 = $this->input->post('arbitro_asistente_1');
+        $arb_as2 = $this->input->post('arbitro_asistente_2');
+        $id_partido = $this->input->post('id_partido');
+
+        $plani = $this->input->post('planillero');
+
+        $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_pri]);
+        $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as1]);
+        $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as2]);
+
+        $this->dbase->update_planillero($id_partido, array('id_planillero' => $plani));
+
+        echo json_encode(array("status" => TRUE));
+    }
+
+    // public function aniadir_planillero()
+    // {
+    //     # code...
+    // }
+
+
+
 
 
 

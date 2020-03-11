@@ -140,6 +140,9 @@
             if(data.status)
             {
                 alert('Se finalizó el partido.');
+                // $(".partido_vs").prop('disabled', true);
+                // $("td>select").attr("disabled", !$(this).prop("checked"));
+                $("td>select").attr("disabled", true);
             }
             
         },

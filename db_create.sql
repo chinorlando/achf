@@ -124,3 +124,12 @@ CREATE TABLE games(
     constraint fk_games_equipo_a foreign key (id_equipo_a) references equipo(id_equipo),
     constraint fk_games_partido foreign key (id_partidos) references partidos(id_partidos)
 );
+
+
+create table arbitro_partido( -- asignacion de arbitros a un partido
+	id_arbitropartido int PRIMARY key AUTO_INCREMENT,
+	id_partidos int,
+	id_arbitro int,
+	constraint fk_arbitropartido_partidos foreign key (id_partidos) references partidos(id_partidos),
+	constraint fk_arbitropartido_arbitro foreign key (id_arbitro) references equipo(id_arbitro)
+);

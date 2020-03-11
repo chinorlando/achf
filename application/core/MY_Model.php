@@ -428,6 +428,13 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
+    public function update_partido($id_partido)
+    {   $data = 
+        $this->db->where('id_partidos', $id_partido);
+        $res = $this->db->update('partidos', ['estado'=>0]);
+        return $res;
+    }
+
     public function save_game($game)
     {
         $this->db->insert('games', $game);
@@ -481,6 +488,42 @@ class MY_Model extends CI_Model
         return $query->result();
     }
     /////////////////////// tabla de posiciones ////////////////////
+
+    /////////////////////// asignacion de arbitros begin  ////////////////////
+
+    public function get_arbitro($where)
+    {
+        $this->db->from('arbitro');
+        $this->db->join('persona', 'persona.id_persona = arbitro.id_persona');
+        $this->db->join('categoria_arbitro ca', 'ca.id_catarbitro = arbitro.id_catarbitro');
+        $this->db->where('ca.nombre', $where);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function get_planillero()
+    {
+        $this->db->from('planillero');
+        $this->db->join('persona', 'persona.id_persona = planillero.id_persona');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function save_arbitro($datos)
+    {
+        $this->db->insert('arbitro_partido', $datos);
+    }
+
+    public function update_planillero($where, $datos)
+    {
+        $this->db->where('id_partidos', $where);
+        $this->db->update('partidos', $datos);
+    }
+
+
+
+
+    /////////////////////// asignacion de arbitros end ///////////////////////
 
 
 
