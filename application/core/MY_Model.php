@@ -520,6 +520,41 @@ class MY_Model extends CI_Model
         $this->db->update('partidos', $datos);
     }
 
+    public function get_siexiste($id_partido)
+    {
+        $this->db->from('arbitro_partido');
+        $this->db->where('id_partidos',$id_partido);
+        $query = $this->db->get();
+
+        if ($query->row()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function get_arbitropartido($id_partido)
+    {
+        $this->db->from('arbitro_partido');
+        $this->db->where('id_partidos',$id_partido);
+        $query = $this->db->get();
+
+        // return $query->row();
+        return $query->result();
+    }
+
+    public function get_planille($id_partido)
+    {
+        $this->db->from('partidos');
+        $this->db->where('id_partidos',$id_partido);
+        $query = $this->db->get();
+
+        return $query->row();
+        // return $query->result();
+    }
+
+
+
 
 
 
@@ -551,7 +586,7 @@ class MY_Model extends CI_Model
 
     public function count_filtered()
     {
-        $this->_get_datatables_query();
+        $this->_get_datatables_que();
         $query = $this->db->get();
         return $query->num_rows();
     }

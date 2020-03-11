@@ -24,28 +24,7 @@
               </tr>
               </thead>
               <tbody>
-                <?php $i = 1 ?>
-                <?php foreach ($partidos as $partido): ?>
-                  <tr>
-                    <td><?php echo $i++; ?></td>
-                    <td><?php echo $partido->local; ?></td>
-                    <td><?php echo $partido->visitante; ?></td>
-                    
-                    <td>
-
-                      <?php $existe = $this->db->get_where('arbitro_partido', array('id_partidos' => 2,))->row()->id_arbitropartido; ?>
-
-                      <?php echo $existe; ?>
-                      
-                      <?php if ($existe): ?>
-                        <a class="btn btn-sm btn-primary id_match" href="javascript:void(0)" title="Añadir árbitros" onclick="add_arbitros(<?php echo $partido->id_partidos; ?>)">Actualizar</a>
-                      <?php else: ?>
-                        <a class="btn btn-sm btn-primary id_match" href="javascript:void(0)" title="Añadir árbitros" onclick="edit_arbitros(<?php echo $partido->id_partidos; ?>)">Asignar árbitros</a>
-                      <?php endif ?>
-                      
-                    </td>
-                  </tr>
-                <?php endforeach ?>
+                <?php echo $datos ?>
               </tbody>
             </table>
           </div>
@@ -74,14 +53,14 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <input type="text" name="id_partido" id="id_partido" hidden="hidden">
+                  <input type="text" name="id_partido" id="id_partido">
                   <label>Árbitro Principal</label>
                   <select class="form-control select2" name="arbitro_principal" id="arbitro_principal" style="width: 100%;">
                     
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>Lateria 1</label>
+                  <label>Asistente 1</label>
                   <select class="form-control select2" name="arbitro_asistente_1" id="arbitro_asistente_1" style="width: 100%;">
                     
                   </select>
@@ -89,7 +68,7 @@
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label>Lateral 2</label>
+                  <label>Asistente 2</label>
                   <select class="form-control select2" name="arbitro_asistente_2" id="arbitro_asistente_2" style="width: 100%;">
                     
                   </select>
@@ -119,6 +98,9 @@
 
 <script type="text/javascript">
   var save_method;
+  $(document).ready(function(){
+    llenararbitros();
+  });
   // $.get(CFG.url + "profile/get_cargo", function(data) {
   //   var tr = $.parseJSON(data);
   //   $.each(tr, function(index, val) {
@@ -148,10 +130,97 @@
 
     $('#id_partido').val(id_partido);
 
+    // llenararbitros();
 
+  }
 
+  function save() {
+    id_jugador = $('#id_partido').val();
+    // console.log(id_jugador);
 
+    $(".btnSave").text("saving..."); //change button text
+    $(".btnSave").attr("disabled", true); //set button disable
+    var url;
 
+    if (save_method == "add") {
+      url = CFG.url + "planillero/add_arbitro";
+    } else {
+      url = CFG.url + "planillero/update_arbitro";
+    }
+    $.ajax({
+      url: url,
+      type: "POST",
+      data: $("#form_arbitro").serialize(),
+      dataType: "JSON",
+      success: function(data) {
+        if (data.status) {
+          //if success close modal and reload ajax table
+          $("#modal-arbitro").modal("hide");
+          // reload_table();
+        } else {
+          
+        }
+        $(".btnSave").text("Añadir");
+        $(".btnSave").attr("disabled", false);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        alert("Error adding / update data");
+        $(".btnSave").text("Añadir árbitros"); //change button text
+        $(".btnSave").attr("disabled", false); //set button enable
+      }
+    });
+  }
+
+  function edit_arbitros(id) {
+    save_method = "update";
+    $("#form_arbitro")[0].reset();
+    $(".form-group").removeClass("has-error"); // clear error class
+    $(".help-block").empty(); // clear error string
+
+    //Ajax Load data from ajax
+    $.ajax({
+      url: CFG.url + "planillero/edit_arbitros/" + id,
+      type: "GET",
+      dataType: "JSON",
+      success: function(data) {
+        $('[name="id_partido"]').val(data.id_partido);
+
+        console.log(data);
+        for (var  i in data) {
+          for (var  j in data[i]) {
+            if (data[i][j].hasOwnProperty('id_arbitro')) {
+              // data[i][j].check = true;
+              // alert(data[i][j].id_arbitro);
+              console.log(j);
+              if (j==0) {
+                console.log('estoy en el cero');
+                $('[name="arbitro_principal"]').val(data[i][j].id_arbitro);
+              }
+              if (j==1) {
+                console.log('estoy en el uno');
+                $('[name="arbitro_asistente_1"]').val(data[i][j].id_arbitro);
+              }
+              if (j==2) {
+                console.log('estoy en el dos');
+                $('[name="arbitro_asistente_2"]').val(data[i][j].id_arbitro);
+              }
+            }
+          }
+        }
+
+        $('[name="planillero"]').val(data.plani);
+        
+        $("#modal-arbitro").modal("show");
+        $(".modal-title").text("Editar Árbitro");
+        $(".btnSave").text("Editar");
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        alert("Error get data from ajax");
+      }
+    });
+  }
+
+  function llenararbitros() {
     $.post(CFG.url + 'planillero/get_arbitro', {
       tipo_arbitro: "REFEREE 1",
     },function(data, textStatus, xhr) {
@@ -198,72 +267,6 @@
           '<option value="' + val.id_planillero + '">' + val.nombres + ' ' + val.apellido_paterno + ' ' + val.apellido_materno + '</option>'
         );
       });
-    });
-
-  }
-
-  function save() {
-    id_jugador = $('#id_partido').val();
-    console.log(id_jugador);
-
-    $(".btnSave").text("saving..."); //change button text
-    $(".btnSave").attr("disabled", true); //set button disable
-    var url;
-
-    if (save_method == "add") {
-      url = CFG.url + "planillero/add_arbitro";
-    } else {
-      url = CFG.url + "planillero/update_arbitro";
-    }
-    $.ajax({
-      url: url,
-      type: "POST",
-      data: $("#form_arbitro").serialize(),
-      dataType: "JSON",
-      success: function(data) {
-        if (data.status) {
-          //if success close modal and reload ajax table
-          $("#modal-arbitro").modal("hide");
-          // reload_table();
-        } else {
-          
-        }
-        $(".btnSave").text("Añadir árbitros");
-        $(".btnSave").attr("disabled", false);
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        alert("Error adding / update data");
-        $(".btnSave").text("Añadir árbitros"); //change button text
-        $(".btnSave").attr("disabled", false); //set button enable
-      }
-    });
-  }
-
-  function edit_arbitros(id) {
-    save_method = "update";
-    $("#form_teacher")[0].reset(); // reset form on modals
-    $(".form-group").removeClass("has-error"); // clear error class
-    $(".help-block").empty(); // clear error string
-
-    //Ajax Load data from ajax
-    $.ajax({
-      url: CFG.url + "profile/ajax_edit_docente/" + id,
-      type: "GET",
-      dataType: "JSON",
-      success: function(data) {
-        
-        $('[name="repeat_password"]').val("");
-
-        $('[name="rol"]').val(data.id_rol);
-        $('[name="cargo"]').val(data.id_cargo);
-
-        $("#modal_confirmar").modal("show");
-        $(".modal-title").text("Editar Docente");
-        $("#btnSave").text("Actualizar");
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        alert("Error get data from ajax");
-      }
     });
   }
 

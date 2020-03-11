@@ -800,6 +800,25 @@ class Planillero extends CI_Controller {
             'partidos' => $partidos,
         );
 
+        $cent = '';
+
+        $i = 1;
+        foreach ($partidos as $partido){
+          $cent .='<tr>
+            <td>'.$i++.'</td>
+            <td>'.$partido->local.'</td>
+            <td>'.$partido->visitante.'</td>
+            <td>';
+            if (!$this->dbase->get_siexiste($partido->id_partidos)) {
+                $cent .= '<a class="btn btn-sm btn-primary id_match" href="javascript:void(0)" title="Añadir árbitros" onclick="add_arbitros('.$partido->id_partidos.')">Asignar árbitros</a>';
+            } else {
+                $cent .= '<a class="btn btn-sm btn-success id_match" href="javascript:void(0)" title="Añadir árbitros" onclick="edit_arbitros('.$partido->id_partidos.')">Actualizar</a>';
+            }
+            $cent .= '</td>
+          </tr>';
+        }
+
+        $data['datos']  = $cent;
         $data['vista']  = 'v_asignacion_arbitros';
         // $data['tablas_posiciones']  = $tabla;
         $this->load->view('plantilla/header');
@@ -817,16 +836,6 @@ class Planillero extends CI_Controller {
 
     public function get_planillero()
     {
-        for ($i=0; $i < 10; $i++) { 
-            $existe = $this->db->get_where('arbitro_partido', array('id_partidos' => $i,))->row()->id_arbitropartido;
-            print_r($eso);
-            print_r('<br>');
-        }
-            # code...
-        
-        // print_r($eso);
-        // exit();
-
         $planillero = $this->dbase->get_planillero();
         echo json_encode(array("status" => TRUE, "planillero" => $planillero));
     }
@@ -851,10 +860,15 @@ class Planillero extends CI_Controller {
         echo json_encode(array("status" => TRUE));
     }
 
-    // public function aniadir_planillero()
-    // {
-    //     # code...
-    // }
+    public function edit_arbitros($id)
+    {
+        if (!isset($res)) 
+            $res = new stdClass();
+        $arbitro = $this->dbase->get_arbitropartido($id);
+        $planillero = $this->dbase->get_planille($id)->id_planillero;
+
+        echo json_encode(array('arbitro'=>$arbitro, 'plani'=>$planillero, 'id_partido'=>$id));
+    }
 
 
 
