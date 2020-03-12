@@ -497,7 +497,7 @@ class MY_Model extends CI_Model
                 join club on club.id_club = equipo.id_club
                 where resultado_partido.id_partidos = ? and club.id_club = ? and resultado_partido.accion = 3
                 ';
-        $query = $this->db->query($sql,array($id_partido, $id_e)); 
+        $query = $this->db->query($sql,array($id_partidos, $id_e)); 
         return $query->result();
     }
     /////////////////////// tabla de posiciones ////////////////////
