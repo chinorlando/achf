@@ -616,6 +616,13 @@ class MY_Model extends CI_Model
     {
         $this->db->insert('pago', $datos);
     }
+
+    public function get_cant_veces()
+    {
+        $this->db->from('cantidad');
+        $query = $this->db->get();
+        return $query->result();
+    }
     ///////////////////// pagos end /////////////////////////
 
 

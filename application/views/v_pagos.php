@@ -35,13 +35,16 @@
 							<option value="-1">Seleccionar categoria...</option>
 						</select>
 					</div>
+
+					<div class="cant_amarillas">
+					</div>
 					
 					<div class="form-group">
 						<label>Monto</label>
 						<!-- <select class="form-control select2" id="monto" name="monto" style="width: 100%;">
 							<option value="-1">Seleccionar monto...</option>
 						</select> -->
-						<input class="form-control monto" type="input" name="monto" id="monto" value="" disabled="true">
+						<input class="form-control monto" type="input" name="monto" id="monto" value="" readonly>
 						<input type="input" name="id_monto" id="id_monto" hidden="hidden">
 					</div>
 				</div>
@@ -87,12 +90,7 @@
 			});
 		});
 
-		$.get(CFG.url + 'planillero/get_motivo', function(data) {
-			var datos = $.parseJSON(data);
-			$.each(datos.motivo, function(index, val) {
-				$('#motivo').append('<option value="'+val.id_motivo+'">'+val.descripcion+'</option>');
-			});
-		});
+		
 
 
 	});
@@ -144,6 +142,51 @@
 	        alert('Error al obtener datos.');
 	    }
 	  });
+	});
+
+
+	$('#concepto').change(function(e) {
+	  var id_concepto = $('#concepto').val();
+	  console.log(id_concepto);
+	  switch (id_concepto){
+	  	case '3':
+	  		$('#motivo').empty();
+		  	$.get(CFG.url + 'planillero/get_motivo', function(data) {
+					var datos = $.parseJSON(data);
+					$('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
+					$.each(datos.motivo, function(index, val) {
+						$('#motivo').append('<option value="'+val.id_motivo+'">'+val.descripcion+'</option>');
+					});
+				});
+				$('.cant_amarillas').html('');
+				break;
+			case '7':
+				$.get(CFG.url + 'planillero/get_cantidad_amarillas', function(data) {
+					var datos = $.parseJSON(data);
+
+					$('.cant_amarillas').html(datos.html);
+				});
+	  	default:
+	  		$('#motivo').empty();
+		  	$('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
+		  	$('#motivo').append('<option value="1">PAGO POR CONCEPTO</option>');
+		  	break;
+	  }
+
+	  // if (id_concepto != 3) {
+	  // 	$('#motivo').empty();
+	  // 	$('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
+	  // 	$('#motivo').append('<option value="1">PAGO POR CONCEPTO</option>');
+	  // } else {
+	  // 	$('#motivo').empty();
+	  // 	$.get(CFG.url + 'planillero/get_motivo', function(data) {
+			// 	var datos = $.parseJSON(data);
+			// 	$('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
+			// 	$.each(datos.motivo, function(index, val) {
+			// 		$('#motivo').append('<option value="'+val.id_motivo+'">'+val.descripcion+'</option>');
+			// 	});
+			// });
+	  // }
 	});
 
 	$('#categoria').change(function(e) {

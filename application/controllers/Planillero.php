@@ -784,8 +784,24 @@ class Planillero extends CI_Controller {
             'id_precioconcepto' => $id_precioconcepto,
             'id_motivo' => $id_motivo,
         ];
-        $this->dbase->save_pago($datos);
+        // $this->dbase->save_pago($datos);
         echo json_encode(array("status" => TRUE));
+    }
+
+    public function get_cantidad_amarillas()
+    {
+        $veces = $this->dbase->get_cant_veces();
+        $html = '';
+
+        $html.='<div class="form-group">
+          <label>Select</label>
+          <select class="form-control">';
+            foreach ($veces as $vez) {
+                $html.='<option value="'.$vez->id_cantidad.'">'.$vez->id_cantidad.'º veces</option>';
+            }
+          $html.='</select>
+        </div>';
+        echo json_encode(array("status" => TRUE, 'html' => $html));
     }
 
     ///////////////////// pagos end ///////////////////////
