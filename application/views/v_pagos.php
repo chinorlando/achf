@@ -41,8 +41,8 @@
 						<!-- <select class="form-control select2" id="monto" name="monto" style="width: 100%;">
 							<option value="-1">Seleccionar monto...</option>
 						</select> -->
-						<input class="form-control monto" type="input" name="monto" id="monto" value="">
-						<input type="input" name="id_monto" id="id_monto">
+						<input class="form-control monto" type="input" name="monto" id="monto" value="" disabled="true">
+						<input type="input" name="id_monto" id="id_monto" hidden="hidden">
 					</div>
 				</div>
 				<div class="col-md-6">
