@@ -849,7 +849,7 @@ class Planillero extends CI_Controller {
 
         $plani = $this->input->post('planillero');
 
-        $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_pri]);
+        $this->dbase->save_aritro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_pri]);
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as1]);
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as2]);
 
@@ -886,6 +886,79 @@ class Planillero extends CI_Controller {
 
         echo json_encode(array("status" => TRUE));
     }
+
+    ///////////////////// pagos begin///////////////////////
+    public function pagos()
+    {
+        $concepto = $this->dbase->get_table();
+        $opcion = 'Pagos por concepto';
+        $data = array(
+            'opcion'            => $opcion,
+            'controllerajax'    => 'Planillero',
+            'titulo_navegation' => $this->window->titulo_navegacion('Empresa',$opcion),
+            'pagos' => $concepto,
+        );
+        $data['vista']  = 'v_pagos';
+        $this->load->view('plantilla/header');
+        $this->load->view($data['vista'],$data);
+        $this->load->view('plantilla/footer');
+    }
+
+    public function get_clubs()
+    {
+        $clubs = $this->dbase->get_clubs();
+        echo json_encode(array("status" => TRUE, 'clubs'=>$clubs));
+    }
+
+    public function get_categoria_by_club()
+    {
+        $id_club = $this->input->post('id_club');
+        $categorias = $this->dbase->get_categoria($id_club);
+
+        echo json_encode(array("status" => TRUE, 'categorias'=>$categorias));
+    }
+
+    public function get_concepto()
+    {
+        $conceptos = $this->dbase->get_conceptos();
+        echo json_encode(array("status" => TRUE, 'conceptos'=>$conceptos));
+    }
+
+    public function get_monto()
+    {
+        $id_categoria = $this->input->post('id_categoria');
+        $id_concepto = $this->input->post('id_concepto');
+        $monto = $this->dbase->get_monto($id_categoria, $id_concepto);
+
+        // print_r($monto);
+        // exit();
+
+        echo json_encode(array("status" => TRUE, 'monto'=>$monto));
+    }
+
+    public function get_motivo()
+    {
+        $motivo = $this->dbase->get_motivo();
+        echo json_encode(array("status" => TRUE, 'motivo'=>$motivo));
+    }
+
+    public function pagar()
+    {
+        // $id_club = $this->input->post('club');
+        // $id_concepto = $this->input->post('concepto');
+        // $id_categoria = $this->input->post('categoria');
+        $id_precioconcepto = $this->input->post('id_monto');
+        $id_motivo = $this->input->post('motivo');
+        $datos= [
+            'fecha' => date("Y-m-d"),
+            'id_precioconcepto' => $id_precioconcepto,
+            'id_motivo' => $id_motivo,
+        ];
+        // $this->dbase->save_pago($datos);
+        echo json_encode(array("status" => TRUE));
+    }
+
+    ///////////////////// pagos end ///////////////////////
 
 
 

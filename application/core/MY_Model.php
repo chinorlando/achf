@@ -558,13 +558,52 @@ class MY_Model extends CI_Model
         $this->db->where('id_partidos', $id_partido);
         $this->db->delete('arbitro_partido');
     }
-
-
-
-
-
-
     /////////////////////// asignacion de arbitros end ///////////////////////
+
+    ///////////////////// pagos begin ///////////////////////
+    public function get_categoria($id_club)
+    {
+        $this->db->from('categoria');
+        $this->db->join('equipo', 'equipo.id_categoria = categoria.id_categoria');
+        $this->db->join('club', 'club.id_club = equipo.id_club');
+        $this->db->where('club.id_club',$id_club);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function get_conceptos()
+    {
+        $this->db->from('concepto');
+        // $this->db->join('equipo', 'equipo.id_categoria = categoria.id_categoria');
+        // $this->db->join('club', 'club.id_club = equipo.id_club');
+        // $this->db->where('club.id_club',$id_club);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function get_monto($id_categoria, $id_concepto)
+    {
+        $this->db->from('precio_concepto');
+        // $this->db->join('equipo', 'equipo.id_categoria = categoria.id_categoria');
+        // $this->db->join('club', 'club.id_club = equipo.id_club');
+        $this->db->where('id_concepto',$id_concepto);
+        $this->db->where('id_categoria',$id_categoria);
+        $query = $this->db->get();
+        return $query->row();
+    }
+
+    public function get_motivo()
+    {
+        $this->db->from('motivo');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function save_pago($datos)
+    {
+        $this->db->insert('pago', $datos);
+    }
+    ///////////////////// pagos end /////////////////////////
 
 
 

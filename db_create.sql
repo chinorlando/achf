@@ -133,3 +133,77 @@ create table arbitro_partido( -- asignacion de arbitros a un partido
 	constraint fk_arbitropartido_partidos foreign key (id_partidos) references partidos(id_partidos),
 	constraint fk_arbitropartido_arbitro foreign key (id_arbitro) references equipo(id_arbitro)
 );
+
+-- ejemplo: cantidad de veces que se ha hecho sacar amarillas 
+create table cantidad(
+	id_cantidad int PRIMARY KEY AUTO_INCREMENT,
+	veces int
+);
+
+-- del concepto valores su cosas
+-- ejemplo: descripcion = planilla de inscripcin cada hoja
+-- ejemplo: certificacion a clubes afiliados
+create table motivo(
+	id_motivo int AUTO_INCREMENT PRIMARY KEY,
+	descripcion text
+);
+
+-- el precio de cada uno de los conceptos
+create table precio_concepto(
+	id_precioconcepto int PRIMARY key AUTO_INCREMENT,
+	precio float,
+	id_cantidad int,
+	-- id_motivo int,
+	id_categoria int,
+	id_concepto int,
+	constraint fk_precioconcepto_cantidad foreign key (id_cantidad) references cantidad(id_cantidad),
+	-- constraint fk_precioconcepto_motivo foreign key (id_motivo) references motivo(id_motivo),
+	constraint fk_precioconcepto_categoria foreign key (id_categoria) references categoria(id_categoria),
+	constraint fk_precioconcepto_concepto foreign key (id_concepto) references concepto(id_concepto)
+);
+
+-- pago 
+create table pago(
+	id_pago int PRIMARY KEY AUTO_INCREMENT,
+	fecha date,
+	id_precioconcepto int,
+	id_motivo int,
+	constraint fk_pago_precioconcepto foreign key(id_precioconcepto) references precio_concepto(id_precioconcepto),
+	constraint fk_pago_motivo foreign key (id_motivo) references motivo(id_motivo)
+);
+
+
+
+INSERT INTO `precio_concepto`(`id_precioconcepto`, `precio`, `id_cantidad`, `id_categoria`, `id_concepto`) VALUES 
+(null,500,1,1,1),
+(null,400,1,2,1),
+(null,350,1,3,1),
+(null,350,1,4,1),
+(null,350,1,5,1),
+(null,300,1,6,1),
+(null,300,1,7,1),
+(null,150,1,10,1),
+(null,150,1,11,1),
+(null,150,1,12,1),
+(null,150,1,13,1),
+(null,150,1,14,1),
+(null,150,1,15,1),
+(null,150,1,16,1);
+
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
+-- VALUES (null,500,1,1,1,1),
