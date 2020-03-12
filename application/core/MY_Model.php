@@ -631,7 +631,7 @@ class MY_Model extends CI_Model
 
     public function count_filtered()
     {
-        $this->_get_datatables_que();
+        $this->_get_datatables_query();
         $query = $this->db->get();
         return $query->num_rows();
     }

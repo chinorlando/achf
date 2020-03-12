@@ -40,8 +40,8 @@ class Curriculo extends CI_Controller {
             $row[] = $d->apellido_paterno;
             $row[] = $d->apellido_materno;
             $row[] = $d->posicion;
-            $row[] = $d->categoria;
-            $row[] = $d->club;
+            // $row[] = $d->categoria;
+            // $row[] = $d->club;
             $row[] = ($d->estado==1)? 'Activo':'Inactivo';
 
             $row[] = '  <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="view_curriculum('.$d->id_jugador.')">

@@ -40,8 +40,8 @@
                             <th>Apellido Paterno</th>
                             <th>Apellido Materno</th>
                             <th>Posicion</th>
-                            <th>Categoría</th>
-                            <th>Equipo</th>
+                            <!-- <th>Categoría</th> -->
+                            <!-- <th>Equipo</th> -->
                             <th>Estado</th>
                             <th>Opciones</th>
                         </tr>
