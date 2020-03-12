@@ -116,22 +116,22 @@ class Planillero extends CI_Controller {
                                     $cent .= '<thead>';
                                         $cent .= '<tr>';
                                             $cent .= '<th class="col-lg-4 text-right">Local</th>';
-                                            $cent .= '<th class="col-lg-1 text-center">Score</th>';
+                                            // $cent .= '<th class="col-lg-1 text-center">Score</th>';
                                             $cent .= '<th class="col-lg-1 text-center"></th>';
-                                            $cent .= '<th class="col-lg-1 text-center">Score</th>';
+                                            // $cent .= '<th class="col-lg-1 text-center">Score</th>';
                                             $cent .= '<th class="col-lg-4">Visitante</th>';
-                                            $cent .= '<th class="col-lg-1">Accion</th>';
+                                            // $cent .= '<th class="col-lg-1">Accion</th>';
                                         $cent .= '</tr>';
                                     $cent .= '</thead>';
                                     $cent .= '<tbody>';
                                 foreach ($item as $key => $value) {
                                     $cent .= '<tr>';
                                         $cent .= '<td class="col-lg-4 text-right">'.$value[0].'</td>';
-                                        $cent .= '<td class="col-lg-1 text-center">-</td>';
+                                        // $cent .= '<td class="col-lg-1 text-center">-</td>';
                                         $cent .= '<td class="col-lg-1 text-center">VS</td>';
-                                        $cent .= '<td class="col-lg-1 text-center">-</td>';
+                                        // $cent .= '<td class="col-lg-1 text-center">-</td>';
                                         $cent .= '<td class="col-lg-4">'.$value[1].'</td>';
-                                        $cent .= '<th class="col-lg-1"><button>Ver</button></th>';
+                                        // $cent .= '<th class="col-lg-1"><button>Ver</button></th>';
                                     $cent .= '</tr>';
                                 }
                                 if ((self::$libre)) {
@@ -300,9 +300,18 @@ class Planillero extends CI_Controller {
                                 if ($partido->jornada == $i) {
                                     $cent .= '<tr>';
                                         $cent .= '<td class="col-lg-4 text-right">'.$partido->local.'</td>';
-                                        $cent .= '<td class="col-lg-1 text-center">-</td>';
+                                        $e1 = $this->dbase->get_gol_equipo($partido->id_partidos, $partido->id_eq1);
+                                        $e2 = $this->dbase->get_gol_equipo($partido->id_partidos, $partido->id_eq2);
+
+                                        // $e2 = $this->dbase->get_gol_equipo(2, $partido->id_eq2);
+                                        // print_r($e2);
+                                        // exit();
+
+                                        $e2 = ($e2[0]->gol== 0) ? '-' : $e2[0]->gol;
+                                        $e1 = ($e1[0]->gol== 0) ? '-' : $e1[0]->gol;
+                                        $cent .= '<td class="col-lg-1 text-center">'.$e2.'</td>';
                                         $cent .= '<td class="col-lg-1 text-center">VS</td>';
-                                        $cent .= '<td class="col-lg-1 text-center">-</td>';
+                                        $cent .= '<td class="col-lg-1 text-center">'.$e1.'</td>';
                                         $cent .= '<td class="col-lg-4">'.$partido->visitante.'</td>';
                                         $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gopartido/'.$partido->id_partidos.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">entrar</a></td>';
                                         // $cent .= '<th class="col-lg-1"><a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Ver" onclick="go_to_match('.$partido->id_partidos.'/'.$partido->id_eq1.','.$partido->id_eq2.')"><i class="glyphicon glyphicon-pencil"></i> Ver</a></th>';
@@ -347,7 +356,7 @@ class Planillero extends CI_Controller {
             } else {
                 $ena = "disabled";
                 $cent .= '<div class="callout callout-warning ">
-                  <h4>Partido Fonalizado</h4>
+                  <h4>Partido Finalizado</h4>
                 </div>';
             }
 
@@ -779,6 +788,9 @@ class Planillero extends CI_Controller {
         echo json_encode(array("status" => TRUE));
     }
 
+    ///////////////////// pagos end ///////////////////////
+
+    ///////////////////// pagos end ///////////////////////
     ///////////////////// pagos end ///////////////////////
 
 

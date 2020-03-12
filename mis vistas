@@ -67,3 +67,12 @@ FROM
                 FROM torneo_equipo, equipo, torneo
                 WHERE torneo_equipo.id_equipo=equipo.id_equipo
                 AND	  torneo_equipo.id_torneo=torneo.id_torneo
+
+
+
+CREATE VIEW v_equipo AS
+SELECT equipo.id_equipo, club.nombre_club, categoria.nombre from inscripcionjugador
+join equipo on equipo.id_equipo = inscripcionjugador.id_equipo
+JOIN club on club.id_club = equipo.id_club
+JOIN categoria on categoria.id_categoria = equipo.id_categoria
+GROUP BY equipo.id_equipo

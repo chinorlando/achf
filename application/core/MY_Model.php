@@ -482,9 +482,22 @@ class MY_Model extends CI_Model
             JOIN equipo t ON tot.id_equipo_h=t.id_equipo
             JOIN club cl on cl.id_club = t.id_club
 
-            GROUP BY Equipo
+            GROUP BY equipo
             ORDER BY SUM(Pts) DESC ";
         $query = $this->db->query($sql); 
+        return $query->result();
+    }
+
+    public function get_gol_equipo($id_partidos, $id_e)
+    {
+        $sql = 'select count(*) as gol
+                from resultado_partido
+                join inscripcionjugador on inscripcionjugador.id_jugador = resultado_partido.id_jugador
+                join equipo on equipo.id_equipo = inscripcionjugador.id_equipo
+                join club on club.id_club = equipo.id_club
+                where resultado_partido.id_partidos = ? and club.id_club = ? and resultado_partido.accion = 3
+                ';
+        $query = $this->db->query($sql,array($id_partido, $id_e)); 
         return $query->result();
     }
     /////////////////////// tabla de posiciones ////////////////////
