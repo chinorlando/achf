@@ -1,5 +1,6 @@
 mis vistas
 
+-----------no sirve
 CREATE VIEW v_ficha_kardex as
 SELECT persona.nombres, persona.apellido_paterno, persona.apellido_materno, persona.foto, persona.fecha_nacimiento, persona.sexo, jugador.id_jugador, jugador.club, jugador.categoria, jugador.lfpb_asociacion_liga_provincial, jugador.n_registro_fbf, jugador.estado_civil, jugador.nombre_padre, jugador.nombre_madre, jugador.c_i, jugador.domicilio, jugador.procede_del_club,jugador.posicion, jugador.estatura, jugador.peso from persona
 join jugador on jugador.id_persona = persona.id_persona
@@ -8,3 +9,61 @@ join categoria on categoria.id_categoria = jugador_categoria.id_categoria
 
 ----------sirve
 CREATE VIEW v_ficha_kardex as SELECT persona.id_persona, persona.nacionalidad, persona.ciudad, jugador.estado, persona.nombres, persona.apellido_paterno, persona.apellido_materno, persona.foto, persona.fecha_nacimiento, persona.sexo, jugador.id_jugador, club.nombre_club, categoria.nombre as nombre_categoria, jugador.lfpb_asociacion_liga_provincial, jugador.n_registro_fbf, jugador.estado_civil, jugador.nombre_padre, jugador.nombre_madre, jugador.c_i, persona.dirección, inscripcionjugador.posicion, jugador.estatura, inscripcionjugador.peso from persona join jugador on jugador.id_persona = persona.id_persona JOIN inscripcionjugador on inscripcionjugador.id_jugador = jugador.id_jugador JOIN equipo on equipo.id_equipo = inscripcionjugador.id_equipo JOIN categoria on categoria.id_categoria = equipo.id_categoria JOIN club on club.id_club = equipo.id_club
+
+
+CREATE VIEW v_costo_torneo as 
+          		SELECT costos_torneo.id_costostorneo,CONCAT('Bs. ',costos_torneo.costo,' - ',concepto.nombre,' -> ',torneo.nombre) AS torneo_costo
+                FROM costos_torneo, torneo, concepto
+                WHERE costos_torneo.id_torneo=torneo.id_torneo
+                AND	  costos_torneo.id_concepto=concepto.id_concepto
+
+
+/*    CREATE VIEW v_jugador_categoria as 
+          		SELECT CONCAT(persona.apellido_paterno,' ',persona.apellido_materno,' ',persona.nombres) AS jugador, jugador.id_jugador, persona.id_persona, categoria.id_categoria
+                FROM persona, jugador, jugador_categoria,categoria
+                WHERE persona.id_persona=jugador.id_persona
+                AND   jugador_categoria.id_jugador=jugador.id_jugador 
+                AND   jugador_categoria.id_categoria=categoria.id_categoria*/
+
+/*    CREATE VIEW v_partidos_arbitro as 
+          SELECT CONCAT(persona.apellido_paterno,' ',persona.apellido_materno,' ',persona.nombres) AS arbitro, arbitro.id_arbitro, persona.id_persona
+          FROM persona, arbitro, partidos_arbitro
+		  WHERE persona.id_persona=arbitro.id_persona
+          AND   partidos_arbitro.id_arbitro=arbitro.id_arbitro */                
+
+CREATE VIEW v_personas_menus_principales AS
+SELECT 
+  `persona`.`nombres` AS `nombre_persona`,
+  `persona`.`apellido_paterno`,
+  `persona`.`apellido_materno`,
+  `persona`.`fecha_nacimiento`,
+  `persona`.`foto`,
+  `persona`.`sexo`,
+  `persona`.`telefono`,
+  `persona`.`celular`,
+  `persona`.`usuario`,
+  `persona`.`password`,
+  `personas_roles`.`id` AS `id_persona_rol`,
+  `personas_roles`.`id_persona`,
+  `personas_roles`.`id_rol`,
+  `roles`.`nombre` AS `nombre_rol`,
+  `roles_menus_principales`.`id_menu_principal`,
+  `menus_principales`.`nombre` AS `nombre_menu_principal`,
+  `menus_principales`.`icono`,
+  `menus_principales`.`color`,
+  `menus_principales`.`orden`,
+  `menus_principales`.`estado`
+FROM
+  `menus_principales`
+  INNER JOIN `roles_menus_principales` ON (`menus_principales`.`id` = `roles_menus_principales`.`id_menu_principal`)
+  INNER JOIN `roles` ON (`roles_menus_principales`.`id_rol` = `roles`.`id`)
+  INNER JOIN `personas_roles` ON (`personas_roles`.`id_rol` = `roles`.`id`)
+  INNER JOIN `persona` ON (`personas_roles`.`id_persona` = `persona`.`id_persona`);          
+
+
+
+  CREATE VIEW v_torneo_equipo as 
+          		SELECT torneo_equipo.id_torneoEquipo,CONCAT(equipo.nombre_equipo,' -> ',torneo.nombre) AS equipo_torneo
+                FROM torneo_equipo, equipo, torneo
+                WHERE torneo_equipo.id_equipo=equipo.id_equipo
+                AND	  torneo_equipo.id_torneo=torneo.id_torneo
