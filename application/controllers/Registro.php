@@ -53,7 +53,7 @@ class Registro extends CI_Controller {
     function personaCrud() {
         try {
             $crud = new grocery_CRUD();
-            $crud->set_theme('bootstrap');
+            //$crud->set_theme('bootstrap');
             $crud->set_subject('Persona');
             $crud->set_table('persona');
             $crud->columns('apellido_paterno','apellido_materno','nombres','fecha_nacimiento','celular','direccion','usuario','foto');
@@ -62,9 +62,8 @@ class Registro extends CI_Controller {
             $crud->set_rules('nombres', 'Nombre(s)', 'trim|callback_alpha_dash_space');
             $crud->set_rules('apellido_paterno', 'apellido_paterno', 'trim|callback_alpha_dash_space');
             $crud->set_rules('apellido_materno', 'apellido_paterno', 'trim|callback_alpha_dash_space');
-            $crud->required_fields('nombres','apellido_paterno','email','ci','fecha_nacimiento','direccion','foto');
+            $crud->required_fields('nombres','apellido_paterno','email','ci','fecha_nacimiento','direccion','foto','usuario');
 
-            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
             $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi',
                 'Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));
             $crud->field_type('sexo','dropdown',array('M'=>'MASCULINO', 'F'=>'FEMENINO'));
@@ -75,7 +74,6 @@ class Registro extends CI_Controller {
             $crud->order_by('id_persona','desc');
 
             $crud->change_field_type('password', 'password');
-
             $crud->callback_before_insert(array($this,'encrypt_password'));
             $crud->callback_before_update(array($this,'encrypt_password'));
 
@@ -884,6 +882,36 @@ class Registro extends CI_Controller {
         }
     }
     //------------------ Fin Modulo estadio ---------------------------------------- 
+
+     function precio_concepto(){
+        $this->_viewOutPut('precio_conceptoCrud');
+    }
+    function precio_conceptoCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            $crud->set_theme('bootstrap');
+            $crud->set_subject('Estadio');
+            $crud->set_table('precio_concepto');
+
+            $crud->set_relation('id_cantidad','cantidad','{veces}');
+            $crud->display_as('id_cantidad','Cantidad');
+
+            $crud->set_relation('id_categoria','categoria','{nombre}');
+            $crud->display_as('id_categoria','Categoria');
+
+            $crud->set_relation('id_concepto','concepto','{nombre}');
+            $crud->display_as('id_concepto','Concepto');
+
+
+            $crud->unset_print();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    //------------------ Fin Modulo precio_concepto ----------------------------------------
     
     
 

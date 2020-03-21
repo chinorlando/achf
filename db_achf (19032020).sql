@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.2
+-- version 4.6.6
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 12-03-2020 a las 21:32:26
--- Versión del servidor: 5.7.24
--- Versión de PHP: 7.2.19
+-- Tiempo de generación: 13-03-2020 a las 22:57:37
+-- Versión del servidor: 5.7.17-log
+-- Versión de PHP: 5.6.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -584,7 +582,8 @@ INSERT INTO `menus` (`id`, `id_menu_principal`, `nombre`, `directorio`, `icono`,
 (41, 4, 'Rol de partidos', 'planillero/rol_partidos', NULL, NULL, NULL, NULL, '1'),
 (42, 9, 'Tabla de posiciones', 'planillero/tabla_posiciones', NULL, NULL, NULL, NULL, '1'),
 (43, 9, 'Asignacion de árbitros', 'planillero/asignacion_arbitros', NULL, NULL, NULL, NULL, '1'),
-(44, 9, 'Pagos', 'planillero/pagos', NULL, NULL, NULL, NULL, '1');
+(44, 9, 'Pagos', 'planillero/pagos', NULL, NULL, NULL, NULL, '1'),
+(46, 10, 'Asignacion menu usuario', 'Menu_Opciones/asignacion', NULL, NULL, NULL, NULL, '1');
 
 -- --------------------------------------------------------
 
@@ -614,7 +613,8 @@ INSERT INTO `menus_principales` (`id`, `nombre`, `icono`, `color`, `orden`, `est
 (6, 'ENTRENADORES', '6', '6', 6, '1'),
 (7, 'INFORMES Y ESTADISTICAS', '7', '7', 7, '1'),
 (8, 'CONTABILIDAD', '8', '8', 8, '1'),
-(9, 'REGISTROS', '9', '9', 9, '1');
+(9, 'REGISTROS', '9', '9', 9, '1'),
+(10, 'Menu-Usuario', '10', '10', 10, '1');
 
 -- --------------------------------------------------------
 
@@ -826,7 +826,7 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellido_paterno`, `apellido_ma
 (36, 'GEYSEL DARWIN', 'CRUZ', 'PANIAGUA', 'user.jpg', NULL, '71245638', 'Lemoine #36', 'Chuquisaca', '1998-04-13', 'M', 'Estudiante', 'Bolivia', NULL, NULL, NULL),
 (37, 'BENJAMIN', 'CASTILLO', 'EGUEZ', 'user.jpg', NULL, '72356897', 'Lemoine #36', 'Chuquisaca', '1995-01-05', 'M', 'Estudiante', 'Bolivia', NULL, NULL, NULL),
 (38, 'Carlos Alfredo', 'Ortega', 'Orellana', 'user.jpg', '464-85255', '74402507', 'Pasaje Tomina # 2', 'Chuquisaca', '1991-04-04', 'M', 'Estudiante', 'Bolivia', 'ortega.orellana.alfredo@gmail.com', 'Carlos', 'carlos'),
-(41, 'ivan', 'callata', 'mamani', 'ce9bf-427pis4wc3l41.jpg', '2134r12', '2134', 'asdvsdav', 'Oruro', '1988-12-09', 'F', 'asdvfsadv', 'asvdsad', 'ercm@itecaamericano.com', 'ivi', '209d5fae8b2ba427d30650dd0250942af944a0c9');
+(41, 'Katerine', 'Martinez', 'Cossio', 'ce9bf-427pis4wc3l41.jpg', '2134r12', '2134', 'asdvsdav', 'Oruro', '1988-12-09', 'F', 'asdvfsadv', 'asvdsad', 'ercm@itecaamericano.com', 'ivi', 'd033e22ae348aeb5660fc2140aec35850c4da997');
 
 -- --------------------------------------------------------
 
@@ -847,7 +847,8 @@ CREATE TABLE `personas_roles` (
 --
 
 INSERT INTO `personas_roles` (`id`, `id_persona`, `id_rol`, `fecha`, `estado`) VALUES
-(1, 1, 1, '2019-08-28', '1');
+(1, 1, 1, '2019-08-28', '1'),
+(2, 41, 2, '2020-03-13', '1');
 
 -- --------------------------------------------------------
 
@@ -1018,15 +1019,17 @@ CREATE TABLE `roles_menus_principales` (
 --
 
 INSERT INTO `roles_menus_principales` (`id`, `id_rol`, `id_menu_principal`, `fecha`, `estado`) VALUES
-(1, 1, 1, '2019-08-28', '1'),
-(2, 1, 2, '2019-08-28', '1'),
-(3, 1, 3, '2019-09-02', '1'),
-(4, 1, 4, '2019-09-02', '1'),
-(5, 1, 5, '2019-09-02', '1'),
-(6, 1, 6, '2019-09-02', '1'),
-(7, 1, 7, '2019-09-02', '1'),
-(8, 1, 8, '2019-09-02', '1'),
-(9, 1, 9, '2019-12-09', '0');
+(54, 1, 1, '2020-03-13', '1'),
+(55, 1, 2, '2020-03-13', '1'),
+(56, 1, 3, '2020-03-13', '1'),
+(57, 1, 4, '2020-03-13', '1'),
+(58, 1, 5, '2020-03-13', '1'),
+(59, 1, 6, '2020-03-13', '1'),
+(60, 1, 7, '2020-03-13', '1'),
+(61, 1, 8, '2020-03-13', '1'),
+(62, 1, 9, '2020-03-13', '1'),
+(63, 1, 10, '2020-03-13', '1'),
+(90, 2, 1, '2020-03-13', '1');
 
 -- --------------------------------------------------------
 
@@ -1111,7 +1114,6 @@ INSERT INTO `transferencias` (`id_transferencias`, `fecha`, `id_jugador`, `id_cl
 
 -- --------------------------------------------------------
 
-
 --
 -- Estructura Stand-in para la vista `v_equipo`
 -- (Véase abajo para la vista actual)
@@ -1167,9 +1169,6 @@ CREATE TABLE `v_jugador_categoria` (
 
 -- --------------------------------------------------------
 
-
--- --------------------------------------------------------
-
 --
 -- Estructura Stand-in para la vista `v_personas_menus_principales`
 -- (Véase abajo para la vista actual)
@@ -1199,9 +1198,6 @@ CREATE TABLE `v_personas_menus_principales` (
 
 -- --------------------------------------------------------
 
--- --------------------------------------------------------
-
-
 --
 -- Estructura para la vista `v_equipo`
 --
@@ -1229,7 +1225,6 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 
 -- --------------------------------------------------------
 
-
 --
 -- Estructura para la vista `v_personas_menus_principales`
 --
@@ -1237,7 +1232,9 @@ DROP TABLE IF EXISTS `v_personas_menus_principales`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_personas_menus_principales`  AS  select `persona`.`nombres` AS `nombre_persona`,`persona`.`apellido_paterno` AS `apellido_paterno`,`persona`.`apellido_materno` AS `apellido_materno`,`persona`.`fecha_nacimiento` AS `fecha_nacimiento`,`persona`.`foto` AS `foto`,`persona`.`sexo` AS `sexo`,`persona`.`telefono` AS `telefono`,`persona`.`celular` AS `celular`,`persona`.`usuario` AS `usuario`,`persona`.`password` AS `password`,`personas_roles`.`id` AS `id_persona_rol`,`personas_roles`.`id_persona` AS `id_persona`,`personas_roles`.`id_rol` AS `id_rol`,`roles`.`nombre` AS `nombre_rol`,`roles_menus_principales`.`id_menu_principal` AS `id_menu_principal`,`menus_principales`.`nombre` AS `nombre_menu_principal`,`menus_principales`.`icono` AS `icono`,`menus_principales`.`color` AS `color`,`menus_principales`.`orden` AS `orden`,`menus_principales`.`estado` AS `estado` from ((((`menus_principales` join `roles_menus_principales` on((`menus_principales`.`id` = `roles_menus_principales`.`id_menu_principal`))) join `roles` on((`roles_menus_principales`.`id_rol` = `roles`.`id`))) join `personas_roles` on((`personas_roles`.`id_rol` = `roles`.`id`))) join `persona` on((`personas_roles`.`id_persona` = `persona`.`id_persona`))) ;
 
--- --------------------------------------------------------
+--
+-- Índices para tablas volcadas
+--
 
 --
 -- Indices de la tabla `arbitro`
@@ -1458,193 +1455,161 @@ ALTER TABLE `transferencias`
 --
 ALTER TABLE `arbitro_partido`
   MODIFY `id_arbitropartido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
-
 --
 -- AUTO_INCREMENT de la tabla `cantidad`
 --
 ALTER TABLE `cantidad`
   MODIFY `id_cantidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
 --
 -- AUTO_INCREMENT de la tabla `cargo`
 --
 ALTER TABLE `cargo`
   MODIFY `id_cargo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
 --
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
   MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
 --
 -- AUTO_INCREMENT de la tabla `categoria_arbitro`
 --
 ALTER TABLE `categoria_arbitro`
   MODIFY `id_catarbitro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
 --
 -- AUTO_INCREMENT de la tabla `club`
 --
 ALTER TABLE `club`
   MODIFY `id_club` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
 --
 -- AUTO_INCREMENT de la tabla `concepto`
 --
 ALTER TABLE `concepto`
   MODIFY `id_concepto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
 --
 -- AUTO_INCREMENT de la tabla `costos`
 --
 ALTER TABLE `costos`
   MODIFY `id_costos` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
 --
 -- AUTO_INCREMENT de la tabla `curriculo_jugador`
 --
 ALTER TABLE `curriculo_jugador`
   MODIFY `id_currijugador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- AUTO_INCREMENT de la tabla `equipo`
 --
 ALTER TABLE `equipo`
   MODIFY `id_equipo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
-
 --
 -- AUTO_INCREMENT de la tabla `estadio`
 --
 ALTER TABLE `estadio`
   MODIFY `id_estadio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
 --
 -- AUTO_INCREMENT de la tabla `games`
 --
 ALTER TABLE `games`
   MODIFY `id_games` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
 --
 -- AUTO_INCREMENT de la tabla `inscripcion`
 --
 ALTER TABLE `inscripcion`
   MODIFY `id_inscripcion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
 --
 -- AUTO_INCREMENT de la tabla `inscripcionjugador`
 --
 ALTER TABLE `inscripcionjugador`
   MODIFY `id_inscripcionjugador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
 --
 -- AUTO_INCREMENT de la tabla `jornadas`
 --
 ALTER TABLE `jornadas`
   MODIFY `id_jornadas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
 --
 -- AUTO_INCREMENT de la tabla `jugador`
 --
 ALTER TABLE `jugador`
   MODIFY `id_jugador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
-
 --
 -- AUTO_INCREMENT de la tabla `menus`
 --
 ALTER TABLE `menus`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 --
 -- AUTO_INCREMENT de la tabla `menus_principales`
 --
 ALTER TABLE `menus_principales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT de la tabla `motivo`
 --
 ALTER TABLE `motivo`
   MODIFY `id_motivo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
 --
 -- AUTO_INCREMENT de la tabla `pago`
 --
 ALTER TABLE `pago`
   MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- AUTO_INCREMENT de la tabla `partidos`
 --
 ALTER TABLE `partidos`
   MODIFY `id_partidos` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
-
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
   MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
-
 --
 -- AUTO_INCREMENT de la tabla `personas_roles`
 --
 ALTER TABLE `personas_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `persona_cargo`
 --
 ALTER TABLE `persona_cargo`
   MODIFY `id_personacargo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
 --
 -- AUTO_INCREMENT de la tabla `planillero`
 --
 ALTER TABLE `planillero`
   MODIFY `id_planillero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- AUTO_INCREMENT de la tabla `precio_concepto`
 --
 ALTER TABLE `precio_concepto`
   MODIFY `id_precioconcepto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
 --
 -- AUTO_INCREMENT de la tabla `resultado_partido`
 --
 ALTER TABLE `resultado_partido`
   MODIFY `id_resultadopartido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=465;
-
 --
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
 --
 -- AUTO_INCREMENT de la tabla `roles_menus_principales`
 --
 ALTER TABLE `roles_menus_principales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 --
 -- AUTO_INCREMENT de la tabla `torneo`
 --
 ALTER TABLE `torneo`
   MODIFY `id_torneo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
 --
 -- AUTO_INCREMENT de la tabla `transacciones`
 --
 ALTER TABLE `transacciones`
   MODIFY `id_transacciones` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
 --
 -- AUTO_INCREMENT de la tabla `transferencias`
 --
 ALTER TABLE `transferencias`
   MODIFY `id_transferencias` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
 --
 -- Restricciones para tablas volcadas
 --
@@ -1685,7 +1650,6 @@ ALTER TABLE `precio_concepto`
 ALTER TABLE `resultado_partido`
   ADD CONSTRAINT `fk_resultadopartido_jugador` FOREIGN KEY (`id_jugador`) REFERENCES `jugador` (`id_jugador`),
   ADD CONSTRAINT `fk_resultadopartido_partidos` FOREIGN KEY (`id_partidos`) REFERENCES `partidos` (`id_partidos`);
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
