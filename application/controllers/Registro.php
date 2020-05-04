@@ -7,7 +7,7 @@ class Registro extends CI_Controller {
     {
         parent::__construct();
         $this->load->library('grocery_CRUD');
-        $this->load->library('ajax_grocery_CRUD');
+        // $this->load->library('ajax_grocery_CRUD');
     }
 
     public function _viewOutPut($vista) {
