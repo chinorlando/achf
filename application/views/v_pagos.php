@@ -51,19 +51,25 @@
 				<div class="col-md-6">
 					<div class="form-group">
 						<label>Motivo</label>
-						<select class="form-control" id="motivo" name="motivo" style="width: 100%;">
-						<!-- <select class="form-control select2" id="motivo" name="motivo" style="width: 100%;"> -->
-							<option value="-1">Seleccionar motivo...</option>
-						</select>
+						<div id="switch_motivo">
+							<!-- <select class="form-control" id="motivo" name="motivo" style="width: 100%;">
+								<option value="-1">Seleccionar motivo...</option>
+							</select> -->
+						</div>
 					</div>
-					<!-- <div class="form-group">
-						<label>cantidad</label>
-						<select class="form-control select2" id="cantidad" name="cantidad" style="width: 100%;">
-							<option value="-1">Seleccionar categoria...</option>
-						</select>
-					</div> -->
 
 				</div>
+
+				<!-- <div id="campo_motivo">
+					<div class="col-md-6">
+						<div class="content-group-lg panel panel-body border-top-success">
+							<h6 class="text-semibold">PAGO POR VALORES </h6>
+							<div id="subreclamohtml" name="subreclamohtml" class="checkbox checkbox-switchery switchery-lg">
+							</div>
+						</div>
+					</div>
+				</div> -->
+
 			</div>
 		</div>
 		</form>
@@ -151,25 +157,49 @@
 	  switch (id_concepto){
 	  	case '3':
 	  		$('#motivo').empty();
-		  	$.get(CFG.url + 'planillero/get_motivo', function(data) {
-					var datos = $.parseJSON(data);
-					$('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
-					$.each(datos.motivo, function(index, val) {
-						$('#motivo').append('<option value="'+val.id_motivo+'">'+val.descripcion+'</option>');
-					});
-				});
-				$('.cant_amarillas').html('');
-				break;
-			case '7':
-				$.get(CFG.url + 'planillero/get_cantidad_amarillas', function(data) {
-					var datos = $.parseJSON(data);
+		 //  	$.get(CFG.url + 'planillero/get_motivo', function(data) {
+			// 	var datos = $.parseJSON(data);
+			// 	$('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
+			// 	$.each(datos.motivo, function(index, val) {
+			// 		$('#motivo').append('<option value="'+val.id_motivo+'">'+val.descripcion+'</option>');
+			// 	});
+			// });
 
-					$('.cant_amarillas').html(datos.html);
-				});
+			// estasmo insertadndo este codigo desde esta linea
+			$.post('<?php echo base_url('planillero/get_valores') ?>',
+				{id_concepto: id_concepto}, 
+				function(data, textStatus, xhr) {
+					var sr = $.parseJSON(data);
+					console.log(sr);
+					var textohtml = '';
+					$.each(sr, function(index, val) {
+						textohtml+=
+						'<label>'+
+							'<input id="motivo" name="motivo[]" value="'+val.id_motivo+'" type="checkbox" class="switchery" >'+
+							val.descripcion+
+						'</label><br>';
+					});
+					$('#switch_motivo').html(textohtml);
+				}
+			);
+			$('.cant_amarillas').html('');
+			break;
+		case '7':
+			$.get(CFG.url + 'planillero/get_cantidad_amarillas', function(data) {
+				var datos = $.parseJSON(data);
+				$('.cant_amarillas').html(datos.html);
+			});
 	  	default:
-	  		$('#motivo').empty();
-		  	$('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
-		  	$('#motivo').append('<option value="1">PAGO POR CONCEPTO</option>');
+	  		// $('#motivo').empty();
+	  		var valorhtml = '';
+		  	valorhtml += '<select class="form-control" id="motivo" name="motivo" style="width: 100%;">'+
+			  	'<option value="-1">Seleccionar motivo...</option>'+
+			  	'<option value="1">PAGO POR CONCEPTO</option>'+
+			'</select>';
+			$('#switch_motivo').html(valorhtml);
+
+			// para limpiar el campo de amarillas 
+			$('.cant_amarillas').html('');
 		  	break;
 	  }
 

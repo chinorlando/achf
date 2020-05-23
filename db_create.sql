@@ -173,6 +173,49 @@ create table pago(
 );
 
 
+create table inscripcionequipo(
+	id_inscripcionequipo int PRIMARY key AUTO_INCREMENT,
+	id_personacargo int not null
+	id_club int not null,
+	genero varchar(9),
+	id_categoria int not null,
+	fecha date not null,
+	num_bolo int,
+	id_torneo int not null,
+	-- id_equipo int(11) NOT NULL,
+	constraint fk_inscripcionequipo_persona foreign KEY(id_personacargo) references persona(id_persona),
+	constraint fk_inscripcionequipo_club foreign KEY(id_club) references club(id_club),
+	constraint fk_inscripcionequipo_categoria foreign key(id_categoria) references categoria(id_categoria),
+	constraint fk_inscripcionequipo_torneo foreign key(id_torneo) references torneo (id_torneo)
+);
+
+
+-- tipo de campeonado en el año
+create table campeonato(
+	id_campeonato int PRIMARY key AUTO_INCREMENT,
+	gestion year not null,
+	fecha_inicio date,
+	fecha_fin date,
+	-- tipos de campeonato --> clausura, apertura, invierno, verano, 
+	tipocampeonato varchar(20) not null
+);
+
+-- guarda los torneos que han sido sorteados en un campeonado
+create table torneosorteado(
+	id_torneosorteado int PRIMARY key AUTO_INCREMENT,
+	fecha_sorteo date not null,
+	id_torneo int not null,
+	id_campeonato int not null,
+	estado tinyint,
+	constraint fk_sorteoequipos_torneo foreign key(id_torneo) references torneo(id_torneo),
+	constraint fk_sorteoequipos_campeonato foreign key(id_campeonato) references campeonato(id_campeonato)
+);
+
+////////////////////////////////////////////////////////////////////////////
+cambiar en la tabla transacciones el id_inscripcion por id_inscripcionequipo
+////////////////////////////////////////////////////////////////////////////
+
+
 
 INSERT INTO `precio_concepto`(`id_precioconcepto`, `precio`, `id_cantidad`, `id_categoria`, `id_concepto`) VALUES 
 (null,500,1,1,1),
@@ -207,3 +250,21 @@ INSERT INTO `precio_concepto`(`id_precioconcepto`, `precio`, `id_cantidad`, `id_
 -- VALUES (null,500,1,1,1,1),
 -- VALUES (null,500,1,1,1,1),
 -- VALUES (null,500,1,1,1,1),
+
+
+
+
+
+INSERT INTO `inscripcionequipo` (`id_inscripcionequipo`, `id_personacargo`, `id_club`, `genero`, `id_categoria`, `fecha`, `num_bolo`, `id_torneo`) VALUES 
+(null, '1', '1', NULL, '1', '2020-05-13', '1', '1'),
+(null, '2', '2', NULL, '1', '2020-05-13', '2', '1'),
+(null, '3', '3', NULL, '1', '2020-05-13', '3', '1'),
+(null, '4', '4', NULL, '1', '2020-05-13', '4', '1'),
+(null, '5', '5', NULL, '1', '2020-05-13', '5', '1'),
+(null, '6', '6', NULL, '1', '2020-05-13', '6', '1'),
+(null, '7', '7', NULL, '1', '2020-05-13', '7', '1'),
+(null, '8', '8', NULL, '1', '2020-05-13', '8', '1'),
+(null, '9', '9', NULL, '1', '2020-05-13', '9', '1'),
+(null, '10', '10', NULL, '1', '2020-05-13', '10', '1'),
+(null, '11', '11', NULL, '1', '2020-05-13', '11', '1'),
+(null, '12', '12', NULL, '1', '2020-05-13', '12', '1')

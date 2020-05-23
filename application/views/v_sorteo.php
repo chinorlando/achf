@@ -48,7 +48,7 @@
         </div>
       </div>
 
-      <div class="programacionpartidos"></div>
+      
 
     <div class="modal fade" id="modal_form">
         <div class="modal-dialog">
@@ -102,7 +102,12 @@
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-    <!-- End Bootstrap modal -->
-    <!-- end: page -->
+    </div>
+
+
+    <div id="equipos_bolo"></div>
+
+    <div class="programacionpartidos"></div>
+
+
 </section>

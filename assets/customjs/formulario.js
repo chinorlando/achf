@@ -387,11 +387,207 @@ function get_torneo(titulo, controlador) {
         });
     });
 }
+
 $(document).ready(function(){
 
     $('#torneo').change(function(e) {
       var id_torneo = $('#torneo').val();
-      // $('#paralelos').empty();
+      $.ajax({
+        url: controller+'/show_equipos',
+        type: "POST",
+        cache: true,
+        data: {id_torneo: id_torneo},
+        success: function(data) {
+            var equipos = $.parseJSON(data);
+            $('#equipos_bolo').html(equipos.cent);
+            if (equipos.num_bolos) {
+                $('#btn_fin_bolos').hide();
+                $('#btn_sort').show();
+                if (equipos.sorteado) {
+                    $('#btn_fin_bolos').hide();
+                    $('#btn_sort').hide();
+                    funcsorteo();
+                }
+            } else {
+                $('#btn_fin_bolos').show();
+                $('#btn_sort').hide();
+            }
+            
+            configuraciones();
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error al obtener datos.');
+        }
+      });
+    });
+
+    // este codigo hace el sorteo
+    // $('#torneo').change(function(e) {
+    //   var id_torneo = $('#torneo').val();
+    //   // $('#paralelos').empty();
+    //   $.ajax({
+    //     url: controller+'/sorteo',
+    //     type: "POST",
+    //     cache: true,
+    //     data: {id_torneo: id_torneo},
+    //     success: function(data) {
+    //         var carrera = $.parseJSON(data);
+    //         console.log(carrera.status);
+    //         if (carrera.status) {
+    //             $('.programacionpartidos').html(carrera.cent);
+    //             // $(".verticalTableHeader").each(function(){$(this).height($(this).width())})
+    //         } else {
+    //             if (carrera.status != 'negativo') {
+    //                 $('.programacionpartidos').html('');
+    //                 alert('No hay Equipos inscritos en este torneo.');
+    //             }
+    //           }
+    //     },
+    //     error: function (jqXHR, textStatus, errorThrown)
+    //     {
+    //         alert('Error al obtener datos.');
+    //     }
+    //   });
+    // });
+
+});
+
+function configuraciones() {
+    $('input[type=text]').focus(function() {
+        $(this).select();
+    });
+    $('input[type=text]').focusout(function(ev) {
+        ev.preventDefault();
+        var id_input = ev.target.id; // devuelve id -> primer_bim58
+        var segundo_turno = $('#'+ev.target.id).val(); //valor de primer_bim58
+        var floatN = parseFloat(segundo_turno);
+        console.log(floatN);
+        if ($(this).val() < 1) {
+            $(this).val('1');
+            $(this).focus();
+            $(this).select();
+            alert('valor debe ser mayor a 0');
+        }
+        // if ($(this).val() > 100) {
+        //     $(this).focus();
+        //     $(this).select();
+        //     alert('valor debe estar entre 0 y 100');
+        // }
+        if (!isFinite(floatN)) {
+            alert('el campo no debe estar vacio');
+            $(this).val('99');
+            $(this).focus();
+            $(this).select();
+        }
+    });
+    $('input[type=text]').change(function(ev) {
+        ev.preventDefault();
+        var id_input = ev.target.id; // devuelve id -> primer_bim58
+        var segundo_turno = $('#'+ev.target.id).val(); //valor de primer_bim58
+        var floatN = parseFloat(segundo_turno);
+        var numero = getNumbersInString(id_input);
+        // var dato = validar(segundo_turno);
+        calcular(numero);
+    });
+}
+
+function getNumbersInString(string) {
+  var tmp = string.split("");
+  var map = tmp.map(function(current) {
+    if (!isNaN(parseInt(current))) {
+      return current;
+    }
+  });
+
+  var numbers = map.filter(function(value) {
+    return value != undefined;
+  });
+
+  return numbers.join("");
+}
+
+function calcular(id_numero){
+
+    var numero_bolo = ($("#bolo"+id_numero).val()  != undefined)? $("#bolo"+id_numero).val() : '0';
+
+    item = {};
+    item["num_bolo"] = numero_bolo;
+    
+    aInfo = JSON.stringify(item);
+    
+    var formData = new FormData($('#form_bolo')[0]);
+
+    var id_torneo = $('#torneo').val();
+    
+    formData.append('id_club', id_numero);
+    formData.append('id_torneo', id_torneo);
+    formData.append('datos', aInfo);
+    // formData.append('csrf_test_name', CFG.token);
+
+    $.ajax({
+        url: controller+'/if_save_num_bolos',
+        type: "POST",
+        dataType: 'JSON',
+        cache:false,
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(data) {
+            if (data.status) {
+                console.log('Número de bolo asignado.');
+            } else {
+                console.log('No se pudo guardar');
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error al guardar el número de bolo.');
+        }
+    });
+}
+
+
+function fin_bolos() {
+    $('#btn_fin_bolos').hide(0,function() {
+        $("input").attr('disabled','disabled');
+
+        var id_torneo = $('#torneo').val();
+        var id_campeonato = $('#campeonato').val();
+        console.log(id_campeonato);
+        $.post(controller+'/save_torneosorteado',
+            {
+                id_torneo: id_torneo,
+                id_campeonato: id_campeonato,
+            },
+            function(data, textStatus, xhr) {
+                alert('No se guardaron los datos.');
+            },
+        );
+    });
+    $('#btn_sort').show();
+}
+
+function sorteo_equipos() {
+    var id_torneo = $('#torneo').val();
+    var id_campeonato = $('#campeonato').val();
+    console.log(id_campeonato);
+    $.post(controller+'/update_torneosorteado',
+        {
+            id_torneo: id_torneo,
+            id_campeonato: id_campeonato,
+        },
+        function(data, textStatus, xhr) {
+            // alert('Se actualizaron los datos.');
+          funcsorteo();
+        },
+    );
+    $('#btn_fin_bolos').hide();
+    $('#btn_sort').hide();
+}
+
+function funcsorteo() {
+    var id_torneo = $('#torneo').val();
       $.ajax({
         url: controller+'/sorteo',
         type: "POST",
@@ -415,9 +611,9 @@ $(document).ready(function(){
             alert('Error al obtener datos.');
         }
       });
-    });
+}
 
-});
+
 ///////////////////// fixture end //////////////////////////////////
 
 ///////////////////// ir al partido begin //////////////////////////////////

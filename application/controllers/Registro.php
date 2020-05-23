@@ -657,14 +657,20 @@ class Registro extends CI_Controller {
         try {
             $crud = new grocery_CRUD();
             $crud->set_theme('bootstrap');
-            $crud->set_subject('Torneo Equipo');
-            $crud->set_table('torneo_equipo');
-            $crud->set_relation('id_equipo','equipo','{nombre_equipo}');
-            $crud->display_as('id_equipo','Equipo');
+            $crud->set_subject('Inscripcion de equipos');
+            $crud->set_table('inscripcionequipo');
+            $crud->set_relation('id_personacargo','persona','{nombres} {apellido_paterno} {apellido_materno}');
+            $crud->display_as('id_personacargo','Director técnico');
+
+            $crud->set_relation('id_club','club','{nombre_club}');
+            $crud->display_as('id_club','Club');
+
+            $crud->set_relation('id_categoria','categoria','{nombre}');
+            $crud->display_as('id_categoria','Categoria');
+
             $crud->set_relation('id_torneo','torneo','{nombre}');
             $crud->display_as('id_torneo','Torneo');
 
-            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
             $crud->unset_print();
             $crud->unset_export();
             $output = $crud->render();

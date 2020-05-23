@@ -314,6 +314,15 @@ class MY_Model extends CI_Model
 
 
     ///////////////////////////////////////////////////////////////////////
+    ////////////////asignacion bolos begin ////////////////
+    public function update_inscripcionequipo($id_club, $id_torneo, $datos)
+    {
+        $this->db->where('id_club', $id_club);
+        $this->db->where('id_torneo', $id_torneo);
+        $this->db->update('inscripcionequipo', $datos);
+    }
+
+    ////////////////asignacion bolos end ////////////////    
 
     ////////////////fixture begin ////////////////
     public function get_equipos_by_torneo($id_torneo)
@@ -326,6 +335,53 @@ class MY_Model extends CI_Model
         $this->db->where('inscripcion.id_torneo', $id_torneo);
         $query = $this->db->get();
         return $query->result();
+    }
+
+    public function get_equipos_by_torneo_1($id_torneo)
+    {
+        // $this->db->select('inscripcion.num_bolo, club.nombre_club');
+        $this->db->from('inscripcionequipo');
+        // $this->db->join('equipo', 'equipo.id_equipo = inscripcion.id_equipo');
+        // $this->db->join('torneo', 'torneo.id_torneo = inscripcion.id_torneo');
+        $this->db->join('club', 'club.id_club = inscripcionequipo.id_club');
+        $this->db->join('torneosorteado', 'torneosorteado.id_torneo = inscripcionequipo.id_torneo');
+        $this->db->join('campeonato', 'campeonato.id_campeonato = torneosorteado.id_campeonato');
+        $this->db->where('inscripcionequipo.id_torneo', $id_torneo);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function get_campeonato_actual()
+    {
+        $this->db->select('id_campeonato');
+        $this->db->from('campeonato');
+        $this->db->where('estado', '0');
+        $this->db->order_by('id_campeonato', 'desc');
+        $this->db->limit(1);
+        $query = $this->db->get();
+        return $query->row();
+    }
+
+    public function counttorneo($id_torneo, $id_campeonato)
+    {
+        $this->db->from('torneosorteado');
+        $this->db->where('id_torneo', $id_torneo);
+        $this->db->where('id_campeonato', $id_campeonato);
+        // $this->db->where('accion', $accion);
+        $query = $this->db->get();
+        return $query->num_rows();
+    }
+
+    public function save_torneosorteo($date)
+    {
+        $this->db->insert('torneosorteado', $date);
+    }
+
+    public function update_torneosorteado($id_campeonato, $id_torneo, $data)
+    {
+        $this->db->where('id_torneo', $id_torneo);
+        $this->db->where('id_campeonato', $id_campeonato);
+        $this->db->update('torneosorteado', $data);
     }
 
     public function save_partido($e1, $e2, $i)
@@ -624,6 +680,19 @@ class MY_Model extends CI_Model
         return $query->result();
     }
     ///////////////////// pagos end /////////////////////////
+
+    // sorteo de equipos begin //
+    public function get_torneo_with_equipo()
+    {
+        $sql = 'select t2.id_torneo, t2.nombre, count(i2.id_torneo) as inscritos
+        FROM inscripcionequipo i2, torneo t2 
+        where t2.id_torneo = i2.id_torneo 
+        GROUP BY t2.nombre, t2.id_torneo
+        HAVING COUNT(i2.id_torneo) >=4';
+        $query = $this->db->query($sql); 
+        return $query->result();
+    }
+    // sorteo de equipos end //
 
 
 

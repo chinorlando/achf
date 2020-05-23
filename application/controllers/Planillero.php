@@ -37,8 +37,119 @@ class Planillero extends CI_Controller {
 
     public function get_torneo()
     {
-        $nivel_curso = $this->db->get('torneo')->result();
-        echo json_encode($nivel_curso);
+        // optien todos lo torneos que por lo menos tengan 4 equipos inscritos
+        $torneo = $this->dbase->get_torneo_with_equipo();
+        // print_r($torneo);
+        echo json_encode($torneo);
+
+
+
+        // $nivel_curso = $this->db->get('torneo')->result();
+        // echo json_encode($nivel_curso);
+    }
+
+    public function show_equipos()
+    {
+        $id_torneo = $this->input->post('id_torneo');
+        $equipos_club = $this->dbase->get_equipos_by_torneo_1($id_torneo);
+        $id_camp_actual = $this->dbase->get_campeonato_actual()->id_campeonato;
+        // print_r($id_camp_actual);
+        // exit();
+        if ($this->dbase->counttorneo($id_torneo, $id_camp_actual)) {
+            $dis = 'disabled';
+            $num_bolos = TRUE;
+        }
+        $estado = $this->db->get_where('torneosorteado', array(
+                'id_torneo' => $id_torneo,
+                'id_campeonato' => $id_camp_actual,
+            ))->row()->estado;
+        if ($estado) {
+            $sorteado = TRUE;
+        } else {
+            $sorteado = FALSE;
+        }
+        $codhtml = '';
+        $codhtml .= '<div class="row">';
+          $codhtml.='<div class="col-md-12">';
+            $codhtml.='<div class="box">';
+              $codhtml.='<div class="box-header with-border">';
+                $codhtml.='<h3 class="box-title">Asignación de bolos Table</h3>';
+              $codhtml.='</div>';
+              $codhtml.='<div class="box-body">';
+                $codhtml.='<table class="table table-bordered">';
+                $codhtml .= '<form id="form_bolo">';
+                  $codhtml.='<tbody>';
+                    $codhtml.='<tr>';
+                      $codhtml.='<th style="width: 10px">#</th>';
+                      $codhtml.='<th>Club</th>';
+                      $codhtml.='<th>Num. de bolo</th>';
+                      // $codhtml.='<th style="width: 40px">Label</th>';
+                    $codhtml.='</tr>';
+                    $i=1;
+                    foreach ($equipos_club as $equipo => $value) {
+                        $codhtml.= '<tr>';
+                          $codhtml.='<td>'.$i++.'</td>';
+                          $codhtml.='<td>'.$value->nombre_club.'</td>';
+                          $codhtml.='<td>';
+                            $codhtml.='<input type="text" id="bolo'.$value->id_club.'" name="bolo" value="'.$value->num_bolo.'"'.$dis.'>';
+                          $codhtml.='</td>';
+                          $codhtml.='<input type="hidden" id="campeonato" name="campeonato" value="'.$id_camp_actual.'">';
+                          // $codhtml.='<input type="hidden" id="torneo'.$value->id_club.'" name="torneo" value="'.$id_torneo.'">';
+                          
+                        $codhtml.='</tr>';
+                    }
+                  $codhtml.='</tbody>';
+                $codhtml.='</table>';
+                $codhtml.='</form>';
+              $codhtml.='</div>';
+              $codhtml.='<div class="box-footer clearfix">';
+                $codhtml.='<button id="btn_fin_bolos" type="submit" onclick="fin_bolos()" class="btn btn-info btn-flat">Terminar asignación de número de bolos</button>';
+                $codhtml.='<button id="btn_sort" type="submit" onclick="sorteo_equipos()" class="btn btn-success btn-flat">Sortear equipos</button>';
+              $codhtml.='</div>';
+            $codhtml.='</div>';
+          $codhtml.='</div>';
+        $codhtml.='</div>';
+
+        $data = array('status'=>TRUE, 'cent' => $codhtml, 'num_bolos' => $num_bolos, 'sorteado' => $sorteado);
+        echo json_encode($data);
+
+    }
+
+    public function if_save_num_bolos()
+    {
+        $id_club = $_POST["id_club"];
+        $id_torneo = $_POST["id_torneo"];
+        $num_bolo = json_decode($_POST["datos"])->num_bolo;
+
+        $data =['num_bolo' => $num_bolo];
+        
+        $this->dbase->update_inscripcionequipo($id_club, $id_torneo, $data);
+
+        echo json_encode(array('status' => TRUE));
+
+    }
+
+    public function save_torneosorteado()
+    {
+
+        $data = [
+            'fecha_sorteo' => date('Y-m-d'),
+            'id_torneo' => $this->input->post('id_torneo'),
+            'id_campeonato' => $this->input->post('id_campeonato'),
+            'estado' => 0
+        ];
+        $this->dbase->save_torneosorteo($data);
+    }
+
+    public function update_torneosorteado()
+    {
+        $id_campeonato = $this->input->post('id_campeonato');
+        $id_torneo = $this->input->post('id_torneo');
+
+        $data = [
+            'estado' => 1
+        ];
+        $this->dbase->update_torneosorteado($id_campeonato, $id_torneo, $data);
     }
 
     public function sorteo()
@@ -766,10 +877,17 @@ class Planillero extends CI_Controller {
         echo json_encode(array("status" => TRUE, 'monto'=>$monto));
     }
 
-    public function get_motivo()
-    {
-        $motivo = $this->dbase->get_motivo();
-        echo json_encode(array("status" => TRUE, 'motivo'=>$motivo));
+    // reemplazamos esto get_motivo() por get_valores()
+    // public function get_motivo()
+    // {
+    //     $motivo = $this->dbase->get_motivo();
+    //     echo json_encode(array("status" => TRUE, 'motivo'=>$motivo));
+    // }
+    public function get_valores(){
+        // $id_concepto = $this->input->post('id_concepto');
+        // $list = $this->odeco_model->get_subreclamo($id_concepto);
+            $motivo = $this->dbase->get_motivo();
+        echo json_encode($motivo);
     }
 
     public function pagar()
