@@ -17,7 +17,9 @@
               <thead>
               <tr>
                 <th>#</th>
+                <th>Jornada Nº</th>
                 <th>Local</th>
+                <th>vs</th>
                 <th>Visitante</th>
                 <th>Acciones</th>
                 
@@ -56,43 +58,71 @@
                   <input type="text" name="id_partido" id="id_partido" hidden="hidden">
                   <label>Árbitro Principal</label>
                   <select class="form-control select2" name="arbitro_principal" id="arbitro_principal" style="width: 100%;">
-                    
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label>Asistente 1</label>
-                  <select class="form-control select2" name="arbitro_asistente_1" id="arbitro_asistente_1" style="width: 100%;">
-                    
                   </select>
                 </div>
               </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Asistente 1</label>
+                  <select class="form-control select2" name="arbitro_asistente_1" id="arbitro_asistente_1" style="width: 100%;">
+                  </select>
+                </div>
+              </div>
+
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Asistente 2</label>
                   <select class="form-control select2" name="arbitro_asistente_2" id="arbitro_asistente_2" style="width: 100%;">
-                    
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label>Planillero</label>
-                  <select class="form-control select2" name="planillero" id="planillero" style="width: 100%;">
-                    
                   </select>
                 </div>
               </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Planillero</label>
+                  <select class="form-control select2" name="planillero" id="planillero" style="width: 100%;">
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Árbitro Principal</label>
+                  <select class="form-control select2" name="cancha" id="cancha" style="width: 100%;">
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Date:</label>
+                  <div class="input-group date">
+                    <input type="text" class="form-control pull-right" id="fecha_hora_partido" name="fecha_hora_partido">
+                    <div class="input-group-addon">
+                      <i class="fa fa-calendar"></i>
+                    </div>
+                    <div class="input-group-addon">
+                      <i class="fa fa-clock-o"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
-      <!-- </div> -->
+      
       </div>
       </form>
       <div class="modal-footer">
         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btnSave btn btn-primary" onclick="save()">Gurdar cambios</button>
+        <button type="button" class="btnSave btn btn-primary" onclick="save()">Guardar cambios</button>
         <!-- onclick="add_arbitros(<?php echo $partido->id_partidos ?>)" -->
       </div>
     </div>
   </div>
 </div>
+
 
 
 
@@ -109,6 +139,7 @@
     // $(".help-block").empty(); // clear error string
     $("#modal-arbitro").modal("show"); // show bootstrap modal when complete loaded
     $(".modal-title").text("Añadir árbitros"); // Set Title to Bootstrap modal title
+    $(".btnSave").text("Guardar datitos");
 
 
     $('#id_partido').val(id_partido);
@@ -121,7 +152,7 @@
     id_jugador = $('#id_partido').val();
     // console.log(id_jugador);
 
-    $(".btnSave").text("saving..."); //change button text
+    $(".btnSave").text("Guardando..."); //change button text
     $(".btnSave").attr("disabled", true); //set button disable
     var url;
 
@@ -143,8 +174,8 @@
         } else {
           
         }
-        $(".btnSave").text("Añadir");
-        $(".btnSave").attr("disabled", false);
+        // $(".btnSave").text("Añadir");
+        // $(".btnSave").attr("disabled", false);
       },
       error: function(jqXHR, textStatus, errorThrown) {
         alert("Error adding / update data");
@@ -178,24 +209,46 @@
               if (j==0) {
                 console.log('estoy en el cero');
                 $('[name="arbitro_principal"]').val(data[i][j].id_arbitro);
+                $('[name="arbitro_principal"]').select2({});
               }
               if (j==1) {
                 console.log('estoy en el uno');
                 $('[name="arbitro_asistente_1"]').val(data[i][j].id_arbitro);
+                $('[name="arbitro_asistente_1"]').select2({});
               }
               if (j==2) {
                 console.log('estoy en el dos');
                 $('[name="arbitro_asistente_2"]').val(data[i][j].id_arbitro);
+                $('[name="arbitro_asistente_2"]').select2({});
               }
             }
           }
         }
 
+        // $('#cancha option').each(function(index, el) {
+        //   if ($(this).val() == 4) {
+        //     $(this).attr("selected","selected");
+        //   }
+        // });
+
+        // $('#cancha > option[value="'+data.id_estad+'"]').prop('selected', 'selected');
+
+        // $('[name="cancha"]').val('Garcilazo (Cap.: 10000)');
+        // $('[name="cancha"]').val(data.id_estad);
+
+        // console.log($('#cancha > option[value="'+4+'"]').val());
+        // $('#cancha > option[value="'+data.id_estad+'"]').attr('selected', 'selected');
+
         $('[name="planillero"]').val(data.plani);
+        $('[name="planillero"]').select2({});
+        $('[name="cancha"]').val(data.id_estad);
+        $('[name="cancha"]').select2({});
+        $('[name="fecha_hora_partido"]').val(data.jornada);
+
         
         $("#modal-arbitro").modal("show");
-        $(".modal-title").text("Editar Árbitro");
-        $(".btnSave").text("Editar");
+        $(".modal-title").text("Actualizar Árbitro");
+        $(".btnSave").text("Actualizar");
       },
       error: function(jqXHR, textStatus, errorThrown) {
         alert("Error get data from ajax");
@@ -209,6 +262,7 @@
     },function(data, textStatus, xhr) {
         var tr = $.parseJSON(data);
         // console.log(tr.arbitro);
+        $('#arbitro_principal').append('<option value="-1">Seleccionar...</option>');
         $.each(tr.arbitro, function(index, val) {
           $("#arbitro_principal").append(
             '<option value="' + val.id_arbitro + '">' + val.nombres + ' ' + val.apellido_paterno + ' ' + val.apellido_materno + '</option>'
@@ -222,6 +276,7 @@
     },function(data, textStatus, xhr) {
         var tr = $.parseJSON(data);
         // console.log(tr.arbitro);
+        $('#arbitro_asistente_1').append('<option value="-1">Seleccionar...</option>');
         $.each(tr.arbitro, function(index, val) {
           $("#arbitro_asistente_1").append(
             '<option value="' + val.id_arbitro + '">' + val.nombres + ' ' + val.apellido_paterno + ' ' + val.apellido_materno + '</option>'
@@ -235,6 +290,7 @@
     },function(data, textStatus, xhr) {
         var tr = $.parseJSON(data);
         // console.log(tr.arbitro);
+        $('#arbitro_asistente_2').append('<option value="-1">Seleccionar...</option>');
         $.each(tr.arbitro, function(index, val) {
           $("#arbitro_asistente_2").append(
             '<option value="' + val.id_arbitro + '">' + val.nombres + ' ' + val.apellido_paterno + ' ' + val.apellido_materno + '</option>'
@@ -245,15 +301,44 @@
 
     $.get(CFG.url + "planillero/get_planillero", function(data) {
       var tr = $.parseJSON(data);
+      $('#planillero').append('<option value="-1">Seleccionar...</option>');
       $.each(tr.planillero, function(index, val) {
         $("#planillero").append(
           '<option value="' + val.id_planillero + '">' + val.nombres + ' ' + val.apellido_paterno + ' ' + val.apellido_materno + '</option>'
         );
       });
     });
+
+    $.get(CFG.url + "planillero/get_cancha", function(data) {
+      var tr = $.parseJSON(data);
+      // $.each(tr.canchas, function(index, val) {
+      //   $("#cancha").append(
+      //     '<option value="' + val.id_estadio + '">' + val.nombreestadio + '</option>'
+      //   );
+      // });
+      // var tr = $.parseJSON(data);
+      // console.log(tr.canchas);
+      $('#cancha').append('<option value="-1">Seleccionar...</option>');
+      $.each(tr.canchas, function(index, val) {
+        $('#cancha').append('<option value="'+val.id_estadio+'">'+val.nombreestadio+'</option>');
+      });
+
+    });
+
+    $('#fecha_hora_partido').datetimepicker({
+      // minDate : new Date(),
+      format: 'YYYY/MM/DD HH:mm:00',
+    });
+    
+
+
+
+
   }
 
   // function save_arbitro() {
   //   alert('asdfa');
   // }
 </script>
+
+<!-- <img src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTcuMS4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDE5OS4zNDkgMTk5LjM0OSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMTk5LjM0OSAxOTkuMzQ5OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjUxMnB4IiBoZWlnaHQ9IjUxMnB4Ij4KPHBhdGggZD0iTTE4My43MzEsMTI4Ljc0NmM1LjkxOC05LjM4Niw5LjM4NC0yMC40NjEsOS40NS0zMi4zMjFjMC4xNzQtMzEuMTItMjMuMzQ0LTU3LjUxLTU0LjcwMy02MS4zODQgIGMtMS40MjQtMC4xNzgtMi44NTEsMC4yNjctMy45MjUsMS4yMTZjLTEuMDczLDAuOTQ5LTEuNjg5LDIuMzEzLTEuNjg5LDMuNzQ2djQuNjA2aC0zMS4yNzN2LTUuMDYzYzAtMi43NjItMi4yMzgtNS01LTVINSAgYy0yLjc2MiwwLTUsMi4yMzgtNSw1VjY4LjZjMCwyLjc2MiwyLjIzOCw1LDUsNWg0Mi4yNTJjMTIuNTMxLDAsMjIuNzkyLDEwLjI2NSwyMi44NzQsMjIuODkxbDAuMDEsMC43NSAgYzAuNjA0LDMyLjQzNCwyNi40NDMsNTguOTIzLDU4LjgyNyw2MC4zMDVjMC44OTksMC4wMzksMS44LDAuMDU4LDIuNjksMC4wNThjMC4wMDIsMCwwLjAwMywwLDAuMDA1LDAgIGMxMS41MjcsMCwyMi4zMzUtMy4yMDgsMzEuNTgtOC43NzJjMS4wNyw4Ljk4MSw4LjcyMSwxNS45NzEsMTcuOTg1LDE1Ljk3MWM5Ljk5NCwwLDE4LjEyNS04LjEzMSwxOC4xMjUtMTguMTI1ICBDMTk5LjM0OSwxMzcuNTM1LDE5Mi41NCwxMjkuOTc0LDE4My43MzEsMTI4Ljc0NnogTTE4MS4yMjQsMTU0LjgwMmMtNC40OCwwLTguMTI1LTMuNjQ0LTguMTI1LTguMTI1ICBjMC00LjQ4LDMuNjQ1LTguMTI1LDguMTI1LTguMTI1czguMTI1LDMuNjQ1LDguMTI1LDguMTI1QzE4OS4zNDksMTUxLjE1NywxODUuNzA0LDE1NC44MDIsMTgxLjIyNCwxNTQuODAyeiIgZmlsbD0iIzAwMDAwMCIvPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K" /> -->

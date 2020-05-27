@@ -92,6 +92,10 @@ drop table partidos_arbitro
 
 create table partido
 
+update table partidos(
+	fecha date->datetime
+);
+
 create table accion(
 	id_accion int AUTO_INCREMENT PRIMARY KEY
 	accion varchar(10)
@@ -211,8 +215,25 @@ create table torneosorteado(
 	constraint fk_sorteoequipos_campeonato foreign key(id_campeonato) references campeonato(id_campeonato)
 );
 
+-- tabla categoria
+-- + id_cagegoria
+create  table torneo(
+	id_torneo int PRIMARY KEY AUTO_INCREMENT,
+	id_categoria int not null,
+	fecha_inicio date null,
+	fecha_fin date null,
+	estado int null,
+	constraint fk_torneo_categoria foreign key(id_categoria) references categoria(id_categoria)
+);
+
+
+
 ////////////////////////////////////////////////////////////////////////////
-cambiar en la tabla transacciones el id_inscripcion por id_inscripcionequipo
+- cambiar en la tabla transacciones el id_inscripcion por id_inscripcionequipo
+- el controlador torneo ya no usamos debemos eliminar, controlador modelo y fista. ->ya esta torneo con grocery
+- que es la tabla transacciones?
+- partidos_arbitro revisar --> menu revisar si va o no va
+- registro/roles_menus_principales --> menu revisar si va o no va 
 ////////////////////////////////////////////////////////////////////////////
 
 

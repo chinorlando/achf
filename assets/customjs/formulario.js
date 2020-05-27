@@ -34,6 +34,7 @@ function get_table(titulo,controlador) //controller = baseurl+controller
 {
 	title = titulo;
 	controller = controlador;
+    console.log(controller);
     table = $('#table').DataTable({ 
 
         "processing": true, //Feature control the processing indicator.
@@ -53,6 +54,8 @@ function get_table(titulo,controlador) //controller = baseurl+controller
         }],
 
     });
+
+    llenardatos_torneo();
     
     //datepicker
     /*
@@ -81,6 +84,16 @@ function get_table(titulo,controlador) //controller = baseurl+controller
         $(this).next().empty();
     });
     */
+}
+
+function llenardatos_torneo() {
+    $.get(controller + 'get_categorias', function(data) {
+        var torneo = $.parseJSON(data);
+        console.log(torneo);
+        $.each(torneo, function(index, val) {
+            $('#torneo_camp').append('<option value="'+val.id_categoria+'">'+val.nombre+'</option>');
+        });
+    });
 }
 
 function add_row(

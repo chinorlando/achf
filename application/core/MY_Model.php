@@ -402,7 +402,7 @@ class MY_Model extends CI_Model
     /////////////////////////rol de partidos begin ////////////////////////////////
     public function get_partidos()
     {
-        $this->db->select('partidos.id_partidos, c1.nombre_club as local, c2.nombre_club as visitante, partidos.jornada, e1.id_equipo as id_eq1, e2.id_equipo id_eq2');
+        $this->db->select('partidos.id_partidos, partidos.fecha, c1.nombre_club as local, c2.nombre_club as visitante, partidos.jornada, e1.id_equipo as id_eq1, e2.id_equipo id_eq2');
         $this->db->from('partidos');
         $this->db->join('inscripcion i1', 'i1.id_inscripcion = partidos.id_inscripcion1');
         $this->db->join('inscripcion i2', 'i2.id_inscripcion = partidos.id_inscripcion2');
@@ -410,6 +410,7 @@ class MY_Model extends CI_Model
         $this->db->join('equipo e2', 'e2.id_equipo = i2.id_equipo');
         $this->db->join('club c1', 'c1.id_club = e1.id_club');
         $this->db->join('club c2', 'c2.id_club = e2.id_club');
+        $this->db->order_by('partidos.jornada, partidos.fecha');
         // $this->db->where('inscripcion.id_torneo', $id_torneo);
         $query = $this->db->get();
         return $query->result();
@@ -578,6 +579,13 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
+    public function get_estadio()
+    {
+        $this->db->from('estadio');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     public function save_arbitro($datos)
     {
         $this->db->insert('arbitro_partido', $datos);
@@ -684,15 +692,22 @@ class MY_Model extends CI_Model
     // sorteo de equipos begin //
     public function get_torneo_with_equipo()
     {
-        $sql = 'select t2.id_torneo, t2.nombre, count(i2.id_torneo) as inscritos
-        FROM inscripcionequipo i2, torneo t2 
-        where t2.id_torneo = i2.id_torneo 
-        GROUP BY t2.nombre, t2.id_torneo
-        HAVING COUNT(i2.id_torneo) >=4';
+        $sql = 'select t2.id_torneo, c.nombre, count(i2.id_torneo) as inscritos
+            FROM inscripcionequipo i2, torneo t2, categoria c
+            where t2.id_torneo = i2.id_torneo and t2.id_categoria = c.id_categoria 
+            GROUP BY c.nombre, t2.id_torneo
+            HAVING COUNT(i2.id_torneo) >=4';
         $query = $this->db->query($sql); 
         return $query->result();
     }
     // sorteo de equipos end //
+
+    public function only_categorias()
+    {
+        $this->db->from('categoria');
+        $query = $this->db->get();
+        return $query->result();
+    }
 
 
 

@@ -59,28 +59,36 @@
                         <input type="hidden" value="" name="id_estadio"/> 
                         <div class="form-body">
                             <div class="form-group">
-                                <label class="control-label col-md-3">Nombre</label>
+                                <label class="control-label col-md-3">Categoria:</label>
                                 <div class="col-md-9">
-                                    <input name="nombreestadio" placeholder="Nombre del stadium" class="form-control" type="text">
+                                    <select class="form-control" name="torneo_camp" id="torneo_camp">
+                                        <option value="-1">Seleccione...</option>
+                                    </select>
                                     <span class="help-block"></span>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3">fecha_inicio</label>
+                                <label class="control-label col-md-3">Fecha inicio:</label>
                                 <div class="col-md-9">
-                                    <input name="capacidad" placeholder="Capacidad" class="form-control" type="text">
-                                    <span class="help-block"></span>
+                                    <div class="input-group">
+                                        <input id="fecha_inicio" name="fecha_inicio" placeholder="9999/99/99" class="form-control" type="text">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <span class="help-block"></span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3">fecha_final</label>
+                                <label class="control-label col-md-3">Fecha final:</label>
                                 <div class="col-md-9">
-                                    <input name="ciudad" placeholder="Ciudad" class="form-control" type="text">
+                                    <div class="input-group">
+                                    <input name="fecha_fin" id="fecha_fin" placeholder="fecha_fin" class="form-control" type="text">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <span class="help-block"></span>
+                                    </div>
                                 </div>
                             </div>                            
                             <div class="form-group">
-                                <label class="control-label col-md-3">Estado</label>
+                                <label class="control-label col-md-3">Estado:</label>
                                 <div class="col-md-9">
                                     <select name="estado" class="form-control">
                                         <option value="1">Activo</option>
@@ -96,9 +104,17 @@
                     <button type="button" id="btnSave" class="btn btn-info" onclick="save_row()">Guardar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-    <!-- End Bootstrap modal -->
-    <!-- end: page -->
+            </div>
+        </div>
+    </div>
 </section>
+
+<script type="text/javascript">
+    $('#fecha_inicio').datetimepicker({
+      // format: 'YYYY/MM/DD',
+      format: 'DD/MM/YYYY',
+    });
+    $('#fecha_fin').datetimepicker({
+      format: 'YYYY/MM/DD',
+    });
+</script>

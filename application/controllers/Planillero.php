@@ -26,7 +26,7 @@ class Planillero extends CI_Controller {
         $opcion = 'Fixture';
         $data = array(
             'opcion'            => $opcion,
-            'controllerajax'    => 'Planillero',
+            'controllerajax'    => 'planillero',
             'titulo_navegation' => $this->window->titulo_navegacion('Empresa',$opcion)
         );
         $data['vista']  = 'v_sorteo';
@@ -154,9 +154,9 @@ class Planillero extends CI_Controller {
 
     public function sorteo()
     {
-        $torneo = 1;
-        // $torneo = $this->input->post('id_torneo');
-        self::$equipos = $this->dbase->get_equipos_by_torneo($torneo);
+        // $torneo = 1;
+        $torneo = $this->input->post('id_torneo');
+        self::$equipos = $this->dbase->get_equipos_by_torneo_1($torneo);
         // self::$equipos = array('A','B','C','D','E','F','G','H','I','J','K');
 
         // print_r('<pre>');
@@ -392,17 +392,18 @@ class Planillero extends CI_Controller {
                 //     $cent .= '<div class="col-md-12">';
                         $cent .= '<div class="box">';
                             $cent .= '<div class="box-header">';
-                              $cent .= '<h3 class="box-title">Fecha: '.$i.'</h3>';
+                              $cent .= '<h3 class="box-title">Jornada: '.$i.'</h3>';
                             $cent .= '</div>';
                             $cent .= '<div class="box-body no-padding">';
                               $cent .= '<table class="table table-condensed">';
                                 $cent .= '<thead>';
                                     $cent .= '<tr>';
-                                        $cent .= '<th class="col-lg-4 text-right">Local</th>';
+                                        $cent .= '<th class="col-lg-2 text-left">Fecha y Hora</th>';
+                                        $cent .= '<th class="col-lg-3 text-right">Local</th>';
                                         $cent .= '<th class="col-lg-1 text-center">Score</th>';
                                         $cent .= '<th class="col-lg-1 text-center"></th>';
                                         $cent .= '<th class="col-lg-1 text-center">Score</th>';
-                                        $cent .= '<th class="col-lg-4">Visitante</th>';
+                                        $cent .= '<th class="col-lg-3">Visitante</th>';
                                         $cent .= '<th class="col-lg-1">Accion</th>';
                                     $cent .= '</tr>';
                                 $cent .= '</thead>';
@@ -410,6 +411,7 @@ class Planillero extends CI_Controller {
                             foreach ($partidos as $partido) {
                                 if ($partido->jornada == $i) {
                                     $cent .= '<tr>';
+                                        $cent .= '<td class="col-lg-2 text-left">'.$partido->fecha.'</td>';
                                         $cent .= '<td class="col-lg-4 text-right">'.$partido->local.'</td>';
                                         $e1 = $this->dbase->get_gol_equipo($partido->id_partidos, $partido->id_eq1);
                                         $e2 = $this->dbase->get_gol_equipo($partido->id_partidos, $partido->id_eq2);
@@ -747,13 +749,15 @@ class Planillero extends CI_Controller {
         foreach ($partidos as $partido){
           $cent .='<tr>
             <td>'.$i++.'</td>
+            <td>'.$partido->jornada.'</td>
             <td>'.$partido->local.'</td>
+            <td>VS</td>
             <td>'.$partido->visitante.'</td>
             <td>';
             if (!$this->dbase->get_siexiste($partido->id_partidos)) {
-                $cent .= '<a class="btn btn-sm btn-primary id_match" href="javascript:void(0)" title="Añadir árbitros" onclick="add_arbitros('.$partido->id_partidos.')">Asignar árbitros</a>';
+                $cent .= '<a class="btn btn-sm btn-primary id_match" href="javascript:void(0)" title="Editar asignación." onclick="add_arbitros('.$partido->id_partidos.')">Agregar datos</a>';
             } else {
-                $cent .= '<a class="btn btn-sm btn-success id_match" href="javascript:void(0)" title="Añadir árbitros" onclick="edit_arbitros('.$partido->id_partidos.')">Actualizar</a>';
+                $cent .= '<a class="btn btn-sm btn-success id_match" href="javascript:void(0)" title="Añadir árbitros, cancha, fecha y hora." onclick="edit_arbitros('.$partido->id_partidos.')">Editar</a>';
             }
             $cent .= '</td>
           </tr>';
@@ -781,20 +785,37 @@ class Planillero extends CI_Controller {
         echo json_encode(array("status" => TRUE, "planillero" => $planillero));
     }
 
+    public function get_cancha()
+    {
+        $canchas = $this->dbase->get_estadio();
+        echo json_encode(array("status" => TRUE, "canchas" => $canchas));
+    }
+
     public function add_arbitro()
     {
         $arb_pri = $this->input->post('arbitro_principal');
         $arb_as1 = $this->input->post('arbitro_asistente_1');
         $arb_as2 = $this->input->post('arbitro_asistente_2');
+        $id_cancha = $this->input->post('cancha');
+        $fecha_partido = $this->input->post('fecha_hora_partido');
         $id_partido = $this->input->post('id_partido');
 
-        $plani = $this->input->post('planillero');
-
-        $this->dbase->save_aritro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_pri]);
+        $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_pri]);
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as1]);
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as2]);
 
-        $this->dbase->update_planillero($id_partido, array('id_planillero' => $plani));
+        $datos = [
+            'id_planillero' => $this->input->post('planillero'),
+            'id_estadio' => $id_cancha,
+            // 'id_estadio' => 1,
+            'fecha' => $fecha_partido,
+        ];
+
+        // print_r($id_cancha);
+        // print_r($fecha_partido);
+        // exit();
+
+        $this->dbase->update_planillero($id_partido, $datos);
 
         echo json_encode(array("status" => TRUE));
     }
@@ -805,8 +826,12 @@ class Planillero extends CI_Controller {
             $res = new stdClass();
         $arbitro = $this->dbase->get_arbitropartido($id);
         $planillero = $this->dbase->get_planille($id)->id_planillero;
+        $id_estadio = $this->dbase->get_planille($id)->id_estadio;
+        $jornada = $this->dbase->get_planille($id)->fecha;
+        // print_r($id_estadio);
+        // exit();
 
-        echo json_encode(array('arbitro'=>$arbitro, 'plani'=>$planillero, 'id_partido'=>$id));
+        echo json_encode(array('arbitro'=>$arbitro, 'plani'=>$planillero, 'id_partido'=>$id, 'id_estad' => $id_estadio, 'jornada' => $jornada));
     }
 
     public function update_arbitro()
@@ -817,13 +842,26 @@ class Planillero extends CI_Controller {
         $id_partido = $this->input->post('id_partido');
         $plani = $this->input->post('planillero');
 
+        $id_cancha = $this->input->post('cancha');
+        $fecha_partido = $this->input->post('fecha_hora_partido');
+
+
         $this->dbase->delete_arbitro($id_partido);
+
+        $datos = array(
+            'id_planillero' => $plani,
+            'id_estadio' => $id_cancha,
+            'fecha' => $fecha_partido,
+        );
+
+        // print_r($datos);
+        // exit();
         
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_pri]);
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as1]);
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as2]);
 
-        $this->dbase->update_planillero($id_partido, array('id_planillero' => $plani));
+        $this->dbase->update_planillero($id_partido, $datos);
 
         echo json_encode(array("status" => TRUE));
     }

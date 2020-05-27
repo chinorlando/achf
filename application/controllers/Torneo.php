@@ -16,7 +16,7 @@ class Torneo extends CI_Controller {
         $opcion = 'Torneo';
         $data = array(
             'opcion'            => $opcion,
-            'controllerajax'    => 'Torneo/',
+            'controllerajax'    => 'torneo/',
             'titulo_navegation' => $this->window->titulo_navegacion('Empresa',$opcion)
         );
         $data['vista']  = 'v_torneo';
@@ -37,7 +37,7 @@ class Torneo extends CI_Controller {
             $row[] = $no;
             $row[] = $d->nombre;
             $row[] = $d->fecha_inicio;
-            $row[] = $d->fecha_final;
+            $row[] = $d->fecha_fin;
             $row[] = ($d->estado==1)? 'Activo':'Inactivo';
 
             $row[] = '  <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="view_row('.$d->id_torneo.')">
@@ -64,14 +64,20 @@ class Torneo extends CI_Controller {
         echo json_encode($output);
     }
 
-     public function post_data()
+    public function get_categorias()
+    {
+        $torneos = $this->dbase->only_categorias();
+        echo json_encode($torneos);
+    }
+
+    public function post_data()
     {
         $data = array(
-                'nombre' => $this->input->post('nombre'),
-                'fecha_inicio'     => $this->input->post('fecha_inicio'),
-                'fecha_final'        => $this->input->post('fecha_final'),
-                'estado'        => $this->input->post('estado'),
-            );
+            'id_categoria' => $this->input->post('categoria'),
+            'fecha_inicio'     => $this->input->post('fecha_inicio'),
+            'fecha_fin'        => $this->input->post('fecha_fin'),
+            'estado'        => $this->input->post('estado'),
+        );
         return $data;
     }
 

@@ -302,7 +302,7 @@ class Registro extends CI_Controller {
             $crud->set_theme('bootstrap');
             $crud->set_subject('Categoria Arbitro');
             $crud->set_table('categoria_arbitro');
-            $crud->columns('id_persona','id_catarbitro','disciplina');
+            // $crud->columns('id_persona','id_catarbitro','disciplina');
             $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
             $crud->unset_print();
             $crud->unset_export();
@@ -513,6 +513,7 @@ class Registro extends CI_Controller {
             $crud->set_subject('Equipo');
             $crud->set_table('equipo');
             $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->field_type('genero','dropdown',array('M'=>'Masculino', 'F'=>'Femenino'));
             $crud->set_field_upload('escudo','assets/uploads/equipo');
             $crud->callback_before_upload(array($this,'image_callback_before_upload'));
 
@@ -581,10 +582,8 @@ class Registro extends CI_Controller {
             $crud->set_theme('bootstrap');
             $crud->set_subject('Club');
             $crud->set_table('club');
-            // $crud->display_as('id_equipo','Equipo');
-            // $crud->set_relation('id_equipo','equipo','{nombre_equipo}');
-            $crud->display_as('id_personacargo','Persona Cargo');
-            $crud->set_relation('id_personacargo','persona_cargo','{id_personacargo}');
+            $crud->set_relation('id_personacargo','persona','{nombres} {apellido_paterno} {apellido_materno}');
+            $crud->display_as('id_personacargo','Presidente');
             $crud->set_field_upload('escudo','assets/uploads/escudo');
             $crud->callback_before_upload(array($this,'image_callback_before_upload'));
 
@@ -638,6 +637,10 @@ class Registro extends CI_Controller {
             $crud->set_theme('bootstrap');
             $crud->set_subject('Torneo');
             $crud->set_table('torneo');
+            
+            $crud->set_relation('id_categoria','categoria','{nombre}');
+            $crud->display_as('id_categoria','Categoria');
+
             $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
             $crud->unset_print();
             $crud->unset_export();
@@ -671,6 +674,13 @@ class Registro extends CI_Controller {
             $crud->set_relation('id_torneo','torneo','{nombre}');
             $crud->display_as('id_torneo','Torneo');
 
+            if( $crud->getState() == 'add' ) { //add these only in add form
+                $crud->set_css('assets/grocery_crud/css/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS);
+                $crud->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.datepicker.config.js');
+            }
+
+            $crud->callback_add_field('fecha',array($this,'_add_default_date_value'));
+
             $crud->unset_print();
             $crud->unset_export();
             $output = $crud->render();
@@ -679,6 +689,14 @@ class Registro extends CI_Controller {
             show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
         }
     }
+
+    function _add_default_date_value(){
+        $value = !empty($value) ? $value : date("d/m/Y");
+        $return = '<input type="text" name="date" value="'.$value.'" class="datepicker-input" /> ';
+        $return .= '<a class="datepicker-input-clear" tabindex="-1"></a> (dd/mm/yyyy)';
+        return $return;
+    }
+
     //------------------ Fin Modulo torneo_equipo ----------------------------------------    
 
      //------------------ Modulo costos_torneo ----------------------------------------
@@ -805,6 +823,7 @@ class Registro extends CI_Controller {
         $this->_viewOutPut('partidosCrud');
     }
 
+    // TODO: verificar si es necesario eliminar
     public function get_equipos_by_torneo($id_torneo)
     {
         $this->db->select('torneo_equipo.id_torneoEquipo, equipo.nombre_equipo');
@@ -896,7 +915,7 @@ class Registro extends CI_Controller {
         try {
             $crud = new grocery_CRUD();
             $crud->set_theme('bootstrap');
-            $crud->set_subject('Estadio');
+            $crud->set_subject('Precio');
             $crud->set_table('precio_concepto');
 
             $crud->set_relation('id_cantidad','cantidad','{veces}');
