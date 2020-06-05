@@ -34,7 +34,7 @@ function get_table(titulo,controlador) //controller = baseurl+controller
 {
 	title = titulo;
 	controller = controlador;
-    console.log(controller);
+    // console.log(controller);
     table = $('#table').DataTable({ 
 
         "processing": true, //Feature control the processing indicator.
@@ -379,6 +379,7 @@ $("body").on("submit", "#form_trasferencia", function(e){
                   // $('#id_persona').val(d.persona.id_persona);
                   // $('#nombrereclamante').val(d.persona.nombres+' '+d.persona.apellidos);
             }
+            table.ajax.reload()
         },
         error: function (jqXHR, textStatus, errorThrown){
             alert('Error al insertar los datos');
@@ -393,7 +394,7 @@ $("body").on("submit", "#form_trasferencia", function(e){
 ///////////////////// fixture begin ////////////////////////////////
 function get_torneo(titulo, controlador) {
     controller = controlador;
-    $.get(controller + '/get_torneo', function(data) {
+    $.get(controller + '/get_torneos', function(data) {
         var torneo = $.parseJSON(data);
         $.each(torneo, function(index, val) {
             $('#torneo').append('<option value="'+val.id_torneo+'">'+val.nombre+'</option>');
@@ -566,15 +567,19 @@ function fin_bolos() {
         $("input").attr('disabled','disabled');
 
         var id_torneo = $('#torneo').val();
-        var id_campeonato = $('#campeonato').val();
-        console.log(id_campeonato);
+
         $.post(controller+'/save_torneosorteado',
             {
                 id_torneo: id_torneo,
-                id_campeonato: id_campeonato,
+                // id_campeonato: id_campeonato,
             },
             function(data, textStatus, xhr) {
-                alert('No se guardaron los datos.');
+                var dato = $.parseJSON(data);
+                if (dato.status) {
+                    alert('Datos guardados correctamente.');
+                } else {
+                    alert('Datos no guardados.');
+                }
             },
         );
     });
@@ -583,12 +588,12 @@ function fin_bolos() {
 
 function sorteo_equipos() {
     var id_torneo = $('#torneo').val();
-    var id_campeonato = $('#campeonato').val();
-    console.log(id_campeonato);
+    // var id_campeonato = $('#campeonato').val();
+    // console.log(id_campeonato);
     $.post(controller+'/update_torneosorteado',
         {
             id_torneo: id_torneo,
-            id_campeonato: id_campeonato,
+            // id_campeonato: id_campeonato,
         },
         function(data, textStatus, xhr) {
             // alert('Se actualizaron los datos.');
@@ -640,8 +645,8 @@ function go_to_match(id_part,e1,e2) {
 
 
 function edit_alumno() {
-            alert('asdfasdfas');
-        }
+        alert('asdfasdfas');
+    }
 ///////////////////// ir al partido end ////////////////////////////////////
 
 

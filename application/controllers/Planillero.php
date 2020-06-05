@@ -35,14 +35,12 @@ class Planillero extends CI_Controller {
         $this->load->view('plantilla/footer');
     }
 
-    public function get_torneo()
+    public function get_torneos()
     {
         // optien todos lo torneos que por lo menos tengan 4 equipos inscritos
-        $torneo = $this->dbase->get_torneo_with_equipo();
+        $torneos = $this->dbase->get_torneo_almost_four_teams();
         // print_r($torneo);
-        echo json_encode($torneo);
-
-
+        echo json_encode($torneos);
 
         // $nivel_curso = $this->db->get('torneo')->result();
         // echo json_encode($nivel_curso);
@@ -51,23 +49,43 @@ class Planillero extends CI_Controller {
     public function show_equipos()
     {
         $id_torneo = $this->input->post('id_torneo');
-        $equipos_club = $this->dbase->get_equipos_by_torneo_1($id_torneo);
-        $id_camp_actual = $this->dbase->get_campeonato_actual()->id_campeonato;
-        // print_r($id_camp_actual);
+        $equipos_club = $this->dbase->get_equipos_by_torneo($id_torneo);
+        // print_r($equipos_club);
         // exit();
-        if ($this->dbase->counttorneo($id_torneo, $id_camp_actual)) {
+
+        $sorteado = FALSE;
+
+        // si existe por lo menos un registro en tabla torneosorteado-->entonces el numero de bolos ya fue asignado a todos los equipos
+        if ($this->dbase->counttorneo($id_torneo)) { // , $id_camp_actual
             $dis = 'disabled';
             $num_bolos = TRUE;
-        }
-        $estado = $this->db->get_where('torneosorteado', array(
+
+            // $estado si 0 => partidos aun no serteado, 1 => partidos sorteados
+            $estado = $this->db->get_where('torneosorteado', array(
                 'id_torneo' => $id_torneo,
-                'id_campeonato' => $id_camp_actual,
             ))->row()->estado;
-        if ($estado) {
-            $sorteado = TRUE;
+            
+            if ($estado) {
+                $sorteado = TRUE;
+            }
+
         } else {
-            $sorteado = FALSE;
+            $dis = '';
+            $num_bolos = FALSE;
         }
+        
+
+        
+
+        // print_r($eso);
+        // exit();
+
+
+        // if ($estado) {
+        //     $sorteado = TRUE;
+        // } else {
+        //     $sorteado = FALSE;
+        // }
         $codhtml = '';
         $codhtml .= '<div class="row">';
           $codhtml.='<div class="col-md-12">';
@@ -93,7 +111,7 @@ class Planillero extends CI_Controller {
                           $codhtml.='<td>';
                             $codhtml.='<input type="text" id="bolo'.$value->id_club.'" name="bolo" value="'.$value->num_bolo.'"'.$dis.'>';
                           $codhtml.='</td>';
-                          $codhtml.='<input type="hidden" id="campeonato" name="campeonato" value="'.$id_camp_actual.'">';
+                          // $codhtml.='<input type="hidden" id="campeonato" name="campeonato" value="'.$id_camp_actual.'">';
                           // $codhtml.='<input type="hidden" id="torneo'.$value->id_club.'" name="torneo" value="'.$id_torneo.'">';
                           
                         $codhtml.='</tr>';
@@ -131,32 +149,31 @@ class Planillero extends CI_Controller {
 
     public function save_torneosorteado()
     {
-
         $data = [
             'fecha_sorteo' => date('Y-m-d'),
             'id_torneo' => $this->input->post('id_torneo'),
-            'id_campeonato' => $this->input->post('id_campeonato'),
             'estado' => 0
         ];
         $this->dbase->save_torneosorteo($data);
+
+        echo json_encode(array('status' => TRUE));
     }
 
     public function update_torneosorteado()
     {
-        $id_campeonato = $this->input->post('id_campeonato');
         $id_torneo = $this->input->post('id_torneo');
 
         $data = [
             'estado' => 1
         ];
-        $this->dbase->update_torneosorteado($id_campeonato, $id_torneo, $data);
+        $this->dbase->update_torneosorteado($id_torneo, $data);
     }
 
     public function sorteo()
     {
         // $torneo = 1;
         $torneo = $this->input->post('id_torneo');
-        self::$equipos = $this->dbase->get_equipos_by_torneo_1($torneo);
+        self::$equipos = $this->dbase->get_equipos_by_torneo($torneo);
         // self::$equipos = array('A','B','C','D','E','F','G','H','I','J','K');
 
         // print_r('<pre>');
@@ -355,7 +372,7 @@ class Planillero extends CI_Controller {
         $opcion = 'Rol de Partidos';
         $data = array(
             'opcion'            => $opcion,
-            'controllerajax'    => 'Planillero',
+            'controllerajax'    => 'planillero',
             'titulo_navegation' => $this->window->titulo_navegacion('Empresa',$opcion),
             'rol_partidos'      => $this->rol_part(),
         );
@@ -444,199 +461,203 @@ class Planillero extends CI_Controller {
 
     public function gopartido($id_partido, $id_e1, $id_e2)
     {
-            $jugad_equi1 = $this->dbase->get_jugadores_por_equipo($id_e1);
-            $jugad_equi2 = $this->dbase->get_jugadores_por_equipo($id_e2);
-            // print_r('<pre>');
-            // print_r($jugad_equi1);
-            // // print_r($jugad_equi1[0]->id_club);
-            // exit();
-            $equipos = [$jugad_equi1, $jugad_equi2];
-            $cent = '';
-            // $cent = '<div class="row partido_vs">';
+        $jugad_equi1 = $this->dbase->get_jugadores_por_equipo($id_e1);
+        $jugad_equi2 = $this->dbase->get_jugadores_por_equipo($id_e2);
+        // print_r('<pre>');
+        // print_r($jugad_equi1);
+        // // print_r($jugad_equi1[0]->id_club);
+        // exit();
+        $equipos = [$jugad_equi1, $jugad_equi2];
+        $cent = '';
+        // $cent = '<div class="row partido_vs">';
 
-            // $nombre_club = $this->dbase->get_nombre_club();
-            $estado = $this->db->get_where('partidos', array(
-                'id_partidos' => $id_partido,
-            ))->row()->estado;
+        // $nombre_club = $this->dbase->get_nombre_club();
+        $estado = $this->db->get_where('partidos', array(
+            'id_partidos' => $id_partido,
+        ))->row()->estado;
 
-            // print_r($estado);
-            // exit();
-
-
-
-            if ($estado == 1 || $estado == null) {
-                $ena = "";
-            } else {
-                $ena = "disabled";
-                $cent .= '<div class="callout callout-warning ">
-                  <h4>Partido Finalizado</h4>
-                </div>';
-            }
-
-            
+        // print_r($estado);
+        // exit();
 
 
-            foreach ($equipos as $key => $equipo) {
-            //     print_r('<pre>');
-            // print_r();
-            // exit();
 
-                $cent .= '<div class="col-md-6">';
-                $cent .= '<div class="box box-info">';
-                $cent .= '<div class="box-header with-border">';
-                  $cent .= '<h3 class="box-title">'.$this->dbase->get_nombre_club($equipo[0]->id_club)->nombre_club.'</h3>';
+        if ($estado == 1 || $estado == null) {
+            $ena = "";
+        } else {
+            $ena = "disabled";
+            $cent .= '<div class="callout callout-warning ">
+              <h4>Partido Finalizado</h4>
+            </div>';
+        }
 
-                  $cent .= '<div class="box-tools pull-right">';
-                    $cent .= '<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>';
-                    $cent .= '</button>';
-                    $cent .= '<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>';
-                  $cent .= '</div>';
-                $cent .= '</div>';
-                $cent .= '<div class="box-body">';
-                  $cent .= '<div class="table-responsive">';
-                    $cent .= '<table class="table no-margin">';
-                      $cent .= '<thead>';
-                      $cent .= '<tr>';
-                        $cent .= '<th>Dorsal</th>';
-                        $cent .= '<th>Posicion</th>';
-                        $cent .= '<th>Amarillas</th>';
-                        $cent .= '<th>Rojas</th>';
-                        $cent .= '<th>Goles</th>';
-                      $cent .= '</tr>';
-                      $cent .= '</thead>';
-                      $cent .= '<tbody>';
-                      foreach ($equipo as $value) {
-                        // print_r('<pre>');
-                        // print_r($value->id_jugador);
-                        // exit();
-                          $cent .= '<tr>';
-                            $cent .= '<td><a href="pages/examples/invoice.html">'.$value->dorsal.'</a></td>';
-                            $cent .= '<td>'.$value->posicion.'</td>';
-                            $cent .= '<td>';
-                                        $cent .= '<select '.$ena.' 
-                                          class="form-control select2 player player_'.$value->id_jugador.'"
-                                          data-placeholder="Select a State"
-                                          style="width: 80%;"
+        
 
-                                          data-trigger
-                                          name="choices-multiple-default"
-                                          id="choices-multiple-default"
-                                          placeholder="This is a placeholder"
-                                          id_par="'.$id_partido.'"
-                                          id_jug="'.$value->id_jugador.'"
-                                          accion="1"
-                                          multiple
-                                          >';
-                                          $amarillas = $this->dbase->get_yellow_jugador($value->id_jugador, $id_partido, 1);
-                                          $contador = count($amarillas);
-                                          if ($contador == 0) {
-                                            $cent .= '<option value="1">A</option>';
-                                            $cent .= '<option value="2">A</option>';
-                                          } else {
-                                              foreach ($amarillas as $yellow) {
-                                                $seleccionar = "selected";
-                                                if ($contador == 1) {
-                                                    $cent .= '<option '.$seleccionar.' value="'.$yellow->accion.'">A</option>';
-                                                    $cent .= '<option value="2">A</option>';
-                                                } else {
-                                                    $cent .= '<option '.$seleccionar.' value="'.$yellow->accion.'">A</option>';
-                                                }
-                                              }
-                                          }
-                                        $cent .= '</select>
-                                      </td>';
-                            $cent .= '<td>';
-                                        $cent .= '<select '.$ena.'
-                                          class="form-control select2 player player_r_'.$value->id_jugador.'"
-                                          data-placeholder="Select a State"
-                                          style="width: 80%;"
 
-                                          data-trigger
-                                          name="choices-multiple-default"
-                                          id="choices-multiple-default"
-                                          placeholder="This is a placeholder"
-                                          id_par="'.$id_partido.'"
-                                          id_jug="'.$value->id_jugador.'"
-                                          accion="2"
-                                          multiple
-                                          >';
-                                          $amarillas = $this->dbase->get_yellow_jugador($value->id_jugador, $id_partido, 2);
-                                          $contador = count($amarillas);
-                                          if ($contador == 0) {
-                                            $cent .= '<option value="1">R</option>';
-                                          } else {
-                                              foreach ($amarillas as $yellow) {
-                                                $cent .= '<option selected value="'.$yellow->accion.'">R</option>';
-                                              }
-                                          }
-                                        $cent .= '</select>
-                                      </td>';
+        foreach ($equipos as $key => $equipo) {
+        //     print_r('<pre>');
+        // print_r();
+        // exit();
 
-                            $cent .= '<td>';
-                                        $cent .= '<select '.$ena.'
-                                          class="form-control select2 player player_g_'.$value->id_jugador.'"
-                                          data-placeholder="Select a State"
-                                          style="width: 80%;"
+            $cent .= '<div class="col-md-6">';
+            $cent .= '<div class="box box-info">';
+            $cent .= '<div class="box-header with-border">';
+              $cent .= '<h3 class="box-title">'.$this->dbase->get_nombre_club($equipo[0]->id_club)->nombre_club.'</h3>';
 
-                                          data-trigger
-                                          name="choices-multiple-default"
-                                          id="choices-multiple-default"
-                                          placeholder="This is a placeholder"
-                                          id_par="'.$id_partido.'"
-                                          id_jug="'.$value->id_jugador.'"
-                                          accion="3"
-                                          multiple
-                                          >';
-                                          $amarillas = $this->dbase->get_yellow_jugador($value->id_jugador, $id_partido, 3);
-                                          $contador = count($amarillas);
-                                          if ($contador == 0) {
-                                            $cent .= '<option value="1">G</option>';
-                                            $cent .= '<option value="2">G</option>';
-                                            $cent .= '<option value="3">G</option>';
-                                            $cent .= '<option value="4">G</option>';
-                                            $cent .= '<option value="5">G</option>';
-                                            $cent .= '<option value="6">G</option>';
-                                            $cent .= '<option value="7">G</option>';
-                                            $cent .= '<option value="8">G</option>';
-                                            $cent .= '<option value="9">G</option>';
-                                            $cent .= '<option value="10">G</option>';
-                                            $cent .= '<option value="11">G</option>';
-                                            $cent .= '<option value="12">G</option>';
-                                            $cent .= '<option value="13">G</option>';
-                                            $cent .= '<option value="14">G</option>';
-                                            $cent .= '<option value="15">G</option>';
-                                            $cent .= '<option value="16">G</option>';
-                                          } else {
-                                              foreach ($amarillas as $yellow) {
-                                                $seleccionar = "selected";
-                                                $cent .= '<option '.$seleccionar.' value="'.$yellow->accion.'">G</option>';
-                                              }
-                                              for ($i=0; $i < 16-$contador; $i++) { 
-                                                $cent .= '<option value="2">G</option>';
-                                              }
-                                          }
-                                        $cent .= '</select>
-                                      </td>';
-                          $cent .= '</tr>';
-                      }
-                      
-                      $cent .= '</tbody>';
-                    $cent .= '</table>';
-                  $cent .= '</div>';
-                $cent .= '</div>';
-                $cent .= '<div class="box-footer clearfix">';
-                  // $cent .= '<a href="javascript:void(0)" class="btn btn-sm btn-info btn-flat pull-left">Place New Order</a>';
-                $cent .= '</div>';
+              $cent .= '<div class="box-tools pull-right">';
+                $cent .= '<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>';
+                $cent .= '</button>';
+                $cent .= '<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>';
               $cent .= '</div>';
-              $cent .= '</div>';
-            }
-            $cent .= '<button '.$ena.' class="btn btn-success" onclick="finalizar_partido('.$id_partido.','.$id_e1.','.$id_e2.')"><i class="glyphicon glyphicon-plus"></i> Finalizar Partido</button>';
             $cent .= '</div>';
-            $data['vista']  = 'v_jugadores_partido';
-            $data['jugadores_equipo1'] = $cent;
-            $this->load->view('plantilla/header');
-            $this->load->view($data['vista'],$data);
-            $this->load->view('plantilla/footer');
+            $cent .= '<div class="box-body">';
+              $cent .= '<div class="table-responsive">';
+                $cent .= '<table class="table no-margin">';
+                  $cent .= '<thead>';
+                  $cent .= '<tr>';
+                    $cent .= '<th>Dorsal</th>';
+                    $cent .= '<th>Posicion</th>';
+                    $cent .= '<th>Amarillas</th>';
+                    $cent .= '<th>Rojas</th>';
+                    $cent .= '<th>Goles</th>';
+                  $cent .= '</tr>';
+                  $cent .= '</thead>';
+                  $cent .= '<tbody>';
+                  foreach ($equipo as $value) {
+                    // print_r('<pre>');
+                    // print_r($value->id_jugador);
+                    // exit();
+                      $cent .= '<tr>';
+                        $cent .= '<td><a href="pages/examples/invoice.html">'.$value->dorsal.'</a></td>';
+                        $cent .= '<td>'.$value->posicion.'</td>';
+                        $cent .= '<td>';
+                                    $cent .= '<select '.$ena.' 
+                                      class="form-control select2 player player_'.$value->id_jugador.'"
+                                      data-placeholder="Select a State"
+                                      style="width: 80%;"
+
+                                      data-trigger
+                                      name="choices-multiple-default"
+                                      id="choices-multiple-default"
+                                      placeholder="This is a placeholder"
+                                      id_par="'.$id_partido.'"
+                                      id_jug="'.$value->id_jugador.'"
+                                      accion="1"
+                                      multiple
+                                      >';
+                                      $amarillas = $this->dbase->get_yellow_jugador($value->id_jugador, $id_partido, 1);
+                                      $contador = count($amarillas);
+                                      if ($contador == 0) {
+                                        $cent .= '<option value="1">A</option>';
+                                        $cent .= '<option value="2">A</option>';
+                                      } else {
+                                          foreach ($amarillas as $yellow) {
+                                            $seleccionar = "selected";
+                                            if ($contador == 1) {
+                                                $cent .= '<option '.$seleccionar.' value="'.$yellow->accion.'">A</option>';
+                                                $cent .= '<option value="2">A</option>';
+                                            } else {
+                                                $cent .= '<option '.$seleccionar.' value="'.$yellow->accion.'">A</option>';
+                                            }
+                                          }
+                                      }
+                                    $cent .= '</select>
+                                  </td>';
+                        $cent .= '<td>';
+                                    $cent .= '<select '.$ena.'
+                                      class="form-control select2 player player_r_'.$value->id_jugador.'"
+                                      data-placeholder="Select a State"
+                                      style="width: 80%;"
+
+                                      data-trigger
+                                      name="choices-multiple-default"
+                                      id="choices-multiple-default"
+                                      placeholder="This is a placeholder"
+                                      id_par="'.$id_partido.'"
+                                      id_jug="'.$value->id_jugador.'"
+                                      accion="2"
+                                      multiple
+                                      >';
+                                      $amarillas = $this->dbase->get_yellow_jugador($value->id_jugador, $id_partido, 2);
+                                      $contador = count($amarillas);
+                                      if ($contador == 0) {
+                                        $cent .= '<option value="1">R</option>';
+                                      } else {
+                                          foreach ($amarillas as $yellow) {
+                                            $cent .= '<option selected value="'.$yellow->accion.'">R</option>';
+                                          }
+                                      }
+                                    $cent .= '</select>
+                                  </td>';
+
+                        $cent .= '<td>';
+                                    $cent .= '<select '.$ena.'
+                                      class="form-control select2 player player_g_'.$value->id_jugador.'"
+                                      data-placeholder="Select a State"
+                                      style="width: 80%;"
+
+                                      data-trigger
+                                      name="choices-multiple-default"
+                                      id="choices-multiple-default"
+                                      placeholder="This is a placeholder"
+                                      id_par="'.$id_partido.'"
+                                      id_jug="'.$value->id_jugador.'"
+                                      accion="3"
+                                      multiple
+                                      >';
+                                      $amarillas = $this->dbase->get_yellow_jugador($value->id_jugador, $id_partido, 3);
+                                      $contador = count($amarillas);
+                                      if ($contador == 0) {
+                                        $cent .= '<option value="1">G</option>';
+                                        $cent .= '<option value="2">G</option>';
+                                        $cent .= '<option value="3">G</option>';
+                                        $cent .= '<option value="4">G</option>';
+                                        $cent .= '<option value="5">G</option>';
+                                        $cent .= '<option value="6">G</option>';
+                                        $cent .= '<option value="7">G</option>';
+                                        $cent .= '<option value="8">G</option>';
+                                        $cent .= '<option value="9">G</option>';
+                                        $cent .= '<option value="10">G</option>';
+                                        $cent .= '<option value="11">G</option>';
+                                        $cent .= '<option value="12">G</option>';
+                                        $cent .= '<option value="13">G</option>';
+                                        $cent .= '<option value="14">G</option>';
+                                        $cent .= '<option value="15">G</option>';
+                                        $cent .= '<option value="16">G</option>';
+                                      } else {
+                                          foreach ($amarillas as $yellow) {
+                                            $seleccionar = "selected";
+                                            $cent .= '<option '.$seleccionar.' value="'.$yellow->accion.'">G</option>';
+                                          }
+                                          for ($i=0; $i < 16-$contador; $i++) { 
+                                            $cent .= '<option value="2">G</option>';
+                                          }
+                                      }
+                                    $cent .= '</select>
+                                  </td>';
+                      $cent .= '</tr>';
+                  }
+                  
+                  $cent .= '</tbody>';
+                $cent .= '</table>';
+              $cent .= '</div>';
+            $cent .= '</div>';
+            $cent .= '<div class="box-footer clearfix">';
+              // $cent .= '<a href="javascript:void(0)" class="btn btn-sm btn-info btn-flat pull-left">Place New Order</a>';
+            $cent .= '</div>';
+          $cent .= '</div>';
+          $cent .= '</div>';
+        }
+        $cent .= '<button '.$ena.' class="btn btn-success" onclick="finalizar_partido('.$id_partido.','.$id_e1.','.$id_e2.')"><i class="glyphicon glyphicon-plus"></i> Finalizar Partido</button>';
+        $cent .= '</div>';
+
+        $amarillas = $this->rojas_amarillas($id_partido, $id_e1, $id_e2);
+
+        $data['vista']  = 'v_jugadores_partido';
+        $data['jugadores_equipo1'] = $cent;
+        $data['amarillas'] = $amarillas;
+        $this->load->view('plantilla/header');
+        $this->load->view($data['vista'],$data);
+        $this->load->view('plantilla/footer');
     }
 
     public function guardar_accion()
@@ -644,25 +665,42 @@ class Planillero extends CI_Controller {
         $id_partido = $this->input->post('id_partido');
         $id_jugador = $this->input->post('id_jugador');
         $accion = $this->input->post('accion');
+
         $acciones = [
             'id_jugador'=> $id_jugador,
             'id_partidos'=> $id_partido,
             'accion'=> $accion,
+            'pagado' => 0,
             'minuto' => 12,
-            // 'targetDiv' => $targetDiv,
         ];
         $this->dbase->guardar_accion_model($acciones);
+
+        switch ($accion) {
+            case 1:
+                // revisar si es necesario usar count_y_c y eliminar el metodo get_yellow_jugador()
+                $count_yc = $this->dbase->count_y_c($id_partido, $id_jugador, $accion);
+
+                // if exist one record in table resultado_partido
+                if ($count_yc == 5) {
+                    // 1= un partido suspendido, i=indirecta // 5 amarillas acumuladas
+                    $this->dbase->save_suspencion(1, 'i', $id_jugador, $id_partido);
+                }
+                if ($count_yc == 10) {
+                    // 2=partidos suspendidos, i=indirecta // 10 amarillas acumuladas
+                    $this->dbase->save_suspencion(2, 'i', $id_jugador, $id_partido);
+                }
+
+                $this->dbase->update_cont_yellow($id_jugador, 'add');
+                break;
+            case 2:
+                // 1=cantidad departidos suspendidos, d=directa // suspencion por roja directa
+                $this->dbase->save_suspencion(1, 'd', $id_jugador, $id_partido);
+                break;
+        }
+        
         echo json_encode(array('status'=>TRUE));
     }
 
-    // public function eliminar_accion()
-    // {
-    //     $id_partido = $this->input->post('id_partido');
-    //     $id_jugador = $this->input->post('id_jugador');
-    //     $accion = $this->input->post('accion');
-    //     $this->dbase->delete_accion($id_partido, $id_jugador, $accion);
-    //     echo json_encode(array('status'=>TRUE));
-    // }
 /////////////////////////////////
     public function verifica_siyaexiste()
     {
@@ -680,6 +718,7 @@ class Planillero extends CI_Controller {
         $id_jugador = $this->input->post('id_jugador');
         $accion = $this->input->post('accion');
         $this->dbase->delete_accion($id_partido, $id_jugador, $accion);
+        $this->dbase->update_cont_yellow($id_jugador, 'rest');
         echo json_encode(array('status'=>TRUE));
     }
 
@@ -712,6 +751,187 @@ class Planillero extends CI_Controller {
         $this->dbase->save_game($game);
         echo json_encode(array("status" => TRUE));
     }
+
+    public function rojas_amarillas($id_partido, $id_e1, $id_e2)
+    {
+        // $cards = $this->dbase->show_yellow_card();
+
+        $players_y_1 = $this->dbase->players_yellow($id_partido, $id_e1);
+        $players_y_2 = $this->dbase->players_yellow($id_partido, $id_e2);
+        $players = [$players_y_1, $players_y_2];
+
+        $html = '';
+        foreach ($players as $players_y) {
+            $html .= '<div class="col-md-6">';
+                $html .= '<div class="box">';
+                    $html .='<div class="box-header">';
+                        $html .='<h3 class="box-title">Tarjetas amarilla</h3>';
+                    $html .='</div>';
+                    $html .='<div class="box-body no-padding">';
+                        $html .='<table class="table table-striped">';
+                            $html .='<tr>';
+                                $html .='<th style="width: 10px">Nº</th>';
+                                $html .='<th>Nombre</th>';
+                                $html .='<th>Amarillas</th>';
+                                $html .='<th style="width: 40px">Opciones</th>';
+                            $html .='</tr>';
+                            foreach ($players_y as $value) {
+                            $html .='<tr>';
+                                $html .='<td>'.$value->dorsal.'</td>';
+                                $html .='<td>'.$value->nombres.'</td>';
+                                $html .='<td>';
+                                    $amarillas = $this->dbase->list_yc_by_player($value->id_jugador);
+                                    foreach ($amarillas as $amarilla) {
+                                        $checked = ($amarilla->pagado == 1) ? 'checked' : '' ;
+                                        $html .= '<input type="checkbox" class="flat-red" '.$checked.' disabled> ';
+                                    }
+                                $html .='</td>';
+                                $html .='<td><a class="btn btn-sm btn-primary" title="Mostrar" onclick="mostrar_amarillas('.$value->id_jugador.','.$id_partido.')" data-toggle="modal" data-target="#modal-amarillas"><i class="glyphicon glyphicon-pencil"></i> Mostrar</a></td>';
+                            $html .='</tr>';
+                            }
+                        $html .='</table>';
+                    $html .='</div>';
+                $html .='</div>';
+            $html .='</div>';
+        }
+
+        return $html;
+
+
+
+        // $data['vista']  = 'v_jugadores_partido';
+        // $data['jugadores_equipo1'] = $html;
+        // $this->load->view('plantilla/header');
+        // $this->load->view($data['vista'],$data);
+        // $this->load->view('plantilla/footer');
+
+    }
+
+    public function list_yellow_cards()
+    {
+        $id_jugador = $this->input->post('id_jugador');
+        $id_partido = $this->input->post('id_partido');
+        $amarillas = $this->dbase->list_yc_by_player($id_jugador);
+        
+        // print_r($amarillas);
+        // exit();
+
+        $html_y_c = '';
+        $i = 1; 
+        $precio = 0;
+        $precio2 = 5;
+        foreach ($amarillas as $amarilla) {
+            if ($amarilla->pagado == 1) {
+                $checked = 'checked';
+                $disabled = 'disabled';
+            } else {
+                $checked = '';
+                $disabled = '';
+            }
+            if ($i >= 1 && $i <=4){
+                // if ($i-1 == ) $disabled = '';
+                $precio = $precio + 5;
+                $html_y_c .= '<div class="form-group">
+                  <label>
+                    <input type="hidden" value="'.$id_jugador.'" name="jugador">
+                    <input type="hidden" value="'.$id_partido.'" name="partido">';
+                    $html_y_c .= '<input type="checkbox" tu-attr-precio="'.$precio.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> '.$i.'º amarilla
+                  </label>
+                </div>';
+            }
+            if ($i>=6 && $i<=9){
+                $precio2 = $precio2 + 5;
+                $html_y_c .= '<div class="form-group">
+                  <label>
+                    <input type="hidden" value="'.$id_jugador.'" name="jugador">
+                    <input type="hidden" value="'.$id_partido.'" name="partido">';
+                    $html_y_c .= '<input type="checkbox" tu-attr-precio="'.$precio2.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> ' .$i.'º amarilla
+                  </label>
+                </div>';
+            }
+            if ($i == 5 || $i == 10){
+                $html_y_c .= '<div class="form-group">
+                  <label>
+                    <input type="hidden" value="'.$id_jugador.'" name="jugador">
+                    <input type="hidden" value="'.$id_partido.'" name="partido">';
+                    $html_y_c .= '<input type="checkbox" tu-attr-precio="0" nopaga="nopaga" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" checked disabled> ' .$i.'º amarilla
+                  </label>
+                </div>';
+            }
+            $i++;
+        }
+        $html_y_c .= '<div class="input-group input-group-sm">
+            <input type="text" class="form-control" name="monto_pagar" id="monto_pagar" value="" readonly>
+                <span class="input-group-btn">
+                  <button type="button" class="btn btn-success btn-flat">Bs.</button>
+                </span>
+          </div>';
+
+        echo json_encode($html_y_c);
+    }
+
+    public function update_yellow()
+    {
+        $id_jugador = $_POST['jugador'];
+        $id_partidos = $_POST['partido'];
+        // $eso = $_POST['amarilla_check'];
+        $monto = $_POST['monto_pagar'];
+
+        if (!empty($_POST['amarilla_check'])) {
+            foreach($_POST['amarilla_check'] as $id_menu) {
+                $datos = array(
+                    'pagado' => 1,
+                );
+                $this->dbase->update_resultado_partido($id_jugador, $id_partidos, $datos); 
+            }
+            $am_de_la_db = $this->dbase->lista_yellos_db();
+            $id_pc = $am_de_la_db[0]->id_precioconcepto;
+
+            $datos = [
+                'fecha' => date("Y-m-d"),
+                'monto' => $monto,
+                'id_precioconcepto' => $id_pc,
+                'descripcion' => json_encode($_POST['amarilla_check']),
+            ];
+
+            $this->dbase->save_pago($datos);
+
+            echo json_encode(array("status" => TRUE, 'id_j' => $id_jugador, 'id_p' => $id_partidos));
+        } else {
+            echo json_encode(array("status" => FALSE));
+        }    
+
+        // if (!empty($_POST['amarilla_check'])) {
+        //     $am_de_la_db = $this->dbase->lista_yellos_db();
+        //     foreach ($am_de_la_db as $value) {
+        //         $explodeDato = explode(' ', $value->descripcion);
+        //         $a_num_ama[] = $explodeDato[0];
+        //         foreach ($_POST['amarilla_check'] as $val) {
+        //             if ($val == $explodeDato[0]) {
+        //                 $amarilla_pagada[] = $value->id_precioconcepto;
+        //             } else {
+                        
+        //             }
+        //         }
+        //         $this->dbase->save_pago()
+        //     }
+        // }
+
+    }
+
+    // // separa numeros y letras
+    // function explodeDescripcion($dato) {
+    //    $delimitadores = [' '];
+    //    $arreglo = [];
+    //    foreach($delimitadores as $delimiter) {
+    //       $explodeDato = explode($delimiter, $dato);
+    //       $arreglo[] = $explodeDato[0];
+    //       // $dato = isset($explodeDato[1])? $explodeDato[1] : NULL;
+    //       //si usas php 7 o sueperior puedes usar para simplificar
+    //       $dato = $explodeDato[1] ?? NULL;
+    //    }
+    //    return $arreglo;
+    // }
 
     public function tabla_posiciones()
     {

@@ -662,17 +662,18 @@ class Registro extends CI_Controller {
             $crud->set_theme('bootstrap');
             $crud->set_subject('Inscripcion de equipos');
             $crud->set_table('inscripcionequipo');
+
             $crud->set_relation('id_personacargo','persona','{nombres} {apellido_paterno} {apellido_materno}');
             $crud->display_as('id_personacargo','Director técnico');
 
             $crud->set_relation('id_club','club','{nombre_club}');
             $crud->display_as('id_club','Club');
 
-            $crud->set_relation('id_categoria','categoria','{nombre}');
-            $crud->display_as('id_categoria','Categoria');
-
-            $crud->set_relation('id_torneo','torneo','{nombre}');
+            $crud->set_primary_key('id_torneo','v_categoria_torneo');
+            $crud->set_relation('id_torneo','v_categoria_torneo','{nombre}');
             $crud->display_as('id_torneo','Torneo');
+
+            $crud->field_type('genero','dropdown',array('M'=>'Masculino', 'F'=>'Femenino'));
 
             if( $crud->getState() == 'add' ) { //add these only in add form
                 $crud->set_css('assets/grocery_crud/css/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS);
@@ -807,6 +808,22 @@ class Registro extends CI_Controller {
             $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
 
             $crud->display_as('nombreestadio','Nombre Estadio');
+
+            //añadiendo campos
+            // $state = $crud->getState();
+            // $state_info = $crud->getStateInfo();
+            // if($state == 'add')
+            // {
+            //     // $crud->callback_add_field('id_estadio',array($this,'_add_default_date_value1'));
+            //     // $crud->callback_add_field('capacidad',array($this,'capacidad'));
+            //     // $crud->callback_add_field('capacidad',array($this,'amount_field_add_callback'));
+            //     print_r($state_info);
+            // }
+            //añadiendo campos
+            // $crud->callbackAddField('capacidad', function ($fieldType, $fieldName) {
+            //     return '<input class="form-control" name="' . $fieldName . '" type="text" value="">';
+            // });
+
             $crud->unset_print();
             $crud->unset_export();
             $output = $crud->render();
@@ -815,6 +832,11 @@ class Registro extends CI_Controller {
             show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
         }
     }
+
+//     function amount_field_add_callback()
+// {
+//   return '<input type="text" maxlength="50" value="" name="amount">';
+// }
     //------------------ Fin Modulo estadio ---------------------------------------- 
 
     //------------------ Modulo estadio ---------------------------------------- 

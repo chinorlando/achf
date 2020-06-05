@@ -63,10 +63,10 @@ class Jugador extends CI_Controller {
             if ($title == 'Transferencia') {
                 $row[] = ' <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="view_trasferencia('.$d->id_jugador.')">
                         <i class="fa fa-eye"></i>
-                    </button>
-                    <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="add_transferencia('.$d->id_jugador.')">
-                        <i class="fa fa-eye"></i>
                     </button>';
+                    // <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="add_transferencia('.$d->id_jugador.')">
+                    //     <i class="fa fa-eye"></i>
+                    // </button>';
             } elseif ($title == 'Jugador') {
                 $row[] = ' <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="view_row('.$d->id_jugador.')">
                         <i class="fa fa-eye"></i>
@@ -176,20 +176,21 @@ class Jugador extends CI_Controller {
     public function get_transferencias()
     {
         $transferencias = $this->dbase->get_transferencias($this->input->post('id_jugador'));
-        // print_r($transferencias);
+        // print_r($this->input->post('id_jugador'));
         // exit();
 
 
         // $equipos = $this->dbase->get_equipos();
         $clubs = $this->dbase->get_clubs();
         $id_club_actual_jugador = $this->dbase->get_club_actual($this->input->post('id_jugador'));
-        $club_actual_jugador = $this->db->get_where('club', array('id_club' => $id_club_actual_jugador->id_club_destino))->row()->nombre_club;
+        if (!isset($id_club_actual_jugador)) {
+            $club_actual_jugador = $this->db->get_where('club', array('id_club' => $id_club_actual_jugador->id_club_destino))->row()->nombre_club;
+        }
 
         // print_r($clubs);
 
-        // print_r($club_actual_jugador);
-
-        // exit();
+        print_r($club_actual_jugador);
+        exit();
 
         $jug_tr = '';
         $jug_tr .= '<table class="table table-bordered text-center">
@@ -221,7 +222,7 @@ class Jugador extends CI_Controller {
         $opcion = 'Categorias';
         $data = array(
             'opcion'            => $opcion,
-            'controllerajax'    => 'Jugador/',
+            'controllerajax'    => 'jugador',
             'titulo_navegation' => $this->window->titulo_navegacion('A.CH.F',$opcion)
         );
         $data['vista'] = 'v_jugador_categoria';
@@ -241,7 +242,11 @@ class Jugador extends CI_Controller {
             'id_club_destino' => $destino,
         );
 
-        // print_r($dataTransferencia);
+        $data = [
+            'id_equipo' => $destino,
+        ];
+        $this->dbase->update_inscripcionjugador($id_jugador, $proviene, $data);
+        // $this->dbase->update_inscripcionjugador(1, 9, $data);
 
         $this->dbase->save_transferencia($dataTransferencia);
 

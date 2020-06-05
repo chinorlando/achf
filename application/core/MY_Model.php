@@ -153,15 +153,24 @@ class MY_Model extends CI_Model
 
     public function get_datatables_jug()
     {
-        $this->db->select('jugador.id_jugador, persona.id_persona, persona.nombres, persona.apellido_paterno, persona.apellido_materno, inscripcionjugador.posicion, categoria.nombre as nombre_categoria, club.nombre_club, jugador.estado');
-        $this->db->from('jugador');
-        $this->db->join('persona', 'persona.id_persona = jugador.id_persona');
-        $this->db->join('inscripcionjugador', 'inscripcionjugador.id_jugador = jugador.id_jugador');
-        $this->db->join('equipo', 'equipo.id_equipo = inscripcionjugador.id_equipo');
-        $this->db->join('categoria', 'categoria.id_categoria = equipo.id_categoria');
+        // $this->db->select('jugador.id_jugador, persona.id_persona, persona.nombres, persona.apellido_paterno, persona.apellido_materno, inscripcionjugador.posicion, categoria.nombre as nombre_categoria, club.nombre_club, jugador.estado');
+        // $this->db->from('jugador');
+        // $this->db->join('persona', 'persona.id_persona = jugador.id_persona');
+        // $this->db->join('inscripcionjugador', 'inscripcionjugador.id_jugador = jugador.id_jugador');
+        // $this->db->join('equipo', 'equipo.id_equipo = inscripcionjugador.id_equipo');
+        // $this->db->join('categoria', 'categoria.id_categoria = equipo.id_categoria');
+        // $this->db->join('club', 'club.id_club = equipo.id_club');
+        // // $query = $this->db->get();
+        // // return $query->result();
+
+
+        $this->db->select('jugador.id_jugador, persona.id_persona, persona.nombres, persona.apellido_paterno, persona.apellido_materno, i.posicion, categoria.nombre as nombre_categoria, club.nombre_club, jugador.estado');
+        $this->db->from('inscripcionjugador i');
+        $this->db->join('jugador', 'jugador.id_jugador = i.id_jugador');
+        $this->db->join('persona', 'persona.id_persona = i.id_jugador');
+        $this->db->join('equipo', 'equipo.id_equipo = i.id_equipo');
         $this->db->join('club', 'club.id_club = equipo.id_club');
-        // $query = $this->db->get();
-        // return $query->result();
+        $this->db->join('categoria', 'categoria.id_categoria = equipo.id_categoria');
     }
 
     public function get_transferencias($id_jugador)
@@ -219,6 +228,13 @@ class MY_Model extends CI_Model
     public function save_transferencia($dataTransferencia)
     {
         $this->db->insert('transferencias', $dataTransferencia);
+    }
+
+    public function update_inscripcionjugador($id_jugador, $id_equipoproviene, $datos)
+    {
+        $this->db->where('id_jugador', $id_jugador);
+        $this->db->where('id_equipo', $id_equipoproviene);
+        $this->db->update('inscripcionjugador', $datos);
     }
 
     ////////curriculum
@@ -362,11 +378,11 @@ class MY_Model extends CI_Model
         return $query->row();
     }
 
-    public function counttorneo($id_torneo, $id_campeonato)
+    public function counttorneo($id_torneo) // , $id_campeonato
     {
         $this->db->from('torneosorteado');
         $this->db->where('id_torneo', $id_torneo);
-        $this->db->where('id_campeonato', $id_campeonato);
+        // $this->db->where('id_campeonato', $id_campeonato);
         // $this->db->where('accion', $accion);
         $query = $this->db->get();
         return $query->num_rows();
@@ -377,10 +393,10 @@ class MY_Model extends CI_Model
         $this->db->insert('torneosorteado', $date);
     }
 
-    public function update_torneosorteado($id_campeonato, $id_torneo, $data)
+    public function update_torneosorteado($id_torneo, $data)
     {
         $this->db->where('id_torneo', $id_torneo);
-        $this->db->where('id_campeonato', $id_campeonato);
+        // $this->db->where('id_campeonato', $id_campeonato);
         $this->db->update('torneosorteado', $data);
     }
 
@@ -393,7 +409,7 @@ class MY_Model extends CI_Model
             // 'id_inscripcion1' => date("Y-m-d H:i:s"),
         );
         // print_r($data);
-
+        // TODO: descomentara la siguiente linea para guardar los partidos sorteados
         // $this->db->insert('partidos', $data);
         // $idcab=$this->db->insert_id();
     }
@@ -433,7 +449,77 @@ class MY_Model extends CI_Model
     {
         $this->db->insert('resultado_partido', $acciones);
     }
+
+    public function update_cont_yellow($id_jugador, $add_or_rest)
+    {
+        $cont_y = $this->db->get_where('jugador', array('id_jugador' => $id_jugador,))->row()->cont_amarilla;
+
+        $cont_y = ($add_or_rest == 'add') ? $cont_y + 1 : $cont_y - 1;
+
+        $cont_y = ($cont_y == 11) ? 1 : $cont_y;
+
+        $datos = [
+            'cont_amarilla' => $cont_y,
+        ];
+
+        $this->db->where('id_jugador', $id_jugador);
+        $res = $this->db->update('jugador', $datos);
+    }
     //////////////guardado de amarillas, rojas y goles end //////////////////////////
+
+    //////////////////pago de amarillas///////////////////
+    public function players_yellow($id_partido, $id_e)
+    {
+        $sql = "select rp.id_jugador, inscripcionjugador.dorsal, persona.nombres, persona.apellido_paterno, persona.apellido_materno 
+            from resultado_partido rp
+            join inscripcionjugador on inscripcionjugador.id_jugador = rp.id_jugador 
+            join jugador on jugador.id_jugador = rp.id_jugador 
+            join persona on persona.id_persona = jugador.id_persona 
+            where accion = 1 and pagado = 0 and rp.id_partidos = ? and inscripcionjugador.id_equipo = ?
+            group BY rp.id_jugador, inscripcionjugador.dorsal, persona.nombres, persona.apellido_paterno, persona.apellido_materno";
+
+        $query = $this->db->query($sql, array($id_partido, $id_e)); 
+        return $query->result();
+    }
+
+    public function list_yc_by_player($id_jugador)
+    {
+        $this->db->from('resultado_partido');
+        $this->db->where('id_jugador', $id_jugador);
+        $this->db->order_by('id_resultadopartido', 'asc');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function lista_yellos_db()
+    {
+        $sql = 'select  * from precio_concepto pc
+            join categoria on categoria.id_categoria = pc.id_categoria
+            join motivo on motivo.id_motivo = pc.id_motivo 
+            where categoria.id_categoria = ? and pc.id_concepto = ?';
+        $query = $this->db->query($sql, array(1, 7)); 
+        return $query->result();
+    }
+
+    public function update_resultado_partido($id_ju, $id_partidos, $datos)
+    {
+        // $this->db->limit(1);
+        // $this->db->where('id_jugador', $id_ju);
+        // $this->db->where('id_partidos', $id_partidos);
+        // $this->db->where('accion', 1);
+        // $this->db->where('pagado', 0);
+        // $res = $this->db->update('jugador', $datos);
+
+        $sql = "UPDATE resultado_partido
+                set pagado = 1
+                WHERE id_jugador = ? and id_partidos = ? and accion = 1 and pagado = 0
+                limit 1";
+
+        $this->db->query($sql, array($id_ju, $id_partidos)); 
+        // return $query->result();
+    }
+
+    //////////////////pago de amarillas///////////////////
 
     
 
@@ -448,6 +534,30 @@ class MY_Model extends CI_Model
         return $query->num_rows();
     }
     //// editar planilla
+
+    ///// contador de amarillas de jugador
+    public function count_y_c($id_partido, $id_jugador, $accion)
+    {
+        $this->db->from('resultado_partido');
+        $this->db->where('id_partidos', $id_partido);
+        $this->db->where('id_jugador', $id_jugador);
+        $this->db->where('accion', $accion);
+        $query = $this->db->get();
+        return $query->num_rows();
+    }
+
+    public function save_suspencion($cantpart, $motivo, $id_jugador, $id_partido)
+    {
+        $datos = [
+            'cantpart' => $cantpart,
+            'motivo' => $motivo,
+            'id_jugador' => $id_jugador,
+            'id_partidos' => $id_partido,
+        ];
+        $this->db->insert('suspencion', $datos);
+    }
+
+    ///// contador de amarillas de jugadro
 
     public function get_yellow_jugador($id_jugador, $id_partido, $accion)
     {
@@ -690,11 +800,11 @@ class MY_Model extends CI_Model
     ///////////////////// pagos end /////////////////////////
 
     // sorteo de equipos begin //
-    public function get_torneo_with_equipo()
+    public function get_torneo_almost_four_teams()
     {
         $sql = 'select t2.id_torneo, c.nombre, count(i2.id_torneo) as inscritos
             FROM inscripcionequipo i2, torneo t2, categoria c
-            where t2.id_torneo = i2.id_torneo and t2.id_categoria = c.id_categoria 
+            where t2.id_torneo = i2.id_torneo and t2.id_categoria = c.id_categoria and t2.estado = 0
             GROUP BY c.nombre, t2.id_torneo
             HAVING COUNT(i2.id_torneo) >=4';
         $query = $this->db->query($sql); 
@@ -707,6 +817,12 @@ class MY_Model extends CI_Model
         $this->db->from('categoria');
         $query = $this->db->get();
         return $query->result();
+    }
+
+
+    public function get_yellow_red()
+    {
+        
     }
 
 
