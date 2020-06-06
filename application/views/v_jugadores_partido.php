@@ -48,25 +48,23 @@
 			
 			calcularPagoAmarilla();
 
-			salto_5_10 = $(this).parent().parent().next().next().children().children().next().next();
-			corto = $(this).parent().parent().next().children().children().next().next();
-			if(!$(this).is(":checked")){
-				if (jQuery(corto).attr("nopaga") == "nopaga") {
-					salto_5_10.prop('checked', false);
-					salto_5_10.prop('disabled', true);
-				} else {
-					corto.prop('checked', false);
-					corto.prop('disabled', true);
-				}
-		  } else {
-		  	if (jQuery(corto).attr("nopaga") == "nopaga") {
-					
-					salto_5_10.prop('disabled', false);
-				} else {
-					
-					corto.prop('disabled', false);
-				}
-		  }
+			// salto_5_10 = $(this).parent().parent().next().next().children().children().next().next();
+			// corto = $(this).parent().parent().next().children().children().next().next();
+			// if(!$(this).is(":checked")){
+			// 	if (jQuery(corto).attr("nopaga") == "nopaga") {
+			// 		salto_5_10.prop('checked', false);
+			// 		salto_5_10.prop('disabled', true);
+			// 	} else {
+			// 		corto.prop('checked', false);
+			// 		corto.prop('disabled', true);
+			// 	}
+		 //  	} else {
+			//   	if (jQuery(corto).attr("nopaga") == "nopaga") {
+			// 		salto_5_10.prop('disabled', false);
+			// 	} else {
+			// 		corto.prop('disabled', false);
+			// 	}
+			// }
 		});
 
 	});
@@ -154,7 +152,7 @@
 			}
 		});
 		var totalParts = parseFloat(tot.val()).toFixed(2).split('.');
-		tot.val(totalParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '.' +  (totalParts.length > 1 ? totalParts[1] : '00'));  
+		tot.val(totalParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, "") + '.' +  (totalParts.length > 1 ? totalParts[1] : '00'));  
 	}
 
 

@@ -501,6 +501,16 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
+    public function lista_yellos_db_pago_concepto($id_categoria, $id_concepto)
+    {
+        $sql = 'select  * from precio_concepto pc
+            join categoria on categoria.id_categoria = pc.id_categoria
+            join motivo on motivo.id_motivo = pc.id_motivo 
+            where categoria.id_categoria = ? and pc.id_concepto = ?';
+        $query = $this->db->query($sql, array($id_categoria, $id_concepto)); 
+        return $query->result();
+    }
+
     public function update_resultado_partido($id_ju, $id_partidos, $datos)
     {
         // $this->db->limit(1);
@@ -596,9 +606,9 @@ class MY_Model extends CI_Model
     }
 
     public function update_partido($id_partido)
-    {   $data = 
+    {   //$data = 
         $this->db->where('id_partidos', $id_partido);
-        $res = $this->db->update('partidos', ['estado'=>0]);
+        $res = $this->db->update('partidos', ['estado'=>1]);
         return $res;
     }
 
@@ -779,11 +789,33 @@ class MY_Model extends CI_Model
         return $query->row();
     }
 
-    public function get_motivo()
+    public function get_motivo($id_categoria, $id_concepto)
     {
-        $this->db->from('motivo');
-        $query = $this->db->get();
+        $sql = "select pc.id_precioconcepto, motivo.id_motivo, pc.precio, motivo.descripcion from precio_concepto pc
+            join motivo on motivo.id_motivo = pc.id_motivo 
+            where pc.id_categoria = ? and pc.id_concepto = ?";
+        $query = $this->db->query($sql, array($id_categoria, $id_concepto)); 
         return $query->result();
+    }
+
+    public function list_jugadoresby_clubequipo($id_club)
+    {
+        $sql = "select j.id_jugador, rp.id_partidos, ij.dorsal, p.nombres, p.apellido_paterno, p.apellido_materno from equipo e 
+join inscripcionjugador ij on ij.id_equipo = e.id_equipo 
+join jugador j on j.id_jugador = ij.id_jugador 
+join club c on c.id_club = e.id_club
+join persona p on p.id_persona = j.id_persona
+join resultado_partido rp on rp.id_jugador = j.id_jugador 
+where c.id_club = 1 and rp.accion = 1
+group by j.id_jugador, rp.id_partidos, ij.dorsal";
+        $query = $this->db->query($sql, array($id_club));
+        return $query->result();
+    }
+
+
+    public function save_pago_yellow($datos)
+    {
+        $this->db->insert('pago', $datos);
     }
 
     public function save_pago($datos)
@@ -791,12 +823,12 @@ class MY_Model extends CI_Model
         $this->db->insert('pago', $datos);
     }
 
-    public function get_cant_veces()
-    {
-        $this->db->from('cantidad');
-        $query = $this->db->get();
-        return $query->result();
-    }
+    // public function get_cant_veces()
+    // {
+    //     $this->db->from('cantidad');
+    //     $query = $this->db->get();
+    //     return $query->result();
+    // }
     ///////////////////// pagos end /////////////////////////
 
     // sorteo de equipos begin //

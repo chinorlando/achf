@@ -481,7 +481,7 @@ class Planillero extends CI_Controller {
 
 
 
-        if ($estado == 1 || $estado == null) {
+        if ($estado == 0 || $estado == null) {
             $ena = "";
         } else {
             $ena = "disabled";
@@ -489,9 +489,6 @@ class Planillero extends CI_Controller {
               <h4>Partido Finalizado</h4>
             </div>';
         }
-
-        
-
 
         foreach ($equipos as $key => $equipo) {
         //     print_r('<pre>');
@@ -831,37 +828,39 @@ class Planillero extends CI_Controller {
             if ($i >= 1 && $i <=4){
                 // if ($i-1 == ) $disabled = '';
                 $precio = $precio + 5;
-                $html_y_c .= '<div class="form-group">
-                  <label>
-                    <input type="hidden" value="'.$id_jugador.'" name="jugador">
-                    <input type="hidden" value="'.$id_partido.'" name="partido">';
-                    $html_y_c .= '<input type="checkbox" tu-attr-precio="'.$precio.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> '.$i.'º amarilla
-                  </label>
-                </div>';
+                // $html_y_c .= '<div class="form-group">
+                //   <label>
+                //     <input type="hidden" value="'.$id_jugador.'" name="jugador">
+                //     <input type="hidden" value="'.$id_partido.'" name="partido">';
+                //     $html_y_c .= '<input type="checkbox" tu-attr-precio="'.$precio.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> '.$i.'º amarilla
+                //   </label>
+                // </div>';
+                $html_y_c .= $this->agregarinput($precio, $id_jugador, $id_partido, $i, $checked, $disabled);
             }
             if ($i>=6 && $i<=9){
                 $precio2 = $precio2 + 5;
-                $html_y_c .= '<div class="form-group">
-                  <label>
-                    <input type="hidden" value="'.$id_jugador.'" name="jugador">
-                    <input type="hidden" value="'.$id_partido.'" name="partido">';
-                    $html_y_c .= '<input type="checkbox" tu-attr-precio="'.$precio2.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> ' .$i.'º amarilla
-                  </label>
-                </div>';
+                // $html_y_c .= '<div class="form-group">
+                //   <label>
+                //     <input type="hidden" value="'.$id_jugador.'" name="jugador">
+                //     <input type="hidden" value="'.$id_partido.'" name="partido">';
+                //     $html_y_c .= '<input type="checkbox" tu-attr-precio="'.$precio2.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> ' .$i.'º amarilla
+                //   </label>
+                // </div>';
+                $html_y_c .= $this->agregarinput($precio2, $id_jugador, $id_partido, $i, $checked, $disabled);
             }
             if ($i == 5 || $i == 10){
                 $html_y_c .= '<div class="form-group">
                   <label>
                     <input type="hidden" value="'.$id_jugador.'" name="jugador">
-                    <input type="hidden" value="'.$id_partido.'" name="partido">';
-                    $html_y_c .= '<input type="checkbox" tu-attr-precio="0" nopaga="nopaga" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" checked disabled> ' .$i.'º amarilla
+                    <input type="hidden" value="'.$id_partido.'" name="partido">
+                    <input type="checkbox" tu-attr-precio="0" nopaga="nopaga" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" checked disabled> ' .$i.'º amarilla
                   </label>
                 </div>';
             }
             $i++;
         }
         $html_y_c .= '<div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="monto_pagar" id="monto_pagar" value="" readonly>
+            <input type="text" class="form-control" name="monto_pagar" id="monto_pagar" value="montito" readonly>
                 <span class="input-group-btn">
                   <button type="button" class="btn btn-success btn-flat">Bs.</button>
                 </span>
@@ -869,6 +868,61 @@ class Planillero extends CI_Controller {
 
         echo json_encode($html_y_c);
     }
+
+    public function agregarinput($precio, $id_jugador, $id_partido, $i, $checked, $disabled)
+    {
+        $h = '<div class="form-group">
+          <label>
+            <input type="hidden" value="'.$id_jugador.'" name="jugador">
+            <input type="hidden" value="'.$id_partido.'" name="partido">
+            <input type="checkbox" tu-attr-precio="'.$precio.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> '.$i.'º amarilla
+          </label>
+        </div>';
+        return $h;
+    }
+
+    // public function agregacheckbox($amarillas, $id_partido)
+    // {
+    //     $html_y_c = '';
+    //     $i = 1; 
+    //     $precio = 0;
+    //     $precio2 = 5;
+    //     foreach ($amarillas as $amarilla) {
+    //         if ($amarilla->pagado == 1) {
+    //             $checked = 'checked';
+    //             $disabled = 'disabled';
+    //         } else {
+    //             $checked = '';
+    //             $disabled = '';
+    //         }
+    //         if ($i >= 1 && $i <=4){
+    //             $precio = $precio + 5;
+    //             $html_y_c .= $this->agregarinput($precio, $amarilla->id_jugador, $id_partido, $i, $checked, $disabled);
+    //         }
+    //         if ($i>=6 && $i<=9){
+    //             $precio2 = $precio2 + 5;
+    //             $html_y_c .= $this->agregarinput($precio2, $amarilla->id_jugador, $id_partido, $i, $checked, $disabled);
+    //         }
+    //         if ($i == 5 || $i == 10){
+    //             $html_y_c .= '<div class="form-group">
+    //               <label>
+    //                 <input type="hidden" value="'.$amarilla->id_jugador.'" name="jugador">
+    //                 <input type="hidden" value="'.$id_partido.'" name="partido">
+    //                 <input type="checkbox" tu-attr-precio="0" nopaga="nopaga" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" checked disabled> ' .$i.'º amarilla
+    //               </label>
+    //             </div>';
+    //         }
+    //         $i++;
+    //     }
+    //     $html_y_c .= '<div class="input-group input-group-sm">
+    //         <input type="text" class="form-control" name="monto_pagar" id="monto_pagar" value="" readonly>
+    //             <span class="input-group-btn">
+    //               <button type="button" class="btn btn-success btn-flat">Bs.</button>
+    //             </span>
+    //       </div>';
+
+    //     return $html_y_c;
+    // }
 
     public function update_yellow()
     {
@@ -894,7 +948,7 @@ class Planillero extends CI_Controller {
                 'descripcion' => json_encode($_POST['amarilla_check']),
             ];
 
-            $this->dbase->save_pago($datos);
+            $this->dbase->save_pago_yellow($datos);
 
             echo json_encode(array("status" => TRUE, 'id_j' => $id_jugador, 'id_p' => $id_partidos));
         } else {
@@ -1142,42 +1196,124 @@ class Planillero extends CI_Controller {
     //     echo json_encode(array("status" => TRUE, 'motivo'=>$motivo));
     // }
     public function get_valores(){
-        // $id_concepto = $this->input->post('id_concepto');
-        // $list = $this->odeco_model->get_subreclamo($id_concepto);
-            $motivo = $this->dbase->get_motivo();
-        echo json_encode($motivo);
+        $id_club = $this->input->post('id_club');
+        $id_categoria = $this->input->post('id_categoria');
+        $id_concepto = $this->input->post('id_concepto');
+        // $list = $this->odeco_model->get_subreclamo($id_club, $id_categoria, $id_concepto);
+        $motivos = $this->dbase->get_motivo($id_categoria, $id_concepto);
+        // print_r($motivos);
+        // exit();
+
+        $textohtml = '<div class="box box-success">
+            <div class="box-header">
+                <h3 class="box-title">Motivo por el que se paga</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group">';
+        switch ($id_concepto) {
+            case 7:
+                $players_y = $this->dbase->list_jugadoresby_clubequipo($id_club);
+                $textohtml .= '<div class="col-md-12">';
+                    $textohtml .= '<div class="box">';
+                        $textohtml .='<div class="box-header">';
+                            $textohtml .='<h3 class="box-title">Tarjetas amarilla</h3>';
+                        $textohtml .='</div>';
+                        $textohtml .='<div class="box-body no-padding">';
+                            $textohtml .='<table class="table table-striped">';
+                                $textohtml .='<tr>';
+                                    $textohtml .='<th style="width: 10px">Nº</th>';
+                                    $textohtml .='<th>Nombre</th>';
+                                    $textohtml .='<th>Amarillas</th>';
+                                    $textohtml .='<th style="width: 40px">Opciones</th>';
+                                $textohtml .='</tr>';
+                                foreach ($players_y as $value) {
+                                $textohtml .='<tr>';
+                                    $textohtml .='<td>'.$value->dorsal.'</td>';
+                                    $textohtml .='<td>'.$value->nombres.'</td>';
+                                    $textohtml .='<td>';
+                                        $amarillas = $this->dbase->list_yc_by_player($value->id_jugador);
+                                        foreach ($amarillas as $amarilla) {
+                                            $checked = ($amarilla->pagado == 1) ? 'checked' : '' ;
+                                            $textohtml .= '<input type="checkbox" class="flat-red" '.$checked.' disabled> ';
+                                        }
+                                    $textohtml .='</td>';
+                                    $textohtml .='<td><a class="btn btn-sm btn-primary" title="Mostrar" onclick="mostrar_amarillas_concepto('.$value->id_jugador.','.$value->id_partidos.')" data-toggle="modal" data-target="#modal-amarillas"><i class="glyphicon glyphicon-pencil"></i> Mostrar</a></td>';
+                                $textohtml .='</tr>';
+                                }
+                            $textohtml .='</table>';
+                        $textohtml .='</div>';
+                    $textohtml .='</div>';
+                $textohtml .='</div>';
+                
+                // $id_jugadores = $this->dbase->list_jugadoresby_clubequipo($id_club);
+                // foreach ($id_jugadores as $value) {
+                //     $amarillas = $this->dbase->list_yc_by_player($value->id_jugador);
+                //     $textohtml .= $this->agregacheckbox($amarillas, $value->id_partidos);
+                // }
+
+                break;
+            default:
+                foreach ($motivos as $val) {
+                    $textohtml.=
+                    '<label>
+                      <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$val->precio.'" value="'.$val->precio.'" class="flat-red monto_motivo"> '  .$val->descripcion.
+                     '</label><br>';
+                }
+                break;
+        }
+        $textohtml.='</div>
+            </div>
+        </div>';
+
+
+        // $textohtml = '<div class="box box-success">
+        //     <div class="box-header">
+        //         <h3 class="box-title">Motivo por el que se paga</h3>
+        //     </div>
+        //     <div class="box-body">
+        //         <div class="form-group">';
+        //     foreach ($motivos as $val) {
+        //         $textohtml.=
+        //         '<label>
+        //           <input type="checkbox" name="motivo[]" value="'.$val->id_precioconcepto.'" class="flat-red" checked> '.$val->descripcion.
+        //         '</label><br>';
+        //     }
+        // $textohtml.='</div>
+        //     </div>
+        // </div>';
+
+        echo json_encode($textohtml);
     }
 
-    public function pagar()
+    public function ajax_pagar_concepto()
     {
         // $id_club = $this->input->post('club');
-        // $id_concepto = $this->input->post('concepto');
-        // $id_categoria = $this->input->post('categoria');
-        $id_precioconcepto = $this->input->post('id_monto');
+        $id_concepto = $this->input->post('concepto');
+        $id_categoria = $this->input->post('categoria');
+
+        $monto = $this->input->post('precio_motivo_total');
         $id_motivo = $this->input->post('motivo');
-        $datos= [
-            'fecha' => date("Y-m-d"),
-            'id_precioconcepto' => $id_precioconcepto,
-            'id_motivo' => $id_motivo,
-        ];
-        // $this->dbase->save_pago($datos);
-        echo json_encode(array("status" => TRUE));
-    }
 
-    public function get_cantidad_amarillas()
-    {
-        $veces = $this->dbase->get_cant_veces();
-        $html = '';
+        if (isset($_POST['check_monto'])) {
+            $am_de_la_db = $this->dbase->lista_yellos_db_pago_concepto($id_categoria, $id_concepto);
+            $id_pc = $am_de_la_db[0]->id_precioconcepto;
+            
+            $datos= [
+                'fecha' => date("Y-m-d"),
+                'monto' => $monto,
+                'descripcion' => json_encode($_POST['check_monto']),
+                'id_precioconcepto' => $id_pc,
+            ];
 
-        $html.='<div class="form-group">
-          <label>Select</label>
-          <select class="form-control">';
-            foreach ($veces as $vez) {
-                $html.='<option value="'.$vez->id_cantidad.'">'.$vez->id_cantidad.'º veces</option>';
-            }
-          $html.='</select>
-        </div>';
-        echo json_encode(array("status" => TRUE, 'html' => $html));
+            // print_r($datos);
+            // exit();
+            // ya hay una funcion en el modelo save_pago_yellow() que hace los mismo borrar uno
+            $this->dbase->save_pago($datos);
+            echo json_encode(array("status" => TRUE));
+        } else {
+            echo json_encode(array("status" => FALSE));
+        }
+        
     }
 
     ///////////////////// pagos end ///////////////////////

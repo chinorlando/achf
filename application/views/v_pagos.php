@@ -19,13 +19,6 @@
 							<option value="-1">Seleccionar club...</option>
 						</select>
 					</div>
-					<div class="form-group">
-						<label>Concepto</label>
-						<select class="form-control" id="concepto" name="concepto" style="width: 100%;">
-						<!-- <select class="form-control select2" id="concepto" name="concepto" style="width: 100%;"> -->
-							<option value="-1">Seleccionar concepto...</option>
-						</select>
-					</div>
 				</div>
 				<div class="col-md-6">
 					<div class="form-group">
@@ -35,30 +28,41 @@
 							<option value="-1">Seleccionar categoria...</option>
 						</select>
 					</div>
-
-					<div class="cant_amarillas">
-					</div>
-					
-					<div class="form-group">
-						<label>Monto</label>
-						<!-- <select class="form-control select2" id="monto" name="monto" style="width: 100%;">
-							<option value="-1">Seleccionar monto...</option>
-						</select> -->
-						<input class="form-control monto" type="input" name="monto" id="monto" value="" readonly>
-						<input type="input" name="id_monto" id="id_monto" hidden="hidden">
-					</div>
 				</div>
 				<div class="col-md-6">
 					<div class="form-group">
-						<label>Motivo</label>
+						<label>Concepto</label>
+						<select class="form-control" id="concepto" name="concepto" style="width: 100%;">
+						<!-- <select class="form-control select2" id="concepto" name="concepto" style="width: 100%;"> -->
+							<option value="-1">Seleccionar concepto...</option>
+						</select>
+					</div>
+				</div>
+
+					<div class="cant_amarillas">
+					</div>
+
+				<div class="col-md-12">
+					<div class="form-group">
+						
 						<div id="switch_motivo">
 							<!-- <select class="form-control" id="motivo" name="motivo" style="width: 100%;">
 								<option value="-1">Seleccionar motivo...</option>
 							</select> -->
 						</div>
 					</div>
-
 				</div>
+				<div class="col-md-6" id="input_ocultar_mostrar">
+					<div class="form-group">
+						<label>Monto</label>
+						<!-- <select class="form-control select2" id="monto" name="monto" style="width: 100%;">
+							<option value="-1">Seleccionar monto...</option>
+						</select> -->
+						<input class="form-control monto" type="input" name="precio_motivo_total" id="precio_motivo_total" value="momomomomomo" readonly>
+						<!-- <input type="input" name="id_monto" id="id_monto" hidden="hidden"> -->
+					</div>
+				</div>
+				
 
 				<!-- <div id="campo_motivo">
 					<div class="col-md-6">
@@ -74,11 +78,32 @@
 		</div>
 		</form>
 		<div class="box-footer">
-      <button type="submit" class="btn btn-info pull-right" onclick="pagar()">Pagar</button>
-    </div>
+	  <button type="submit" class="btn btn-info pull-right" onclick="pagar_concepto()">Pagar</button>
 	</div>
-	
+	</div>
 </section>
+
+<div class="modal fade" id="modal-amarillas">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Default Modal</h4>
+				</div>
+				<?php echo form_open("#", array('id'=>'form_amarillas_jugador', "method"=>"POST")); ?>
+				<div class="modal-body">
+					<div id="amarillas"></div>
+				</div>
+			</form>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
+				<button type="button" class="btn btn-primary refrescar" onclick="update_yellow_player_conceto()">Pagar amarillas</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -96,176 +121,353 @@
 			});
 		});
 
+
+		$(document).on('click keyup','.amarilla_check',function() {
+			
+			calcularPagoAmarilla();
+
+			// salto_5_10 = $(this).parent().parent().next().next().children().children().next().next();
+			// corto = $(this).parent().parent().next().children().children().next().next();
+			// if(!$(this).is(":checked")){
+			// 	if (jQuery(corto).attr("nopaga") == "nopaga") {
+			// 		salto_5_10.prop('checked', false);
+			// 		salto_5_10.prop('disabled', true);
+			// 	} else {
+			// 		corto.prop('checked', false);
+			// 		corto.prop('disabled', true);
+			// 	}
+		 //  	} else {
+			//   	if (jQuery(corto).attr("nopaga") == "nopaga") {
+			// 		salto_5_10.prop('disabled', false);
+			// 	} else {
+					
+			// 		corto.prop('disabled', false);
+			// 	}
+		 //  	}
+		});
+
+		$(document).on('click keyup','.monto_motivo',function() {
+			calcularMotivoConcepto();
+		});
+
+
+
 		
 
 
 	});
 
+	function calcularMotivoConcepto(argument) {
+		var tot = $('#precio_motivo_total');
+		tot.val(0);
+		$('.monto_motivo').each(function() {
+			if (!$(this).is(':disabled') ) {
+				if($(this).hasClass('monto_motivo')) {
+					tot.val(($(this).is(':checked') ? parseFloat($(this).attr('tu-attr-precio')) : 0) + parseFloat(tot.val()));  
+				}
+				else {
+					tot.val(parseFloat(tot.val()) + (isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val())));
+				}
+			}
+		});
+		var totalParts = parseFloat(tot.val()).toFixed(2).split('.');
+		tot.val(totalParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, "") + '.' +  (totalParts.length > 1 ? totalParts[1] : '00'));  
+	}
+
 	// function llamarfunciones() {
-	// 	$.get(CFG.url + 'planillero/get_clubs', function(data) {
-	// 		var datos = $.parseJSON(data);
-	// 		$.each(datos.clubs, function(index, val) {
-	// 			$('#club').append('<option value="'+val.id_club+'">'+val.nombre_club+'</option>');
-	// 		});
-	// 	});
+	//  $.get(CFG.url + 'planillero/get_clubs', function(data) {
+	//      var datos = $.parseJSON(data);
+	//      $.each(datos.clubs, function(index, val) {
+	//          $('#club').append('<option value="'+val.id_club+'">'+val.nombre_club+'</option>');
+	//      });
+	//  });
 
-	// 	$.get(CFG.url + 'planillero/get_concepto', function(data) {
-	// 		var datos = $.parseJSON(data);
-	// 		$.each(datos.conceptos, function(index, val) {
-	// 			$('#concepto').append('<option value="'+val.id_concepto+'">'+val.nombre+'</option>');
-	// 		});
-	// 	});
+	//  $.get(CFG.url + 'planillero/get_concepto', function(data) {
+	//      var datos = $.parseJSON(data);
+	//      $.each(datos.conceptos, function(index, val) {
+	//          $('#concepto').append('<option value="'+val.id_concepto+'">'+val.nombre+'</option>');
+	//      });
+	//  });
 
-	// 	$.get(CFG.url + 'planillero/get_motivo', function(data) {
-	// 		var datos = $.parseJSON(data);
-	// 		$.each(datos.motivo, function(index, val) {
-	// 			$('#motivo').append('<option value="'+val.id_motivo+'">'+val.descripcion+'</option>');
-	// 		});
-	// 	});
+	//  $.get(CFG.url + 'planillero/get_motivo', function(data) {
+	//      var datos = $.parseJSON(data);
+	//      $.each(datos.motivo, function(index, val) {
+	//          $('#motivo').append('<option value="'+val.id_motivo+'">'+val.descripcion+'</option>');
+	//      });
+	//  });
 	// }
 
 	$('#club').change(function(e) {
 	  var id_club = $('#club').val();
 	  $('#categoria').empty();
 	  $.ajax({
-	    url: CFG.url + 'planillero/get_categoria_by_club',
-	    type: "POST",
-	    cache: true,
-	    data: {id_club: id_club},
-	    success: function(data) {
-	      var datos = $.parseJSON(data);
-	      if (!$.isEmptyObject(datos.categorias)) {
-	      	$('#categoria').append('<option value="-1">Seleccionar categoria...</option>');
+		url: CFG.url + 'planillero/get_categoria_by_club',
+		type: "POST",
+		cache: true,
+		data: {id_club: id_club},
+		success: function(data) {
+		  var datos = $.parseJSON(data);
+		  if (!$.isEmptyObject(datos.categorias)) {
+			$('#categoria').append('<option value="-1">Seleccionar categoria...</option>');
 					$.each(datos.categorias, function(index, val) {
-			      $('#categoria').append('<option value="'+val.id_categoria+'">'+val.nombre+'</option>');
-			    });;
-	      } else {
-	        alert('El club no tiene categorias. Elija otro.');
-	      }
-	    },
-	    error: function (jqXHR, textStatus, errorThrown)
-	    {
-	        alert('Error al obtener datos.');
-	    }
+				  $('#categoria').append('<option value="'+val.id_categoria+'">'+val.nombre+'</option>');
+				});;
+		  } else {
+			alert('El club no tiene categorias. Elija otro.');
+		  }
+		},
+		error: function (jqXHR, textStatus, errorThrown)
+		{
+			alert('Error al obtener datos.');
+		}
 	  });
 	});
 
+	// $('#categoria').change(function(e) {
+	//   var id_categoria = $('#categoria').val();
+	//   var id_concepto = $('#concepto').val();
+	//   $('#monto').empty();
+	//   $.ajax({
+	//  url: CFG.url + 'planillero/get_monto',
+	//  type: "POST",
+	//  cache: true,
+	//  data: {id_categoria: id_categoria, id_concepto:id_concepto},
+	//  success: function(data) {
+	//    var datos = $.parseJSON(data);
+	//    console.log(datos);
+	//    // console.log(datos.monto);
+	//    if (!$.isEmptyObject(datos)) {
+	//      // $('#monto').val(datos.monto.precio);
+	//      $('#id_monto').val(datos.monto.id_precioconcepto);
+	//    } else {
+	//      alert('El la categoria no tiene monto asignado.');
+	//    }
+	//  },
+	//  error: function (jqXHR, textStatus, errorThrown)
+	//  {
+	//      alert('Error al obtener datos.');
+	//  }
+	//   });
+	// });
 
 	$('#concepto').change(function(e) {
-	  var id_concepto = $('#concepto').val();
-	  console.log(id_concepto);
-	  switch (id_concepto){
-	  	case '3':
-	  		$('#motivo').empty();
-		 //  	$.get(CFG.url + 'planillero/get_motivo', function(data) {
-			// 	var datos = $.parseJSON(data);
-			// 	$('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
-			// 	$.each(datos.motivo, function(index, val) {
-			// 		$('#motivo').append('<option value="'+val.id_motivo+'">'+val.descripcion+'</option>');
-			// 	});
-			// });
+		var id_concepto = $('#concepto').val();
+		var id_categoria = $('#categoria').val();
+		var id_club = $('#club').val();
+		if (id_concepto == 7) {
+			$('#input_ocultar_mostrar').hide();
+		} else {
+			$('#input_ocultar_mostrar').show();
+		}
+		$.post('<?php echo base_url('planillero/get_valores') ?>',
+			{id_concepto: id_concepto, id_categoria: id_categoria, id_club: id_club}, 
+			function(data, textStatus, xhr) {
+				var sr = $.parseJSON(data);
+				// console.log(sr);
 
-			// estasmo insertadndo este codigo desde esta linea
-			$.post('<?php echo base_url('planillero/get_valores') ?>',
-				{id_concepto: id_concepto}, 
-				function(data, textStatus, xhr) {
-					var sr = $.parseJSON(data);
-					console.log(sr);
-					var textohtml = '';
-					$.each(sr, function(index, val) {
-						textohtml+=
-						'<label>'+
-							'<input id="motivo" name="motivo[]" value="'+val.id_motivo+'" type="checkbox" class="switchery" >'+
-							val.descripcion+
-						'</label><br>';
-					});
-					$('#switch_motivo').html(textohtml);
-				}
-			);
-			$('.cant_amarillas').html('');
-			break;
-		case '7':
-			$.get(CFG.url + 'planillero/get_cantidad_amarillas', function(data) {
-				var datos = $.parseJSON(data);
-				$('.cant_amarillas').html(datos.html);
-			});
-	  	default:
-	  		// $('#motivo').empty();
-	  		var valorhtml = '';
-		  	valorhtml += '<select class="form-control" id="motivo" name="motivo" style="width: 100%;">'+
-			  	'<option value="-1">Seleccionar motivo...</option>'+
-			  	'<option value="1">PAGO POR CONCEPTO</option>'+
-			'</select>';
-			$('#switch_motivo').html(valorhtml);
+				// textohtml='<div class="box box-success">'+
+				// 	'<div class="box-header">'+
+				// 		'<h3 class="box-title">Motivo</h3>'+
+				// 	'</div>'+
+				// 	'<div class="box-body">'+
+				// 		'<div class="form-group">';
+				// 	$.each(sr, function(index, val) {
+				// 		textohtml+=
+				// 		'<label>'+
+				// 		  '<input type="checkbox" name="motivo[]" value="'+val.id_precioconcepto+'" class="flat-red" checked> '+val.descripcion+' '+
+				// 		'</label><br>';
+				// 	});
+				// textohtml+='</div>'+
+				// 	'</div>'+
+				// '</div>';
 
-			// para limpiar el campo de amarillas 
-			$('.cant_amarillas').html('');
-		  	break;
-	  }
 
-	  // if (id_concepto != 3) {
-	  // 	$('#motivo').empty();
-	  // 	$('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
-	  // 	$('#motivo').append('<option value="1">PAGO POR CONCEPTO</option>');
-	  // } else {
-	  // 	$('#motivo').empty();
-	  // 	$.get(CFG.url + 'planillero/get_motivo', function(data) {
-			// 	var datos = $.parseJSON(data);
-			// 	$('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
-			// 	$.each(datos.motivo, function(index, val) {
-			// 		$('#motivo').append('<option value="'+val.id_motivo+'">'+val.descripcion+'</option>');
-			// 	});
-			// });
-	  // }
+				$('#switch_motivo').html(sr);
+			}
+		);
 	});
 
-	$('#categoria').change(function(e) {
-	  var id_categoria = $('#categoria').val();
-	  var id_concepto = $('#concepto').val();
-	  $('#monto').empty();
-	  $.ajax({
-	    url: CFG.url + 'planillero/get_monto',
-	    type: "POST",
-	    cache: true,
-	    data: {id_categoria: id_categoria, id_concepto:id_concepto},
-	    success: function(data) {
-	      var datos = $.parseJSON(data);
-	      console.log(datos);
-	      console.log(datos.monto);
-	      if (!$.isEmptyObject(datos)) {
-	      	$('#monto').val(datos.monto.precio);
-	      	$('#id_monto').val(datos.monto.id_precioconcepto);
-	      } else {
-	        alert('El la categoria no tiene monto asignado.');
-	      }
-	    },
-	    error: function (jqXHR, textStatus, errorThrown)
-	    {
-	        alert('Error al obtener datos.');
-	    }
-	  });
-	});
 
-	function pagar() {
+	// $('#concepto').change(function(e) {
+	//   var id_concepto = $('#concepto').val();
+	//   console.log(id_concepto);
+	//   switch (id_concepto){
+	//      case '3':
+	//          $('#motivo').empty();
+	//   //     $.get(CFG.url + 'planillero/get_motivo', function(data) {
+	//      //  var datos = $.parseJSON(data);
+	//      //  $('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
+	//      //  $.each(datos.motivo, function(index, val) {
+	//      //      $('#motivo').append('<option value="'+val.id_motivo+'">'+val.descripcion+'</option>');
+	//      //  });
+	//      // });
+
+	//      // estasmo insertadndo este codigo desde esta linea
+	//      $.post('<?php echo base_url('planillero/get_valores') ?>',
+	//          {id_concepto: id_concepto}, 
+	//          function(data, textStatus, xhr) {
+	//              var sr = $.parseJSON(data);
+	//              console.log(sr);
+	//              var textohtml = '';
+	//              $.each(sr, function(index, val) {
+	//                  textohtml+=
+	//                  '<label>'+
+	//                      '<input id="motivo" name="motivo[]" value="'+val.id_motivo+'" type="checkbox" class="switchery" >'+
+	//                      val.descripcion+
+	//                  '</label><br>';
+	//              });
+	//              $('#switch_motivo').html(textohtml);
+	//          }
+	//      );
+	//      $('.cant_amarillas').html('');
+	//      break;
+	//  case '7':
+	//      $.get(CFG.url + 'planillero/get_cantidad_amarillas', function(data) {
+	//          var datos = $.parseJSON(data);
+	//          $('.cant_amarillas').html(datos.html);
+	//      });
+	//      default:
+	//          // $('#motivo').empty();
+	//          var valorhtml = '';
+	//      valorhtml += '<select class="form-control" id="motivo" name="motivo" style="width: 100%;">'+
+	//          '<option value="-1">Seleccionar motivo...</option>'+
+	//          '<option value="1">PAGO POR CONCEPTO</option>'+
+	//      '</select>';
+	//      $('#switch_motivo').html(valorhtml);
+
+	//      // para limpiar el campo de amarillas 
+	//      $('.cant_amarillas').html('');
+	//      break;
+	//   }
+
+	//   // if (id_concepto != 3) {
+	//   //     $('#motivo').empty();
+	//   //     $('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
+	//   //     $('#motivo').append('<option value="1">PAGO POR CONCEPTO</option>');
+	//   // } else {
+	//   //     $('#motivo').empty();
+	//   //     $.get(CFG.url + 'planillero/get_motivo', function(data) {
+	//      //  var datos = $.parseJSON(data);
+	//      //  $('#motivo').append('<option value="-1">Seleccionar motivo...</option>');
+	//      //  $.each(datos.motivo, function(index, val) {
+	//      //      $('#motivo').append('<option value="'+val.id_motivo+'">'+val.descripcion+'</option>');
+	//      //  });
+	//      // });
+	//   // }
+	// });
+
+	
+
+	function pagar_concepto() {
 		$.ajax({
-	    url: CFG.url + 'planillero/pagar',
-	    type: "POST",
-	    cache: true,
-	    data: $("#form_pagos").serialize(),
-	    success: function(data) {
-	      var datos = $.parseJSON(data);
-	      if (datos.status) {
-	      	alert('datos guardados exitosamente.');
-	      }
-				$("#form_pagos")[0].reset();
-				// window.location.replace(CFG.url+"planillero/pagos");
-	    },
-	    error: function (jqXHR, textStatus, errorThrown)
-	    {
-	        alert('Error al obtener datos.');
-	    }
+		url: CFG.url + 'planillero/ajax_pagar_concepto',
+		type: "POST",
+		cache: true,
+		data: $("#form_pagos").serialize(),
+		success: function(data) {
+		  var datos = $.parseJSON(data);
+		  if (datos.status) {
+			alert('Datos guardados exitosamente.');
+		  }
+				// $("#form_pagos")[0].reset();
+		},
+		error: function (jqXHR, textStatus, errorThrown)
+		{
+			alert('Error al obtener datos.');
+		}
 	  });
 	}
+
+	///////////////////// pagos de concepto////////////////////////////////
+	function mostrar_amarillas_concepto(id_jugador, id_partido) {
+		// alert('message?: DOMString');
+		$.ajax({
+			url : CFG.url + 'planillero/list_yellow_cards/',
+			type: 'POST',
+			dataType: 'JSON',
+			data: {id_jugador: id_jugador, id_partido: id_partido},
+		})
+		.done(function(data) {
+			$('#amarillas').html(data);
+		})
+		.fail(function() {
+			console.log("Error al obtener las amarillas.");
+		});
+		
+	}
+
+	function update_yellow_player_conceto(argument) {
+		$.ajax({
+			url: CFG.url +"planillero/update_yellow",
+			type: "POST",
+			cache: false,
+			dataType: 'JSON',
+			data: new FormData($('#form_amarillas_jugador')[0]),
+			contentType: false,
+			processData: false,
+			success: function(data)
+			{
+				if(data.status) {
+					$('#modal-amarillas').modal('hide');
+				} else {
+					$('#modal-amarillas').modal('show');
+					alert('Debe seleccionar por lo menos una opción.');
+				}
+				// $('#modal-amarillas').modal('hide');
+			},
+			error: function (jqXHR, textStatus, errorThrown)
+			{
+				alert('Error al guardar paralelos.');
+				// $('#modal-amarillas').modal('hide');
+			}
+		});
+	}
+
+	function calcularPagoAmarilla() {
+		var tot = $('#monto_pagar');
+		tot.val(0);
+		$('.amarilla_check').each(function() {
+			if (!$(this).is(':disabled') ) {
+				if($(this).hasClass('amarilla_check')) {
+					tot.val(($(this).is(':checked') ? parseFloat($(this).attr('tu-attr-precio')) : 0) + parseFloat(tot.val()));  
+				}
+				else {
+					tot.val(parseFloat(tot.val()) + (isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val())));
+				}
+			}
+		});
+		var totalParts = parseFloat(tot.val()).toFixed(2).split('.');
+		tot.val(totalParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, "") + '.' +  (totalParts.length > 1 ? totalParts[1] : '00'));  
+	}
+
+	function update_yellow_player()
+	{
+		$.ajax({
+			url: CFG.url +"planillero/update_yellow",
+			type: "POST",
+			cache: false,
+			dataType: 'JSON',
+			data: new FormData($('#form_amarillas_jugador')[0]),
+			contentType: false,
+			processData: false,
+			success: function(data)
+			{
+				if(data.status) {
+					$('#modal-amarillas').modal('hide');
+				} else {
+					$('#modal-amarillas').modal('show');
+					alert('Debe seleccionar por lo menos una opción.');
+				}
+				// $('#modal-amarillas').modal('hide');
+			},
+			error: function (jqXHR, textStatus, errorThrown)
+			{
+				alert('Error al guardar paralelos.');
+				// $('#modal-amarillas').modal('hide');
+			}
+		});
+	}
+	///////////////////// pagos de concepto ////////////////////////////////
 
 
 </script>
