@@ -940,14 +940,26 @@ class Registro extends CI_Controller {
             $crud->set_subject('Precio');
             $crud->set_table('precio_concepto');
 
-            $crud->set_relation('id_cantidad','cantidad','{veces}');
-            $crud->display_as('id_cantidad','Cantidad');
+            // para mostrar la ordenacion de los campo en la lista 
+            $crud->columns('precio', 'id_categoria', 'id_concepto', 'id_motivo');
+            // ordenacion al añadir y al editar
+            $crud->fields('precio', 'id_categoria', 'id_concepto', 'id_motivo');
 
             $crud->set_relation('id_categoria','categoria','{nombre}');
             $crud->display_as('id_categoria','Categoria');
+            // $crud->add_fields('precio', 'id_categoria', 'id_concepto', 'id_motivo');
+            // $crud->edit_fields('precio', 'id_categoria', 'id_concepto', 'id_motivo');
+            // $crud->order_by('id_categoria','desc');
+
+
 
             $crud->set_relation('id_concepto','concepto','{nombre}');
             $crud->display_as('id_concepto','Concepto');
+
+            $crud->set_relation('id_motivo','motivo','{descripcion}');
+            $crud->display_as('id_motivo','Motivo');
+
+            $crud->required_fields('precio', 'id_categoria', 'id_concepto', 'id_motivo');
 
 
             $crud->unset_print();
