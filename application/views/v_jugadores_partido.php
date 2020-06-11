@@ -82,7 +82,9 @@
 				console.log(list_id.length);
 				if (ye==2) {
 					$(".player_g_"+id_jugador).prop('disabled', true);
-					// aniadir_accion(id_jugador, id_partido, 2);
+					$('.player_r_'+id_jugador+' :nth-child(1)').prop('selected', true);
+					$(".player_r_"+id_jugador).select2({});
+					aniadir_accion(id_jugador, id_partido, 2);
 				} else {
 					$(".player_g_"+id_jugador).prop('disabled', false);
 				}

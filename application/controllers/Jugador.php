@@ -181,16 +181,18 @@ class Jugador extends CI_Controller {
 
 
         // $equipos = $this->dbase->get_equipos();
-        $clubs = $this->dbase->get_clubs();
-        $id_club_actual_jugador = $this->dbase->get_club_actual($this->input->post('id_jugador'));
-        if (!isset($id_club_actual_jugador)) {
-            $club_actual_jugador = $this->db->get_where('club', array('id_club' => $id_club_actual_jugador->id_club_destino))->row()->nombre_club;
-        }
+        $club_actual_jugador = $this->dbase->get_club_actual($this->input->post('id_jugador'));
+        // print_r($club_actual_jugador->id_club);
+        // exit();
+        $clubs = $this->dbase->get_clubs($club_actual_jugador->id_club);
+        // if (!isset($id_club_actual_jugador)) {
+        //     $club_actual_jugador = $this->db->get_where('club', array('id_club' => $id_club_actual_jugador->id_club_destino))->row()->nombre_club;
+        // }
 
         // print_r($clubs);
 
-        print_r($club_actual_jugador);
-        exit();
+        // print_r($club_actual_jugador);
+        // exit();
 
         $jug_tr = '';
         $jug_tr .= '<table class="table table-bordered text-center">
@@ -214,7 +216,7 @@ class Jugador extends CI_Controller {
                   }
         $jug_tr .= '</tbody>
             </table>';
-        echo json_encode(array('jug_tr' => $jug_tr, 'id_club' => $id_club_actual_jugador->id_club_destino, 'equipo_actual' => $club_actual_jugador, 'clubs' => $clubs, 'id_jugador'=>$this->input->post('id_jugador')));
+        echo json_encode(array('jug_tr' => $jug_tr, 'equipo_actual' => $club_actual_jugador, 'clubs' => $clubs, 'id_jugador'=>$this->input->post('id_jugador')));
     }
 
     public function categorias()
@@ -235,22 +237,27 @@ class Jugador extends CI_Controller {
         $destino = $this->input->post('destino');
         $id_jugador = $this->input->post('id_jugador');
 
-        $dataTransferencia = array(
-            'fecha' => date("Y/m/d"),
-            'id_jugador' => $id_jugador,
-            'id_club' => $proviene,
-            'id_club_destino' => $destino,
-        );
+        if ($destino == -1) {
+            echo json_encode(array('status' => FALSE));
+        } else {
+            $dataTransferencia = array(
+                'fecha' => date("Y/m/d"),
+                'id_jugador' => $id_jugador,
+                'id_club' => $proviene,
+                'id_club_destino' => $destino,
+            );
 
-        $data = [
-            'id_equipo' => $destino,
-        ];
-        $this->dbase->update_inscripcionjugador($id_jugador, $proviene, $data);
-        // $this->dbase->update_inscripcionjugador(1, 9, $data);
+            $data = [
+                'id_equipo' => $destino,
+            ];
+            $this->dbase->update_inscripcionjugador($id_jugador, $proviene, $data);
+            // $this->dbase->update_inscripcionjugador(1, 9, $data);
 
-        $this->dbase->save_transferencia($dataTransferencia);
+            $this->dbase->save_transferencia($dataTransferencia);
 
-        echo json_encode(array('status' => TRUE));
+            echo json_encode(array('status' => TRUE));
+        }
+
     }
 
     /////////////////////////////////////////////////////////////

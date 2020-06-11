@@ -13,7 +13,7 @@ class Jugador_model extends MY_Model {
 		$this->order = array('id_jugador' => 'asc' );
 		$this->id = 'id_jugador';
 
-		$this->column_jugador = array('jugador.id_jugador', 'persona.id_persona', 'persona.nombres', 'persona.apellido_paterno', 'persona.apellido_materno', 'inscripcionjugador.posicion', 'nombre', 'club.nombre_club', 'jugador.estado');
+		$this->column_jugador = array('ij.dorsal', 'p.nombres', 'p.apellido_paterno', 'p.apellido_materno', 'ij.posicion', 'nombre_categoria', 'c.nombre_club', 'j.estado');
 		$this->order_jugador = array('id_jugador' => 'asc' );
 
 	}

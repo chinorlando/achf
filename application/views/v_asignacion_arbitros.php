@@ -88,7 +88,7 @@
 
               <div class="col-md-6">
                 <div class="form-group">
-                  <label>Árbitro Principal</label>
+                  <label>Cancha:</label>
                   <select class="form-control select2" name="cancha" id="cancha" style="width: 100%;">
                   </select>
                 </div>
@@ -134,7 +134,8 @@
 
   function add_arbitros(id_partido) {
     save_method = "add";
-    $("#form_arbitro")[0].reset(); // reset form on modals
+    // $("#form_arbitro")[0].reset(); // reset form on modals
+    limpiarFormulario()
     $(".form-group").removeClass("has-error"); // clear error class
     // $(".help-block").empty(); // clear error string
     $("#modal-arbitro").modal("show"); // show bootstrap modal when complete loaded
@@ -144,8 +145,18 @@
 
     $('#id_partido').val(id_partido);
 
-    // llenararbitros();
+  }
 
+  function limpiarFormulario() {
+    $(':input','#form_arbitro')
+      .not(':button, :submit, :reset, :hidden')
+      .val('')
+      .removeAttr('checked')
+      .removeAttr('selected');
+    $('[name="arbitro_principal"]').select2({});
+    $('[name="arbitro_asistente_1"]').select2({});
+    $('[name="arbitro_asistente_2"]').select2({});
+    $('[name="cancha"]').select2({});
   }
 
   function save() {
@@ -171,6 +182,7 @@
           //if success close modal and reload ajax table
           $("#modal-arbitro").modal("hide");
           // reload_table();
+          alert("Los datos han sido guardados.");
         } else {
           
         }
@@ -209,6 +221,7 @@
               if (j==0) {
                 console.log('estoy en el cero');
                 $('[name="arbitro_principal"]').val(data[i][j].id_arbitro);
+                // para que al editar quede seleccionado el elemento a editar
                 $('[name="arbitro_principal"]').select2({});
               }
               if (j==1) {

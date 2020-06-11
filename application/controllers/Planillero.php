@@ -1159,7 +1159,7 @@ class Planillero extends CI_Controller {
 
     public function get_clubs()
     {
-        $clubs = $this->dbase->get_clubs();
+        $clubs = $this->dbase->get_all_clubs();
         echo json_encode(array("status" => TRUE, 'clubs'=>$clubs));
     }
 

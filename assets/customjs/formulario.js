@@ -314,11 +314,11 @@ function view_trasferencia(id_jugador) {
         data: {id_jugador: id_jugador},
     })
     .done(function(date) {
-        // console.log(date);
+        console.log(date.equipo_actual.nombre_club);
         $('.transferencias').html(date.jug_tr);
         $('#modal_form').modal('show'); // show bootstrap modal
-        $('input[name=proviene]').val(date.id_club);
-        $('input[name=proviene_nombre]').val(date.equipo_actual);
+        $('input[name=proviene]').val(date.equipo_actual.id_club);
+        $('input[name=proviene_nombre]').val(date.equipo_actual.nombre_club);
         $('input[name=id_jugador]').val(date.id_jugador);
 
         $.each(date.clubs, function(index, val) {
@@ -378,8 +378,11 @@ $("body").on("submit", "#form_trasferencia", function(e){
                 alert('Los datos fueron guardados correctamente');
                   // $('#id_persona').val(d.persona.id_persona);
                   // $('#nombrereclamante').val(d.persona.nombres+' '+d.persona.apellidos);
+                table.ajax.reload()
+            } else {
+                $('#modal_form').modal('show');
+                alert('Debe llenar el campo Club destino.');
             }
-            table.ajax.reload()
         },
         error: function (jqXHR, textStatus, errorThrown){
             alert('Error al insertar los datos');
