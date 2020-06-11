@@ -506,10 +506,11 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
-    public function list_yc_by_player($id_jugador)
+    public function list_yc_by_player($id_jugador, $accion)
     {
         $this->db->from('resultado_partido');
         $this->db->where('id_jugador', $id_jugador);
+        $this->db->where('accion', $accion);
         $this->db->order_by('id_resultadopartido', 'asc');
         $query = $this->db->get();
         return $query->result();
@@ -627,6 +628,15 @@ class MY_Model extends CI_Model
                 where resultado_partido.id_partidos = ? and club.id_club = ? and resultado_partido.accion = 3";
         $query = $this->db->query($sql, array($id_partido, $equipo)); 
         return $query->result();
+    }
+
+    public function get_fin($id_partidos)
+    {
+        $this->db->from('partidos');
+        $this->db->where('id_partidos', $id_partidos);
+        $this->db->where('estado', 1);
+        $query = $this->db->get();
+        return $query->num_rows();
     }
 
     public function update_partido($id_partido)

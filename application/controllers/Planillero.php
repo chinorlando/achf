@@ -426,8 +426,12 @@ class Planillero extends CI_Controller {
                                 $cent .= '</thead>';
                                 $cent .= '<tbody>';
                             foreach ($partidos as $partido) {
+                                $fin = $this->dbase->get_fin($partido->id_partidos);
+                                $guion = ($fin == 1) ? '0' : '-' ;
+                                $color = ($fin == 1) ? 'bg-green disabled color-palette' : '' ;
+
                                 if ($partido->jornada == $i) {
-                                    $cent .= '<tr>';
+                                    $cent .= '<tr class="'.$color.'">';
                                         $cent .= '<td class="col-lg-2 text-left">'.$partido->fecha.'</td>';
                                         $cent .= '<td class="col-lg-4 text-right">'.$partido->local.'</td>';
                                         $e1 = $this->dbase->get_gol_equipo($partido->id_partidos, $partido->id_eq1);
@@ -436,9 +440,9 @@ class Planillero extends CI_Controller {
                                         // $e2 = $this->dbase->get_gol_equipo(2, $partido->id_eq2);
                                         // print_r($e2);
                                         // exit();
-
-                                        $e2 = ($e2[0]->gol== 0) ? '-' : $e2[0]->gol;
-                                        $e1 = ($e1[0]->gol== 0) ? '-' : $e1[0]->gol;
+                                        
+                                        $e2 = ($e2[0]->gol== 0) ? $guion : $e2[0]->gol;
+                                        $e1 = ($e1[0]->gol== 0) ? $guion : $e1[0]->gol;
                                         $cent .= '<td class="col-lg-1 text-center">'.$e2.'</td>';
                                         $cent .= '<td class="col-lg-1 text-center">VS</td>';
                                         $cent .= '<td class="col-lg-1 text-center">'.$e1.'</td>';
@@ -777,10 +781,18 @@ class Planillero extends CI_Controller {
                                 $html .='<td>'.$value->dorsal.'</td>';
                                 $html .='<td>'.$value->nombres.'</td>';
                                 $html .='<td>';
-                                    $amarillas = $this->dbase->list_yc_by_player($value->id_jugador);
+                                    $amarillas = $this->dbase->list_yc_by_player($value->id_jugador, 1);
                                     foreach ($amarillas as $amarilla) {
-                                        $checked = ($amarilla->pagado == 1) ? 'checked' : '' ;
-                                        $html .= '<input type="checkbox" class="flat-red" '.$checked.' disabled> ';
+                                        // pagado, no pagado
+                                        $p_np = ($amarilla->pagado == 1) ? 'P' : 'A' ;
+                                        // $html .= '<input type="checkbox" class="flat-red" '.$checked.' disabled> ';
+                                        $html .= '<small class="label bg-yellow">'.$p_np.'</small> ';
+                                    }
+                                    $rojas = $this->dbase->list_yc_by_player($value->id_jugador, 2);
+                                    foreach ($rojas as $roja) {
+                                        // $checked = ($amarilla->pagado == 1) ? 'checked' : '' ;
+                                        $html .= '<small class="label bg-red">R</small> ' ;
+                                        // $html .= '<span>&nbsp;</span>';
                                     }
                                 $html .='</td>';
                                 $html .='<td><a class="btn btn-sm btn-primary" title="Mostrar" onclick="mostrar_amarillas('.$value->id_jugador.','.$id_partido.')" data-toggle="modal" data-target="#modal-amarillas"><i class="glyphicon glyphicon-pencil"></i> Mostrar</a></td>';
@@ -808,7 +820,7 @@ class Planillero extends CI_Controller {
     {
         $id_jugador = $this->input->post('id_jugador');
         $id_partido = $this->input->post('id_partido');
-        $amarillas = $this->dbase->list_yc_by_player($id_jugador);
+        $amarillas = $this->dbase->list_yc_by_player($id_jugador, 1);
         
         // print_r($amarillas);
         // exit();
@@ -1231,7 +1243,7 @@ class Planillero extends CI_Controller {
                                     $textohtml .='<td>'.$value->dorsal.'</td>';
                                     $textohtml .='<td>'.$value->nombres.'</td>';
                                     $textohtml .='<td>';
-                                        $amarillas = $this->dbase->list_yc_by_player($value->id_jugador);
+                                        $amarillas = $this->dbase->list_yc_by_player($value->id_jugador, 1);
                                         foreach ($amarillas as $amarilla) {
                                             $checked = ($amarilla->pagado == 1) ? 'checked' : '' ;
                                             $textohtml .= '<input type="checkbox" class="flat-red" '.$checked.' disabled> ';
