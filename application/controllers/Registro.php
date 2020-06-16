@@ -53,7 +53,7 @@ class Registro extends CI_Controller {
     function personaCrud() {
         try {
             $crud = new grocery_CRUD();
-            $crud->set_theme('bootstrap');
+            // $crud->set_theme('bootstrap');
             $crud->set_subject('Persona');
             $crud->set_table('persona');
             $crud->columns('apellido_paterno','apellido_materno','nombres','fecha_nacimiento','celular','direccion','usuario','foto');

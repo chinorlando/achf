@@ -821,14 +821,17 @@ class Planillero extends CI_Controller {
         $id_jugador = $this->input->post('id_jugador');
         $id_partido = $this->input->post('id_partido');
         $amarillas = $this->dbase->list_yc_by_player($id_jugador, 1);
+
+        $id_categoria = $this->dbase->id_categoria_jugador($id_jugador)->id_categoria;
+
         
-        // print_r($amarillas);
+        // print_r($id_categoria);
         // exit();
 
         $html_y_c = '';
         $i = 1; 
-        $precio = 0;
-        $precio2 = 5;
+        // $precio = 0;
+        // $precio2 = 5;
         foreach ($amarillas as $amarilla) {
             if ($amarilla->pagado == 1) {
                 $checked = 'checked';
@@ -837,38 +840,51 @@ class Planillero extends CI_Controller {
                 $checked = '';
                 $disabled = '';
             }
-            if ($i >= 1 && $i <=4){
-                // if ($i-1 == ) $disabled = '';
-                $precio = $precio + 5;
-                // $html_y_c .= '<div class="form-group">
-                //   <label>
-                //     <input type="hidden" value="'.$id_jugador.'" name="jugador">
-                //     <input type="hidden" value="'.$id_partido.'" name="partido">';
-                //     $html_y_c .= '<input type="checkbox" tu-attr-precio="'.$precio.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> '.$i.'º amarilla
-                //   </label>
-                // </div>';
-                $html_y_c .= $this->agregarinput($precio, $id_jugador, $id_partido, $i, $checked, $disabled);
-            }
-            if ($i>=6 && $i<=9){
-                $precio2 = $precio2 + 5;
-                // $html_y_c .= '<div class="form-group">
-                //   <label>
-                //     <input type="hidden" value="'.$id_jugador.'" name="jugador">
-                //     <input type="hidden" value="'.$id_partido.'" name="partido">';
-                //     $html_y_c .= '<input type="checkbox" tu-attr-precio="'.$precio2.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> ' .$i.'º amarilla
-                //   </label>
-                // </div>';
-                $html_y_c .= $this->agregarinput($precio2, $id_jugador, $id_partido, $i, $checked, $disabled);
-            }
+
             if ($i == 5 || $i == 10){
-                $html_y_c .= '<div class="form-group">
-                  <label>
-                    <input type="hidden" value="'.$id_jugador.'" name="jugador">
-                    <input type="hidden" value="'.$id_partido.'" name="partido">
-                    <input type="checkbox" tu-attr-precio="0" nopaga="nopaga" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" checked disabled> ' .$i.'º amarilla
-                  </label>
-                </div>';
+                $checked = 'checked';
+                $disabled = 'disabled';
             }
+            
+
+            $precioconcepto = $this->dbase->get_precio_by_categoria_and_concepto($id_categoria, 7, $i);
+            // print_r($precioconcepto);
+            // exit();
+
+            $html_y_c .= $this->agregarinput($precioconcepto->precio, $id_jugador, $id_partido, $i, $checked, $disabled, $precioconcepto->id_precioconcepto);
+
+            // if ($i >= 1 && $i <=4){
+            //     // if ($i-1 == ) $disabled = '';
+            //     $precio = $precio + 5;
+            //     // $html_y_c .= '<div class="form-group">
+            //     //   <label>
+            //     //     <input type="hidden" value="'.$id_jugador.'" name="jugador">
+            //     //     <input type="hidden" value="'.$id_partido.'" name="partido">';
+            //     //     $html_y_c .= '<input type="checkbox" tu-attr-precio="'.$precio.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> '.$i.'º amarilla
+            //     //   </label>
+            //     // </div>';
+            //     $html_y_c .= $this->agregarinput($precio, $id_jugador, $id_partido, $i, $checked, $disabled);
+            // }
+            // if ($i>=6 && $i<=9){
+            //     $precio2 = $precio2 + 5;
+            //     // $html_y_c .= '<div class="form-group">
+            //     //   <label>
+            //     //     <input type="hidden" value="'.$id_jugador.'" name="jugador">
+            //     //     <input type="hidden" value="'.$id_partido.'" name="partido">';
+            //     //     $html_y_c .= '<input type="checkbox" tu-attr-precio="'.$precio2.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> ' .$i.'º amarilla
+            //     //   </label>
+            //     // </div>';
+            //     $html_y_c .= $this->agregarinput($precio2, $id_jugador, $id_partido, $i, $checked, $disabled);
+            // }
+            // if ($i == 5 || $i == 10){
+            //     $html_y_c .= '<div class="form-group">
+            //       <label>
+            //         <input type="hidden" value="'.$id_jugador.'" name="jugador">
+            //         <input type="hidden" value="'.$id_partido.'" name="partido">
+            //         <input type="checkbox" tu-attr-precio="0" nopaga="nopaga" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" checked disabled> ' .$i.'º amarilla
+            //       </label>
+            //     </div>';
+            // }
             $i++;
         }
         $html_y_c .= '<div class="input-group input-group-sm">
@@ -881,16 +897,18 @@ class Planillero extends CI_Controller {
         echo json_encode($html_y_c);
     }
 
-    public function agregarinput($precio, $id_jugador, $id_partido, $i, $checked, $disabled)
+    public function agregarinput($precio, $id_jugador, $id_partido, $i, $checked, $disabled, $id_precioconcepto)
     {
         $h = '<div class="form-group">
+          <input type="checkbox" value="'.$id_precioconcepto.'" name="precioconcepto[]" '.$disabled.' >
           <label>
             <input type="hidden" value="'.$id_jugador.'" name="jugador">
             <input type="hidden" value="'.$id_partido.'" name="partido">
-            <input type="checkbox" tu-attr-precio="'.$precio.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$i.'" '.$checked.' '.$disabled.'> '.$i.'º amarilla
+            <input type="checkbox" tu-attr-precio="'.$precio.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$precio.'" '.$checked.' '.$disabled.'> '.$i.'º amarilla
           </label>
         </div>';
         return $h;
+        // style="visibility: hidden;"
     }
 
     // public function agregacheckbox($amarillas, $id_partido)
@@ -940,27 +958,31 @@ class Planillero extends CI_Controller {
     {
         $id_jugador = $_POST['jugador'];
         $id_partidos = $_POST['partido'];
-        // $eso = $_POST['amarilla_check'];
-        $monto = $_POST['monto_pagar'];
-
+        $precioconcepto = $_POST['precioconcepto'];
+        // $monto = $_POST['monto_pagar'];
+        $i=0;
         if (!empty($_POST['amarilla_check'])) {
-            foreach($_POST['amarilla_check'] as $id_menu) {
+            foreach($_POST['amarilla_check'] as $monto) {
+
                 $datos = array(
                     'pagado' => 1,
                 );
                 $this->dbase->update_resultado_partido($id_jugador, $id_partidos, $datos); 
+
+                $datos = [
+                    'fecha' => date("Y-m-d"),
+                    'monto' => $monto,
+                    'descripcion' => '',
+                    'cantidad' => 1,
+                    'id_precioconcepto' => $precioconcepto[$i],
+                ];
+                $i++;
+
+                $this->dbase->save_pago_yellow($datos);
+
             }
-            $am_de_la_db = $this->dbase->lista_yellos_db();
-            $id_pc = $am_de_la_db[0]->id_precioconcepto;
-
-            $datos = [
-                'fecha' => date("Y-m-d"),
-                'monto' => $monto,
-                'id_precioconcepto' => $id_pc,
-                'descripcion' => json_encode($_POST['amarilla_check']),
-            ];
-
-            $this->dbase->save_pago_yellow($datos);
+            // $am_de_la_db = $this->dbase->lista_yellos_db();
+            // $id_pc = $am_de_la_db[0]->id_precioconcepto;
 
             echo json_encode(array("status" => TRUE, 'id_j' => $id_jugador, 'id_p' => $id_partidos));
         } else {
@@ -1223,10 +1245,49 @@ class Planillero extends CI_Controller {
             <div class="box-body">
                 <div class="form-group">';
         switch ($id_concepto) {
+            case 3:
+$textohtml .= '<div class="col-md-12">';
+  $textohtml .= '<div class="box">';
+    // $textohtml .= '<div class="box-header">';
+    //   $textohtml .= '<h3 class="box-title">Condensed Full Width Table</h3>';
+    // $textohtml .= '</div>';
+    $textohtml .= '<div class="box-body no-padding">';
+      $textohtml .= '<table class="table table-condensed">';
+        $textohtml .= '<tr>';
+          $textohtml .= '<th>Descripción</th>';
+          $textohtml .= '<th>Precio</th>';
+          $textohtml .= '<th>Cantidad</th>';
+          $textohtml .= '<th>Total parcial</th>';
+        $textohtml .= '</tr>';
+
+    foreach ($motivos as $val) {
+        
+        $textohtml .= '<tr>';
+          $textohtml .= '<td>'.$val->descripcion.'</td>';
+          $textohtml .= '<td>'.$val->precio.'</td>';
+          $textohtml .= '<td>
+                            <div class="input-group">
+                                <input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]">
+                                <span class="input-group-addon">
+                                  <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$val->precio.'" value="'.$val->precio.'" class="flat-red concepto_valores">
+                                </span>
+                                <input type="number" min="1" class="form-control cantidad_num" name="cantidad[]" value="1" disabled>
+                            </div>
+                        </td>';
+          $textohtml .= '<td><span class="badge bg-red">0</span></td>';
+        $textohtml .= '</tr>';
+    }
+
+      $textohtml .= '</table>';
+    $textohtml .= '</div>';
+  $textohtml .= '</div>';
+$textohtml .= '</div>';
+                break;
+
             case 7:
                 $players_y = $this->dbase->list_jugadoresby_clubequipo($id_club);
                 $textohtml .= '<div class="col-md-12">';
-                    $textohtml .= '<div class="box">';
+                    $textohtml .= '<div class="box box-warning">';
                         $textohtml .='<div class="box-header">';
                             $textohtml .='<h3 class="box-title">Tarjetas amarilla</h3>';
                         $textohtml .='</div>';
@@ -1267,9 +1328,11 @@ class Planillero extends CI_Controller {
             default:
                 foreach ($motivos as $val) {
                     $textohtml.=
-                    '<label>
+                    '<input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]">
+                    <label>
+                      <input type="hidden" name="cantidad[]" value="1">
                       <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$val->precio.'" value="'.$val->precio.'" class="flat-red monto_motivo"> '  .$val->descripcion.
-                     '</label><br>';
+                    '</label><br>';
                 }
                 break;
         }
@@ -1299,28 +1362,46 @@ class Planillero extends CI_Controller {
 
     public function ajax_pagar_concepto()
     {
+
+        // print_r($_POST['precioconcepto']);
+        // print_r($_POST['cantidad']);
+        // print_r($_POST['check_monto']);
+        // exit();
+
+
         // $id_club = $this->input->post('club');
-        $id_concepto = $this->input->post('concepto');
-        $id_categoria = $this->input->post('categoria');
+        // $id_concepto = $this->input->post('concepto');
+        // $id_categoria = $this->input->post('categoria');
+        // print_r($id_concepto);
+        // exit();
+        
 
-        $monto = $this->input->post('precio_motivo_total');
-        $id_motivo = $this->input->post('motivo');
+        // $monto = $this->input->post('precio_motivo_total');
+        // $id_motivo = $this->input->post('motivo');
 
-        if (isset($_POST['check_monto'])) {
-            $am_de_la_db = $this->dbase->lista_yellos_db_pago_concepto($id_categoria, $id_concepto);
-            $id_pc = $am_de_la_db[0]->id_precioconcepto;
-            
-            $datos= [
-                'fecha' => date("Y-m-d"),
-                'monto' => $monto,
-                'descripcion' => json_encode($_POST['check_monto']),
-                'id_precioconcepto' => $id_pc,
-            ];
+        $precioconcepto = $_POST['precioconcepto'];
+        $cantidad = $_POST['cantidad'];
 
-            // print_r($datos);
-            // exit();
-            // ya hay una funcion en el modelo save_pago_yellow() que hace los mismo borrar uno
-            $this->dbase->save_pago($datos);
+
+        if (isset($_POST['precioconcepto'])) {
+            if (isset($_POST['check_monto'])) {
+                $i=0;
+                foreach($_POST['check_monto'] as $monto) {
+                    $datos= [
+                        'fecha' => date("Y-m-d"),
+                        'monto' => $monto * $cantidad[$i],
+                        'descripcion' => '',
+                        'cantidad' => $cantidad[$i],
+                        'id_precioconcepto' => $precioconcepto[$i],
+                    ];
+                    // print_r($datos);
+                    // exit();
+                    // ya hay una funcion en el modelo save_pago_yellow() que hace los mismo borrar uno
+                    $this->dbase->save_pago($datos);
+                    $i++;
+                }
+                
+            }
             echo json_encode(array("status" => TRUE));
         } else {
             echo json_encode(array("status" => FALSE));

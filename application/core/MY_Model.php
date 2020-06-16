@@ -506,6 +506,26 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
+    public function id_categoria_jugador($id_jugador)
+    {
+        $sql = 'select c.id_categoria from inscripcionjugador i 
+            join equipo e on  e.id_equipo  = i.id_equipo 
+            join categoria c on c.id_categoria = e.id_categoria
+            where i.id_jugador = ?';
+        $query = $this->db->query($sql, array($id_jugador));
+        return $query->row();
+    }
+
+    public function get_precio_by_categoria_and_concepto($id_categoria, $id_concepto, $i)
+    {
+        $sql = 'select * from precio_concepto pc
+            join motivo m on m.id_motivo = pc.id_motivo 
+            where pc.id_categoria = ? and pc.id_concepto = ? and m.descripcion = "'.$i.' AMARILLA"';
+        $query = $this->db->query($sql, array($id_categoria, $id_concepto));
+        return $query->row();
+    }
+
+
     public function list_yc_by_player($id_jugador, $accion)
     {
         $this->db->from('resultado_partido');
@@ -516,15 +536,16 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
-    public function lista_yellos_db()
-    {
-        $sql = 'select  * from precio_concepto pc
-            join categoria on categoria.id_categoria = pc.id_categoria
-            join motivo on motivo.id_motivo = pc.id_motivo 
-            where categoria.id_categoria = ? and pc.id_concepto = ?';
-        $query = $this->db->query($sql, array(1, 7)); 
-        return $query->result();
-    }
+    // ya no necesitamos este metodo
+    // public function lista_yellos_db()
+    // {
+    //     $sql = 'select  * from precio_concepto pc
+    //         join categoria on categoria.id_categoria = pc.id_categoria
+    //         join motivo on motivo.id_motivo = pc.id_motivo 
+    //         where categoria.id_categoria = ? and pc.id_concepto = ?';
+    //     $query = $this->db->query($sql, array(1, 7)); 
+    //     return $query->result();
+    // }
 
     public function lista_yellos_db_pago_concepto($id_categoria, $id_concepto)
     {
@@ -840,7 +861,7 @@ join jugador j on j.id_jugador = ij.id_jugador
 join club c on c.id_club = e.id_club
 join persona p on p.id_persona = j.id_persona
 join resultado_partido rp on rp.id_jugador = j.id_jugador 
-where c.id_club = 1 and rp.accion = 1
+where c.id_club = ? and rp.accion = 1
 group by j.id_jugador, rp.id_partidos, ij.dorsal";
         $query = $this->db->query($sql, array($id_club));
         return $query->result();

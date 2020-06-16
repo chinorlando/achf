@@ -140,12 +140,20 @@
 	});
 
 
+	// pago de amarillas desde el planillero, desde el partido
 	function calcularPagoAmarilla() {
 		var tot = $('#monto_pagar');
 		tot.val(0);
 		$('.amarilla_check').each(function() {
 			if (!$(this).is(':disabled') ) {
 				if($(this).hasClass('amarilla_check')) {
+					// para el check habilitar o deshabilitar al pagar amarilla
+					if($(this).is(':checked')){
+						$(this).parent().prev().prop('checked', 'true');
+					} else {
+						$(this).parent().prev().removeAttr('checked');
+					}
+
 					tot.val(($(this).is(':checked') ? parseFloat($(this).attr('tu-attr-precio')) : 0) + parseFloat(tot.val()));  
 				}
 				else {
@@ -243,11 +251,12 @@
 					$('#modal-amarillas').modal('show');
 					alert('Debe seleccionar por lo menos una opción.');
 				}
+				// aqui debemos actualizar los datos 
 				// $('#modal-amarillas').modal('hide');
 			},
 			error: function (jqXHR, textStatus, errorThrown)
 			{
-				alert('Error al guardar paralelos.');
+				alert('Error al guardar datos.');
 				// $('#modal-amarillas').modal('hide');
 			}
 		});

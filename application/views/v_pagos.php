@@ -150,6 +150,48 @@
 			calcularMotivoConcepto();
 		});
 
+		// la opcion 3 para valores 
+		$(document).on('click keyup','.concepto_valores',function() {
+			calcularMotivoconceptoValores();
+		});
+		$(document).on('change','.concepto_valores',function() {
+			calcularMotivoconceptoValores();
+		});
+		// $('.concepto_valores').change(function(e) {
+		// 	alert('change');
+		// });
+
+		// $('.concepto_valores').click(function(){
+		// 	alert('click');
+		// });
+		// $('#cantidad_concepto').keypress(function( event ) {
+		//   if ( event.which == 38 ) {
+		//      event.preventDefault();
+		//      alert('arriba');
+		//   }
+		//   if ( event.which == 40 ) {
+		//      event.preventDefault();
+		//      alert('abajo');
+		//   }
+		//   if ( event.which == 13 ) {
+		//      event.preventDefault();
+		//      alert('enter');
+		//   }
+		// });
+
+		$(".cantidad_num").keydown(function(e) {
+             
+            //13 es el código de la tecla
+            if(e.which == 38) {
+                  alert('Has pulsado enter!');
+            }
+ 
+      	});
+
+      	$(document).on('click keyup','.cantidad_num',function() {
+			calcularMotivoconceptoValores();
+		});
+
 
 
 		
@@ -157,12 +199,64 @@
 
 	});
 
+	function calcularMotivoconceptoValores(argument) {
+		var tot = $('#precio_motivo_total');
+		tot.val(0);
+		$('.concepto_valores').each(function() {
+			if (!$(this).is(':disabled') ) {
+				// m_p ->ubicamos el input cantidad, val_inp_cant-> valor del imput cantidad, ->rp- resultado total de cada elemento seleccionado, 
+				var m_p = $(this).parent().parent().parent().next().children();
+				var val_inp_cant = parseFloat($(this).parent().next().val());
+				var rp = parseFloat($(this).attr('tu-attr-precio')) * val_inp_cant;
+				if (isNaN(rp)) {
+					m_p.text('0');
+				} else {
+					m_p.text(rp);
+				}
+				
+				if($(this).hasClass('concepto_valores')) {
+					
+					$(this).is(':checked') ? parseFloat(rp) : 0;
+					if ($(this).is(':checked')) {
+						valor_multiplicado = parseFloat(rp);
+						$(this).parent().next().removeAttr('disabled');
+
+						// checkbox oculto
+						$(this).parent().prev().prop('checked', 'true');
+
+					} else {
+						valor_multiplicado = 0;
+						m_p.text('0');
+						$(this).parent().next().attr('disabled', 'true');
+
+						// checkbox oculto
+						$(this).parent().prev().removeAttr('checked');
+
+					}
+					tot.val((valor_multiplicado) + parseFloat(tot.val()));  
+				}
+				else {
+					tot.val(parseFloat(tot.val()) + (isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val())));
+				}
+			} else {
+				$(this).parent().next().removeAttr('disabled')
+			}
+		});
+		var totalParts = parseFloat(tot.val()).toFixed(2).split('.');
+		tot.val(totalParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, "") + '.' +  (totalParts.length > 1 ? totalParts[1] : '00'));  
+	}
+
 	function calcularMotivoConcepto(argument) {
 		var tot = $('#precio_motivo_total');
 		tot.val(0);
 		$('.monto_motivo').each(function() {
 			if (!$(this).is(':disabled') ) {
 				if($(this).hasClass('monto_motivo')) {
+					if($(this).is(':checked')){
+						$(this).parent().prev().prop('checked', 'true');
+					} else {
+						$(this).parent().prev().removeAttr('checked');
+					}
 					tot.val(($(this).is(':checked') ? parseFloat($(this).attr('tu-attr-precio')) : 0) + parseFloat(tot.val()));  
 				}
 				else {
@@ -251,6 +345,7 @@
 	// });
 
 	$('#concepto').change(function(e) {
+		$('#precio_motivo_total').val('0.00');
 		var id_concepto = $('#concepto').val();
 		var id_categoria = $('#categoria').val();
 		var id_club = $('#club').val();
@@ -264,24 +359,6 @@
 			function(data, textStatus, xhr) {
 				var sr = $.parseJSON(data);
 				// console.log(sr);
-
-				// textohtml='<div class="box box-success">'+
-				// 	'<div class="box-header">'+
-				// 		'<h3 class="box-title">Motivo</h3>'+
-				// 	'</div>'+
-				// 	'<div class="box-body">'+
-				// 		'<div class="form-group">';
-				// 	$.each(sr, function(index, val) {
-				// 		textohtml+=
-				// 		'<label>'+
-				// 		  '<input type="checkbox" name="motivo[]" value="'+val.id_precioconcepto+'" class="flat-red" checked> '+val.descripcion+' '+
-				// 		'</label><br>';
-				// 	});
-				// textohtml+='</div>'+
-				// 	'</div>'+
-				// '</div>';
-
-
 				$('#switch_motivo').html(sr);
 			}
 		);
@@ -368,12 +445,13 @@
 		  var datos = $.parseJSON(data);
 		  if (datos.status) {
 			alert('Datos guardados exitosamente.');
+		  } else {
+		  	alert('Debe seleccionar por lo menos una opción.')
 		  }
-				// $("#form_pagos")[0].reset();
 		},
 		error: function (jqXHR, textStatus, errorThrown)
 		{
-			alert('Error al obtener datos.');
+			alert('Error al guardar datos.');
 		}
 	  });
 	}
@@ -423,12 +501,20 @@
 		});
 	}
 
+	// funcion que se llama desde el pagos de conceptos 
 	function calcularPagoAmarilla() {
 		var tot = $('#monto_pagar');
 		tot.val(0);
 		$('.amarilla_check').each(function() {
 			if (!$(this).is(':disabled') ) {
 				if($(this).hasClass('amarilla_check')) {
+					// para el check habilitar o deshabilitar al pagar amarilla
+					if($(this).is(':checked')){
+						$(this).parent().prev().prop('checked', 'true');
+					} else {
+						$(this).parent().prev().removeAttr('checked');
+					}
+
 					tot.val(($(this).is(':checked') ? parseFloat($(this).attr('tu-attr-precio')) : 0) + parseFloat(tot.val()));  
 				}
 				else {
