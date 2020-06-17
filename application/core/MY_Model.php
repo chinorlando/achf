@@ -424,12 +424,13 @@ class MY_Model extends CI_Model
         $this->db->update('torneosorteado', $data);
     }
 
-    public function save_partido($e1, $e2, $i)
+    public function save_partido($e1, $e2, $i, $id_torneo)
     {
         $data = array(
             'id_inscripcion1' => $e1,
             'id_inscripcion2' => $e2,
             'jornada' => $i,
+            'id_torneo' => $id_torneo,
             // 'id_inscripcion1' => date("Y-m-d H:i:s"),
         );
         // print_r($data);
@@ -853,6 +854,16 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
+    public function get_idtorneo_by_club_categoria($id_club, $id_categoria)
+    {
+        $sql = "select t.id_torneo from inscripcionequipo i 
+            join torneo t on t.id_torneo = i.id_torneo
+            join categoria c on c.id_categoria = t.id_categoria 
+            where t.estado = 0 and i.id_club = ? and t.id_categoria = ?";
+        $query = $this->db->query($sql, array($id_club, $id_categoria));
+        return $query->row();
+    }
+
     public function list_jugadoresby_clubequipo($id_club)
     {
         $sql = "select j.id_jugador, rp.id_partidos, ij.dorsal, p.nombres, p.apellido_paterno, p.apellido_materno from equipo e 
@@ -867,6 +878,11 @@ group by j.id_jugador, rp.id_partidos, ij.dorsal";
         return $query->result();
     }
 
+    public function insert_montogeneral($datosmontogeneral)
+    {
+        $this->db->insert('pagogeneral', $datosmontogeneral);
+        return $this->db->insert_id();
+    }
 
     public function save_pago_yellow($datos)
     {

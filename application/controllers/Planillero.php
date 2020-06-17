@@ -344,7 +344,7 @@ class Planillero extends CI_Controller {
     {
         // print_r(self::$equipos);
         //     exit();
-        
+        $torneo = $this->input->post('id_torneo');
         for ($intRow=2; $intRow <= $NumPlayers; $intRow++) { 
             for ($intCol=1; $intCol <= $intRow-1; $intCol++) {
                 
@@ -353,7 +353,7 @@ class Planillero extends CI_Controller {
                     $strFixture2 = self::$Equipo[$intCol];
                     $e1 = self::$bolo[$intRow];
                     $e2 = self::$bolo[$intCol];
-                    $this->dbase->save_partido($e1, $e2, self::$i);
+                    $this->dbase->save_partido($e1, $e2, self::$i, $torneo);
                     self::$FechaLibre[$intRow] = 2;
                     self::$FechaLibre[$intCol] = 2;
                     $partido[] = array($strFixture1,$strFixture2);
@@ -489,9 +489,16 @@ class Planillero extends CI_Controller {
             $ena = "";
         } else {
             $ena = "disabled";
-            $cent .= '<div class="callout callout-warning ">
-              <h4>Partido Finalizado</h4>
-            </div>';
+            $cent .= '<div class="row">
+                <div class="col-md-12">
+                    <div class="box-header with-border">
+                        <div class="callout callout-warning ">
+                          <h4>Partido Finalizado</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>'
+            ;
         }
 
         foreach ($equipos as $key => $equipo) {
@@ -648,8 +655,14 @@ class Planillero extends CI_Controller {
           $cent .= '</div>';
           $cent .= '</div>';
         }
-        $cent .= '<button '.$ena.' class="btn btn-success" onclick="finalizar_partido('.$id_partido.','.$id_e1.','.$id_e2.')"><i class="glyphicon glyphicon-plus"></i> Finalizar Partido</button>';
+        
         $cent .= '</div>';
+
+        $cent .= '<div class="row">';
+            $cent .= '<div class="col-md-12">';
+                $cent .= '<button '.$ena.' class="btn btn-success" onclick="finalizar_partido('.$id_partido.','.$id_e1.','.$id_e2.')"><i class="glyphicon glyphicon-ok"></i>  Finalizar Partido</button>';
+            $cent .= '</div>';
+        $cent .= '</div> <br>';
 
         $amarillas = $this->rojas_amarillas($id_partido, $id_e1, $id_e2);
 
@@ -762,6 +775,7 @@ class Planillero extends CI_Controller {
         $players = [$players_y_1, $players_y_2];
 
         $html = '';
+        $html .= '<div class="row">';
         foreach ($players as $players_y) {
             $html .= '<div class="col-md-6">';
                 $html .= '<div class="box">';
@@ -803,6 +817,7 @@ class Planillero extends CI_Controller {
                 $html .='</div>';
             $html .='</div>';
         }
+        $html .='</div>';
 
         return $html;
 
@@ -832,6 +847,14 @@ class Planillero extends CI_Controller {
         $i = 1; 
         // $precio = 0;
         // $precio2 = 5;
+        $id_torneo = $this->db->get_where(
+            'partidos', array(
+                'id_partidos' => $id_partido,
+            )
+        )->row()->id_torneo;
+
+        $html_y_c .= '<input type="text" name="id_torneo" id="id_torneo" value="'.$id_torneo.'" style="display:none;">';
+
         foreach ($amarillas as $amarilla) {
             if ($amarilla->pagado == 1) {
                 $checked = 'checked';
@@ -954,14 +977,28 @@ class Planillero extends CI_Controller {
     //     return $html_y_c;
     // }
 
+
+    // // pago de amarillas desde el planillero
     public function update_yellow()
     {
-        $id_jugador = $_POST['jugador'];
-        $id_partidos = $_POST['partido'];
-        $precioconcepto = $_POST['precioconcepto'];
-        // $monto = $_POST['monto_pagar'];
-        $i=0;
         if (!empty($_POST['amarilla_check'])) {
+            $i=0;
+            $id_jugador = $_POST['jugador'];
+            $id_partidos = $_POST['partido'];
+            $precioconcepto = $_POST['precioconcepto'];
+            $id_torneo = $_POST['id_torneo'];
+            $montototal = $_POST['monto_pagar'];
+
+            // $id_iscripcionequipo = $this->dbase->get_inscripcionequipo($id_jugador);
+
+            $datosmontogeneral = [
+                'fecha' => date("Y-m-d"),
+                'montototal' => $montototal,
+                'observacion' => '',
+                'id_torneo' => $id_torneo,
+            ];
+            $id_pagogeneral = $this->dbase->insert_montogeneral($datosmontogeneral);
+
             foreach($_POST['amarilla_check'] as $monto) {
 
                 $datos = array(
@@ -969,21 +1006,16 @@ class Planillero extends CI_Controller {
                 );
                 $this->dbase->update_resultado_partido($id_jugador, $id_partidos, $datos); 
 
-                $datos = [
-                    'fecha' => date("Y-m-d"),
+                $pago = [
                     'monto' => $monto,
-                    'descripcion' => '',
                     'cantidad' => 1,
                     'id_precioconcepto' => $precioconcepto[$i],
+                    'id_pagogeneral' => $id_pagogeneral,
                 ];
+                $this->dbase->save_pago_yellow($pago);
+
                 $i++;
-
-                $this->dbase->save_pago_yellow($datos);
-
             }
-            // $am_de_la_db = $this->dbase->lista_yellos_db();
-            // $id_pc = $am_de_la_db[0]->id_precioconcepto;
-
             echo json_encode(array("status" => TRUE, 'id_j' => $id_jugador, 'id_p' => $id_partidos));
         } else {
             echo json_encode(array("status" => FALSE));
@@ -1238,12 +1270,19 @@ class Planillero extends CI_Controller {
         // print_r($motivos);
         // exit();
 
+        $torneo = $this->dbase->get_idtorneo_by_club_categoria($id_club, $id_categoria);
+        // print_r($torneo);
+        // exit();
+
         $textohtml = '<div class="box box-success">
             <div class="box-header">
                 <h3 class="box-title">Motivo por el que se paga</h3>
             </div>
             <div class="box-body">
                 <div class="form-group">';
+        
+        $textohtml.='<input type="hidden" name="id_torneo" value="'.$torneo->id_torneo.'">';
+
         switch ($id_concepto) {
             case 3:
 $textohtml .= '<div class="col-md-12">';
@@ -1376,28 +1415,41 @@ $textohtml .= '</div>';
         // exit();
         
 
-        // $monto = $this->input->post('precio_motivo_total');
-        // $id_motivo = $this->input->post('motivo');
-
-        $precioconcepto = $_POST['precioconcepto'];
-        $cantidad = $_POST['cantidad'];
 
 
         if (isset($_POST['precioconcepto'])) {
             if (isset($_POST['check_monto'])) {
                 $i=0;
+                $montototal = $this->input->post('precio_motivo_total');
+                $id_torneo = $this->input->post('id_torneo');
+                $id_motivo = $this->input->post('motivo');
+
+                $precioconcepto = $_POST['precioconcepto'];
+                $cantidad = $_POST['cantidad'];
+
+                $datosmontogeneral = [
+                    'fecha' => date("Y-m-d"),
+                    'montototal' => $montototal,
+                    'observacion' => '',
+                    'id_torneo' => $id_torneo,
+                ];
+                $id_pagogeneral = $this->dbase->insert_montogeneral($datosmontogeneral);
+                // print_r($datosmontogeneral);
+
                 foreach($_POST['check_monto'] as $monto) {
                     $datos= [
-                        'fecha' => date("Y-m-d"),
+                        // 'fecha' => date("Y-m-d"),
                         'monto' => $monto * $cantidad[$i],
-                        'descripcion' => '',
+                        // 'descripcion' => '',
                         'cantidad' => $cantidad[$i],
                         'id_precioconcepto' => $precioconcepto[$i],
+                        'id_pagogeneral' => $id_pagogeneral,
                     ];
                     // print_r($datos);
                     // exit();
+
                     // ya hay una funcion en el modelo save_pago_yellow() que hace los mismo borrar uno
-                    $this->dbase->save_pago($datos);
+                    // $this->dbase->save_pago($datos);
                     $i++;
                 }
                 

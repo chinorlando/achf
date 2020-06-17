@@ -149,6 +149,28 @@ update table partidos(
 	fecha date->datetime
 );
 
+CREATE TABLE partidos (
+	id_partidos int AUTO_INCREMENT PRIMARY KEY
+	id_planillero int(11) NOT NULL,
+	id_inscripcion1 int(11) NOT NULL,
+	id_inscripcion2 int(11) NOT NULL,
+	jornada int(11) NOT NULL,
+	id_estadio int(11) NOT NULL,
+	fecha datetime DEFAULT NULL,
+	observaciones varchar(350) COLLATE utf8_spanish_ci DEFAULT NULL,
+	estado int(11) DEFAULT NULL,
+
+	id_torneo int not null,
+
+ --  	constraint fk_partidos_planilleo foreign key (id_planillero) references planillero(id_planiller),
+	-- constraint fk_partidos_ foreign key (id_) references (id_),
+ --    constraint fk_partidos_ foreign key (id_) references (id_)
+ --    constraint fk_partidos_ foreign key (id_) references (id_)
+ --    constraint fk_partidos_ foreign key (id_) references (id_)
+ --    constraint fk_partidos_ foreign key (id_) references (id_)
+ --    constraint fk_partidos_ foreign key (id_) references (id_)
+)
+
 create table accion(
 	id_accion int AUTO_INCREMENT PRIMARY KEY
 	accion varchar(10)
@@ -226,13 +248,14 @@ create table precio_concepto(
 -- pago 
 create table pago(
 	id_pago int PRIMARY KEY AUTO_INCREMENT,
-	fecha date not null,
+	-- fecha date not null, -- -
 	monto float not null,
-	descripcion text null,
-	id_precioconcepto int, -- +
-	-- id_motivo int,
-	constraint fk_pago_precioconcepto foreign key(id_precioconcepto) references precio_concepto(id_precioconcepto)
-	-- constraint fk_pago_motivo foreign key (id_motivo) references motivo(id_motivo)
+	-- descripcion text null, -- -
+	cantidad int not null, -- +
+	id_precioconcepto int not null, -- +
+	id_pagogeneral int not null, -- +
+	constraint fk_pago_precioconcepto foreign key(id_precioconcepto) references precio_concepto(id_precioconcepto),
+	constraint fk_pago_pagogeneral foreign key (id_pagogeneral) references pagogeneral(id_pagogeneral)
 );
 
 
@@ -306,6 +329,19 @@ update table jugador(
 
 drop table motivo;
 
+-- pago total de los conceptos por torneo
+create table pagogeneral(
+	id_pagogeneral int AUTO_INCREMENT PRIMARY KEY,
+	fecha date not null,
+	montototal float not null,
+	observacion text null,
+	id_inscripcionequipo int not null,
+
+	constraint fk_pagogeneral_inscripcionequipo foreign key(id_inscripcionequipo) references inscripcionequipo(id_inscripcionequipo)
+);
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////
 - cambiar en la tabla transacciones el id_inscripcion por id_inscripcionequipo
@@ -316,7 +352,7 @@ drop table motivo;
 - eliminar tabla campeonadonato
 - eliminar tabla jornada
 - debemos eliminar el menú Equipos --> primero verificar 
--> hecho al hacer la transferencia habra actualizar la tabla inscripcion jugador
+-> hecho ->al hacer la transferencia habra actualizar la tabla inscripcion jugador
 ////////////////////////////////////////////////////////////////////////////
 
 
