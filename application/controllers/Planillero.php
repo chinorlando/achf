@@ -479,13 +479,18 @@ class Planillero extends CI_Controller {
                                         // print_r($e2);
                                         // exit();
                                         
-                                        $e2 = ($e2[0]->gol== 0) ? $guion : $e2[0]->gol;
                                         $e1 = ($e1[0]->gol== 0) ? $guion : $e1[0]->gol;
-                                        $cent .= '<td class="col-lg-1 text-center">'.$e2.'</td>';
-                                        $cent .= '<td class="col-lg-1 text-center">VS</td>';
+                                        $e2 = ($e2[0]->gol== 0) ? $guion : $e2[0]->gol;
                                         $cent .= '<td class="col-lg-1 text-center">'.$e1.'</td>';
+                                        $cent .= '<td class="col-lg-1 text-center">VS</td>';
+                                        $cent .= '<td class="col-lg-1 text-center">'.$e2.'</td>';
                                         $cent .= '<td class="col-lg-4">'.$partido->visitante.'</td>';
-                                        $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gopartido/'.$partido->id_partidos.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">entrar</a></td>';
+                                        if ($this->uri->segment(2) == 'habilitacion') {
+                                            $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gohabilitacion/'.$partido->id_partidos.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">Habilitación</a></td>';
+                                        } else {
+                                            $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gopartido/'.$partido->id_partidos.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">Entrar</a></td>';
+                                        }
+                                        
                                         // $cent .= '<th class="col-lg-1"><a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Ver" onclick="go_to_match('.$partido->id_partidos.'/'.$partido->id_eq1.','.$partido->id_eq2.')"><i class="glyphicon glyphicon-pencil"></i> Ver</a></th>';
                                     $cent .= '</tr>';
                                 }
@@ -1720,8 +1725,150 @@ $textohtml .= '</div>';
 
     ///////////////////// pagos end ///////////////////////
 
-    ///////////////////// pagos end ///////////////////////
-    ///////////////////// pagos end ///////////////////////
+    ///////////////////// habilitacion de jugadores para el partido begin ///////////////////////
+    function habilitacion()
+    {
+        $opcion = 'Habilitación de jugadores para el partido.';
+        $data = array(
+            'opcion'            => $opcion,
+            'controllerajax'    => 'planillero',
+            'titulo_navegation' => $this->window->titulo_navegacion('Empresa',$opcion),
+            'rol_partidos'      => $this->rol_part(),
+        );
+        $data['vista']  = 'v_habilitaciones';
+        $this->load->view('plantilla/header');
+        $this->load->view($data['vista'],$data);
+        $this->load->view('plantilla/footer');
+    }
+
+    public function gohabilitacion($id_partido, $id_e1, $id_e2)
+    {
+        $jugad_equi1 = $this->dbase->get_jugadores_por_equipo($id_e1);
+        $jugad_equi2 = $this->dbase->get_jugadores_por_equipo($id_e2);
+        // print_r('<pre>');
+        // print_r($jugad_equi1);
+        // // print_r($jugad_equi1[0]->id_club);
+        // exit();
+        $equipos = [$jugad_equi1, $jugad_equi2];
+        $cent = '';
+        // $cent = '<div class="row partido_vs">';
+
+        // $nombre_club = $this->dbase->get_nombre_club();
+        $estado = $this->db->get_where('partidos', array(
+            'id_partidos' => $id_partido,
+        ))->row()->estado;
+
+        // print_r($estado);
+        // exit();
+
+
+
+        if ($estado == 0 || $estado == null) {
+            $ena = "";
+        } else {
+            $ena = "disabled";
+            $cent .= '<div class="row">
+                <div class="col-md-12">
+                    <div class="box-header with-border">
+                        <div class="callout callout-warning ">
+                          <h4>Partido Finalizado</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>'
+            ;
+        }
+
+        foreach ($equipos as $key => $equipo) {
+        //     print_r('<pre>');
+        // print_r();
+        // exit();
+
+            $cent .= '<div class="col-md-6">';
+            $cent .= '<div class="box box-info">';
+            $cent .= '<div class="box-header with-border">';
+              $cent .= '<h3 class="box-title">'.$this->dbase->get_nombre_club($equipo[0]->id_club)->nombre_club.'</h3>';
+
+              $cent .= '<div class="box-tools pull-right">';
+                $cent .= '<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>';
+                $cent .= '</button>';
+                $cent .= '<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>';
+              $cent .= '</div>';
+            $cent .= '</div>';
+            $cent .= '<div class="box-body">';
+              $cent .= '<div class="table-responsive">';
+                $cent .= '<table class="table no-margin">';
+                  $cent .= '<thead>';
+                  $cent .= '<tr>';
+                    $cent .= '<th>Dorsal</th>';
+                    $cent .= '<th>Posicion</th>';
+                    $cent .= '<th>Nombre</th>';
+                    $cent .= '<th>Habilitado</th>';
+                    // $cent .= '<th>Goles</th>';
+                  $cent .= '</tr>';
+                  $cent .= '</thead>';
+                  $cent .= '<tbody>';
+                  foreach ($equipo as $value) {
+                    // print_r('<pre>');
+                    // print_r($value->id_jugador);
+                    // exit();
+                    $jugador = $this->db->get_where('jugador', array(
+                        'id_jugador' => $value->id_jugador,
+                    ))->row()->id_persona;
+                    $persona = $this->db->get_where('persona', array(
+                        'id_persona' => $jugador,
+                    ))->row();
+
+                      $cent .= '<tr>';
+                        $cent .= '<td><a href="pages/examples/invoice.html">'.$value->dorsal.'</a></td>';
+                        $cent .= '<td>'.$value->posicion.'</td>';
+                        $cent .= '<td>'.$persona->apellido_paterno.' '.$persona->apellido_materno.', '.$persona->nombres.'</td>';
+                        $cant = $this->dbase->verificar_habilitado($id_partido, $value->id_jugador);
+                        $checked = ($cant > 0) ? 'checked' : '' ;
+                        $cent .= '<td><input class="playered" type="checkbox" name="jugador" id_par="'.$id_partido.'" id_jug="'.$value->id_jugador.'" value="'.$value->id_jugador.'" '.$checked.'></td>';
+                      $cent .= '</tr>';
+                  }
+                  
+                  $cent .= '</tbody>';
+                $cent .= '</table>';
+              $cent .= '</div>';
+            $cent .= '</div>';
+            $cent .= '<div class="box-footer clearfix">';
+              // $cent .= '<a href="javascript:void(0)" class="btn btn-sm btn-info btn-flat pull-left">Place New Order</a>';
+            $cent .= '</div>';
+          $cent .= '</div>';
+          $cent .= '</div>';
+        }
+        
+        $cent .= '</div>';
+
+
+        $data['vista']  = 'v_jugador_habilitacion';
+        $data['jugadores_equipo'] = $cent;
+        $this->load->view('plantilla/header');
+        $this->load->view($data['vista'],$data);
+        $this->load->view('plantilla/footer');
+    }
+
+    // verificamos si el jugador ya ha sido habilitado para el partido
+    public function verifica_habilitado_jugador()
+    {
+        $id_partido = $this->input->post('id_partido');
+        $id_jugador = $this->input->post('id_jugador');
+        $cant = $this->dbase->verificar_habilitado($id_partido, $id_jugador);
+        if ($cant > 0) {
+            $this->dbase->eliminar_habilitacion($id_partido, $id_jugador);
+        } else {
+            $data = [
+                'id_jugador' => $id_jugador,
+                'id_partidos' => $id_partido,
+            ];
+            $this->dbase->guardar_habilitacion($data);
+        }
+        
+        echo json_encode(array('status'=>TRUE));
+    }
+    ///////////////////// habilitacion de jugadores para el partido end  ///////////////////////
 
 
 

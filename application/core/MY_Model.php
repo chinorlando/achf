@@ -813,7 +813,7 @@ class MY_Model extends CI_Model
         $sql = 'select count(*) as gol
             from resultado_partido
             join inscripcionjugador on inscripcionjugador.id_jugador = resultado_partido.id_jugador
-            join inscripcionequipo e on e.id_inscripcionequipo = inscripcionjugador.id_inscripcionjugador
+            join inscripcionequipo e on e.id_inscripcionequipo = inscripcionjugador.id_inscripcionequipo
             join club on club.id_club = e.id_club
             where resultado_partido.id_partidos = ? and club.id_club = ? and resultado_partido.accion = 3';
         $query = $this->db->query($sql,array($id_partidos, $id_e)); 
@@ -1047,11 +1047,28 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
-
-    public function get_yellow_red()
+    ///////////////////// habilitacion de jugadores para el partido end  ///////////////////////
+    public function verificar_habilitado($id_partido, $id_jugador)
     {
-        
+        $this->db->from('habilitado');
+        $this->db->where('id_partidos', $id_partido);
+        $this->db->where('id_jugador', $id_jugador);
+        $query = $this->db->get();
+        return $query->num_rows();
     }
+
+    public function eliminar_habilitacion($id_partido, $id_jugador)
+    {
+        $this->db->where('id_jugador', $id_jugador);
+        $this->db->where('id_partidos', $id_partido);
+        $this->db->delete('habilitado');
+    }
+
+    public function guardar_habilitacion($data)
+    {
+        $this->db->insert('habilitado', $data);
+    }
+    ///////////////////// habilitacion de jugadores para el partido end  ///////////////////////
 
 
 
