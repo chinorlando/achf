@@ -1743,8 +1743,8 @@ $textohtml .= '</div>';
 
     public function gohabilitacion($id_partido, $id_e1, $id_e2)
     {
-        $jugad_equi1 = $this->dbase->get_jugadores_por_equipo($id_e1);
-        $jugad_equi2 = $this->dbase->get_jugadores_por_equipo($id_e2);
+        $jugad_equi1 = $this->dbase->get_jugadores_por_equipo($id_e1, $id_partido);
+        $jugad_equi2 = $this->dbase->get_jugadores_por_equipo($id_e2, $id_partido);
         // print_r('<pre>');
         // print_r($jugad_equi1);
         // // print_r($jugad_equi1[0]->id_club);
