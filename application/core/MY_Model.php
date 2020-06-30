@@ -180,7 +180,7 @@ class MY_Model extends CI_Model
         // $this->db->join('persona p', 'p.id_persona = j.id_persona');
         // $this->db->join('categoria ct', 'ct.id_categoria = e.id_categoria');
 
-        $this->db->select('j.id_jugador, ij.dorsal, p.nombres, p.apellido_paterno, p.apellido_materno, p.foto, ij.posicion, ct.nombre as nombre_categoria, c.nombre_club as nombre_club, j.estado');
+        $this->db->select('j.id_jugador, ij.dorsal, p.nombres, p.apellido_paterno, p.apellido_materno, p.foto, ij.posicion, ct.nombre as nombre_categoria, c.nombre_club as nombre_club, j.estado, p.fecha_nacimiento, j.c_i, j.n_registro_fbf, p.sexo, p.nacionalidad');
         $this->db->from('inscripcionjugador ij');
         $this->db->join('inscripcionequipo e', 'e.id_inscripcionequipo = ij.id_inscripcionequipo');
         $this->db->join('club c', 'c.id_club = e.id_club');
@@ -534,7 +534,7 @@ class MY_Model extends CI_Model
             join inscripcionjugador on inscripcionjugador.id_jugador = rp.id_jugador 
             join jugador on jugador.id_jugador = rp.id_jugador 
             join persona on persona.id_persona = jugador.id_persona 
-            where accion = 1 and pagado = 0 and rp.id_partidos = ? and inscripcionjugador.id_equipo = ?
+            where accion = 1 and pagado = 0 and rp.id_partidos = ? and inscripcionjugador.id_inscripcionequipo = ?
             group BY rp.id_jugador, inscripcionjugador.dorsal, persona.nombres, persona.apellido_paterno, persona.apellido_materno";
 
         $query = $this->db->query($sql, array($id_partido, $id_e)); 
@@ -982,6 +982,11 @@ class MY_Model extends CI_Model
         $this->db->where('id_club', $id_club);
         $query = $this->db->get();
         return $query->row();
+
+        // $sql = 'select id_inscripcionequipo from inscripcionequipo i 
+        //     where id_torneo = ? and id_categoria = ? and id_club = ?';
+        // $query = $this->db->query($sql, array($id_torneo, $id_categoria, $id_club));
+        // return $query->result();
     }
 
     public function update_transferencia($id_club, $id_jugador, $preconc, $datostrasnf)
@@ -1027,7 +1032,7 @@ class MY_Model extends CI_Model
 
         $sql = 'select t.id_torneo, c.id_categoria, c.nombre, count(i.id_torneo) as inscritos
             FROM inscripcionequipo i, torneo t, categoria c
-            where t.id_torneo = i.id_torneo and i.id_categoria = c.id_categoria and t.estado = 1
+            where t.id_torneo = i.id_torneo and i.id_categoria = c.id_categoria and t.estado = 0
             GROUP BY c.nombre, t.id_torneo
             HAVING COUNT(i.id_torneo) >=4';
         $query = $this->db->query($sql); 

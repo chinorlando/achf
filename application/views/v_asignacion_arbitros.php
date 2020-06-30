@@ -80,6 +80,14 @@
 
               <div class="col-md-6">
                 <div class="form-group">
+                  <label>Asistente 3</label>
+                  <select class="form-control select2" name="arbitro_asistente_3" id="arbitro_asistente_3" style="width: 100%;">
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
                   <label>Planillero</label>
                   <select class="form-control select2" name="planillero" id="planillero" style="width: 100%;">
                   </select>
@@ -156,6 +164,7 @@
     $('[name="arbitro_principal"]').select2({});
     $('[name="arbitro_asistente_1"]').select2({});
     $('[name="arbitro_asistente_2"]').select2({});
+    $('[name="arbitro_asistente_3"]').select2({});
     $('[name="cancha"]').select2({});
   }
 
@@ -234,6 +243,11 @@
                 $('[name="arbitro_asistente_2"]').val(data[i][j].id_arbitro);
                 $('[name="arbitro_asistente_2"]').select2({});
               }
+              if (j==3) {
+                console.log('estoy en el tres');
+                $('[name="arbitro_asistente_3"]').val(data[i][j].id_arbitro);
+                $('[name="arbitro_asistente_3"]').select2({});
+              }
             }
           }
         }
@@ -271,7 +285,7 @@
 
   function llenararbitros() {
     $.post(CFG.url + 'planillero/get_arbitro', {
-      tipo_arbitro: "REFEREE 1",
+      tipo_arbitro: "ARBITRO FIFA",
     },function(data, textStatus, xhr) {
         var tr = $.parseJSON(data);
         // console.log(tr.arbitro);
@@ -285,7 +299,7 @@
     );
 
     $.post(CFG.url + 'planillero/get_arbitro', {
-      tipo_arbitro: "ASISTENTE 1",
+      tipo_arbitro: "ASISTENTE ARBITRO FIFA",
     },function(data, textStatus, xhr) {
         var tr = $.parseJSON(data);
         // console.log(tr.arbitro);
@@ -299,13 +313,27 @@
     );
 
     $.post(CFG.url + 'planillero/get_arbitro', {
-      tipo_arbitro: "ASISTENTE 2",
+      tipo_arbitro: "ASISTENTE ARBITRO FIFA",
     },function(data, textStatus, xhr) {
         var tr = $.parseJSON(data);
         // console.log(tr.arbitro);
         $('#arbitro_asistente_2').append('<option value="-1">Seleccionar...</option>');
         $.each(tr.arbitro, function(index, val) {
           $("#arbitro_asistente_2").append(
+            '<option value="' + val.id_arbitro + '">' + val.nombres + ' ' + val.apellido_paterno + ' ' + val.apellido_materno + '</option>'
+          );
+        });
+      }
+    );
+
+    $.post(CFG.url + 'planillero/get_arbitro', {
+      tipo_arbitro: "ASISTENTE ARBITRO FIFA",
+    },function(data, textStatus, xhr) {
+        var tr = $.parseJSON(data);
+        // console.log(tr.arbitro);
+        $('#arbitro_asistente_3').append('<option value="-1">Seleccionar...</option>');
+        $.each(tr.arbitro, function(index, val) {
+          $("#arbitro_asistente_3").append(
             '<option value="' + val.id_arbitro + '">' + val.nombres + ' ' + val.apellido_paterno + ' ' + val.apellido_materno + '</option>'
           );
         });

@@ -35,15 +35,16 @@
                 <table id="table" class="table table-striped mb-none ">
                     <thead>
                         <tr>
-                            <th>Nro.</th>
+                            <th>#</th>
                             <th>Nombres</th>
-                            <th>Apellido Paterno</th>
-                            <th>Apellido Materno</th>
-                            <th>Posicion</th>
-                            <th>Categoría</th>
-                            <!-- <th>Equipo</th> -->
-                            <!-- <th>Estado</th> -->
+                            <th>F. Nacimiento</th>
+                            <th>CI</th>
+                            <th>Nº FBF</th>
                             <th>Foto</th>
+                            <th>Sexo</th>
+                            <th>Nacionalidad</th>
+                            <th>Club</th>
+                            <th>Estado</th>
                             <th>Opciones</th>
                         </tr>
                     </thead> 

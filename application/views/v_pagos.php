@@ -89,12 +89,14 @@
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title">Default Modal</h4>
+					<h4 class="modal-title">Amarillas</h4>
 				</div>
 				<?php echo form_open("#", array('id'=>'form_amarillas_jugador', "method"=>"POST")); ?>
 				<div class="modal-body">
 					<div id="amarillas"></div>
 				</div>
+				<input type="hidden" id="categoria_c" name="categoria_c">
+				<input type="hidden" id="club_c" name="club_c">
 			</form>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
@@ -458,12 +460,15 @@
 
 	///////////////////// pagos de concepto////////////////////////////////
 	function mostrar_amarillas_concepto(id_jugador, id_partido) {
-		// alert('message?: DOMString');
+		id_club = $('#club').val();
+		id_categoria = $('#categoria').val();
+		$('#categoria_c').val(id_categoria);
+		$('#club_c').val(id_club);
 		$.ajax({
 			url : CFG.url + 'planillero/list_yellow_cards/',
 			type: 'POST',
 			dataType: 'JSON',
-			data: {id_jugador: id_jugador, id_partido: id_partido},
+			data: {id_jugador: id_jugador, id_partido: id_partido, id_club: id_club, id_categoria:id_categoria},
 		})
 		.done(function(data) {
 			$('#amarillas').html(data);

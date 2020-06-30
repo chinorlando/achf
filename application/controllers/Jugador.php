@@ -51,17 +51,19 @@ class Jugador extends CI_Controller {
             $row = array();
 
             $row[] = $no;
-            // $row[] = $d->id_persona;
-            $row[] = $d->nombres;
-            $row[] = $d->apellido_paterno;
-            $row[] = $d->apellido_materno;
-            $row[] = $d->posicion;
-            $row[] = $d->nombre_categoria;
-            // $row[] = $d->nombre_club;
+            $row[] = $d->nombres.' '.$d->apellido_paterno.' '.$d->apellido_materno;
+            $row[] = $d->fecha_nacimiento;
+            $row[] = $d->c_i;
+            $row[] = $d->n_registro_fbf;
             if($d->foto)
                 $row[] = '<a href="'.base_url('upload/'.$d->foto).'" target="_blank"><img src="'.base_url('upload/'.$d->foto).'" class="img-responsive" /></a>';
             else
                 $row[] = '(Sin foto)';
+            $row[] = ($d->sexo=='M')? 'Masculino':'Femenino';
+            $row[] = $d->nacionalidad;
+            $row[] = $d->nombre_club;
+            $row[] = ($d->estado==1)? 'Activo':'Inactivo';
+            // $row[] = $d->nombre_categoria;
 
             // $row[] = ($d->estado==1)? 'Activo':'Inactivo';
 

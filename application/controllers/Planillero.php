@@ -49,7 +49,7 @@ class Planillero extends CI_Controller {
     public function get_torneo_activo()
     {
         $id_torneo = $this->db->get_where('torneo', array(
-                'estado' => 1,
+                'estado' => 0,
             ))->row()->id_torneo;
         return $id_torneo;
     }
@@ -1024,16 +1024,29 @@ class Planillero extends CI_Controller {
             $id_jugador = $_POST['jugador'];
             $id_partidos = $_POST['partido'];
             $precioconcepto = $_POST['precioconcepto'];
-            $id_torneo = $_POST['id_torneo'];
+            // $id_torneo = $_POST['id_torneo'];
+            $id_torneo = $this->get_torneo_activo();
             $montototal = $_POST['monto_pagar'];
 
-            // $id_iscripcionequipo = $this->dbase->get_inscripcionequipo($id_jugador);
+            $id_categoria = $this->input->post('categoria_c');
+            $id_club = $this->input->post('club_c');
+
+            // print_r($id_torneo);
+            // print_r($id_categoria);
+            // print_r($id_club);
+
+            // exit();
+
+            $id_inscripcionequipo = $this->dbase->get_inscripcionequipo($id_torneo, $id_categoria, $id_club)->id_inscripcionequipo;
+
+            // print_r($id_inscripcionequipo);
+            // exit();
 
             $datosmontogeneral = [
                 'fecha' => date("Y-m-d"),
                 'montototal' => $montototal,
                 'observacion' => '',
-                'id_torneo' => $id_torneo,
+                'id_inscripcionequipo' => $id_inscripcionequipo,
             ];
             $id_pagogeneral = $this->dbase->insert_montogeneral($datosmontogeneral);
 
@@ -1174,6 +1187,7 @@ class Planillero extends CI_Controller {
         $arb_pri = $this->input->post('arbitro_principal');
         $arb_as1 = $this->input->post('arbitro_asistente_1');
         $arb_as2 = $this->input->post('arbitro_asistente_2');
+        $arb_as3 = $this->input->post('arbitro_asistente_3');
         $id_cancha = $this->input->post('cancha');
         $fecha_partido = $this->input->post('fecha_hora_partido');
         $id_partido = $this->input->post('id_partido');
@@ -1181,6 +1195,7 @@ class Planillero extends CI_Controller {
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_pri]);
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as1]);
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as2]);
+        $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as3]);
 
         $datos = [
             'id_planillero' => $this->input->post('planillero'),
@@ -1217,6 +1232,7 @@ class Planillero extends CI_Controller {
         $arb_pri = $this->input->post('arbitro_principal');
         $arb_as1 = $this->input->post('arbitro_asistente_1');
         $arb_as2 = $this->input->post('arbitro_asistente_2');
+        $arb_as3 = $this->input->post('arbitro_asistente_3');
         $id_partido = $this->input->post('id_partido');
         $plani = $this->input->post('planillero');
 
@@ -1238,6 +1254,7 @@ class Planillero extends CI_Controller {
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_pri]);
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as1]);
         $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as2]);
+        $this->dbase->save_arbitro(['id_partidos'=>$id_partido, 'id_arbitro'=>$arb_as3]);
 
         $this->dbase->update_planillero($id_partido, $datos);
 
@@ -1638,7 +1655,8 @@ $textohtml .= '</div>';
                 $i=0;
                 $j=0;
                 $montototal = $this->input->post('precio_motivo_total');
-                $id_torneo = $this->input->post('id_torneo');
+                // $id_torneo = $this->input->post('id_torneo');
+                $id_torneo = $this->get_torneo_activo();
                 $id_motivo = $this->input->post('motivo');
                 
                 $id_categoria = $this->input->post('categoria');
