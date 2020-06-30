@@ -226,7 +226,7 @@
                             <div class="form-group">
                                 <label class="control-label col-md-3">Contraseña</label>
                                 <div class="col-md-9">
-                                    <input name="password" placeholder="Contraseña" class="form-control" type="text">
+                                    <input name="password" placeholder="Contraseña" class="form-control" type="password">
                                     <span class="help-block"></span>
                                 </div>
                             </div>

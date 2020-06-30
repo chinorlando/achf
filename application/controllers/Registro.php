@@ -46,6 +46,46 @@ class Registro extends CI_Controller {
     }
     //------------------ Fin Modulo Cargo ----------------------------------------
 
+    //------------------ Modulo Usuario // cambiar contraseña ----------------------------------------
+    function usuario(){
+        $this->_viewOutPut('usuarioCrud');
+    }
+    function usuarioCrud() {
+        try {
+            $crud = new grocery_CRUD();
+            // $crud->set_theme('bootstrap');
+            $crud->set_subject('Persona');
+            $crud->set_table('persona');
+            $crud->columns('apellido_paterno','apellido_materno','nombres','fecha_nacimiento','celular','direccion','foto');
+            $crud->display_as('ci','CI');       
+            $crud->set_rules('email', 'Email', 'trim|valid_email|max_length[255]');
+            $crud->set_rules('nombres', 'Nombre(s)', 'trim|callback_alpha_dash_space');
+            $crud->set_rules('apellido_paterno', 'apellido_paterno', 'trim|callback_alpha_dash_space');
+            $crud->set_rules('apellido_materno', 'apellido_paterno', 'trim|callback_alpha_dash_space');
+            $crud->required_fields('usuario','password');
+
+
+            $crud->set_field_upload('foto','upload');
+            $crud->callback_before_upload(array($this,'image_callback_before_upload'));
+
+            $crud->edit_fields(array('usuario','password'));
+
+            $crud->change_field_type('password', 'password');
+            $crud->callback_before_insert(array($this,'encrypt_password'));
+            $crud->callback_before_update(array($this,'encrypt_password'));
+
+            $crud->unset_print();
+            $crud->unset_add();
+            $crud->unset_read();
+            $crud->unset_export();
+            $output = $crud->render();
+            $this->__salida_output($output);
+        } catch (Exception $e) {
+            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        }
+    }
+    // ------------------fin cambiar usuario y contraseña ----------------------
+
     //------------------ Modulo Persona ----------------------------------------
     function persona(){
         $this->_viewOutPut('personaCrud');
@@ -56,13 +96,13 @@ class Registro extends CI_Controller {
             // $crud->set_theme('bootstrap');
             $crud->set_subject('Persona');
             $crud->set_table('persona');
-            $crud->columns('apellido_paterno','apellido_materno','nombres','fecha_nacimiento','celular','direccion','usuario','foto');
+            $crud->columns('apellido_paterno','apellido_materno','nombres','fecha_nacimiento','celular','direccion','foto');
             $crud->display_as('ci','CI');       
             $crud->set_rules('email', 'Email', 'trim|valid_email|max_length[255]');
             $crud->set_rules('nombres', 'Nombre(s)', 'trim|callback_alpha_dash_space');
             $crud->set_rules('apellido_paterno', 'apellido_paterno', 'trim|callback_alpha_dash_space');
             $crud->set_rules('apellido_materno', 'apellido_paterno', 'trim|callback_alpha_dash_space');
-            $crud->required_fields('nombres','apellido_paterno','email','ci','fecha_nacimiento','direccion','foto');
+            $crud->required_fields('nombres','apellido_paterno','email','ci','fecha_nacimiento','direccion', 'sexo', 'nacionalidad');
 
             $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi',
                 'Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));
@@ -73,11 +113,18 @@ class Registro extends CI_Controller {
             $crud->callback_before_upload(array($this,'image_callback_before_upload'));
             $crud->order_by('id_persona','desc');
 
-            $crud->change_field_type('password', 'password');
-            $crud->callback_before_insert(array($this,'encrypt_password'));
-            $crud->callback_before_update(array($this,'encrypt_password'));
+            $crud->edit_fields(array('apellido_paterno','apellido_materno','nombres', 'foto','telefono','celular','direccion','ciudad','fecha_nacimiento','sexo','profesion','nacionalidad','email'));
+            $crud->add_fields(array('apellido_paterno','apellido_materno','nombres', 'foto','telefono','celular','direccion','ciudad','fecha_nacimiento','sexo','profesion','nacionalidad','email'));
+
+            // $crud->callback_edit_field('password',array($this,'set_password_input_to_empty'));
+            // $crud->callback_add_field('password',array($this,'set_password_input_to_empty'));
+            
+            // $crud->change_field_type('password', 'password');
+            // $crud->callback_before_insert(array($this,'encrypt_password'));
+            // $crud->callback_before_update(array($this,'encrypt_password'));
 
             $crud->unset_print();
+            $crud->unset_read();
             $crud->unset_export();
             $output = $crud->render();
             $this->__salida_output($output);
@@ -110,6 +157,9 @@ class Registro extends CI_Controller {
     function alpha_dash_space($str)
     {
         return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
+    }
+    function set_password_input_to_empty() {
+        return "<input type='password' name='password' value='' />";
     }
     //------------------ Fin Modulo persona ----------------------------------------
      

@@ -121,7 +121,7 @@ class Jugador extends CI_Controller {
             'nacionalidad'     => $this->input->post('nacionalidad'),
             'email'            => $this->input->post('email'),
             'usuario'          => $this->input->post('usuario'),
-            'password'         => $this->input->post('password'),
+            'password'         => sha1($this->input->post('password')),
         ); 
        
         return $data;
