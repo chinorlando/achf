@@ -57,8 +57,13 @@ class Jugador extends CI_Controller {
             $row[] = $d->apellido_materno;
             $row[] = $d->posicion;
             $row[] = $d->nombre_categoria;
-            $row[] = $d->nombre_club;
-            $row[] = ($d->estado==1)? 'Activo':'Inactivo';
+            // $row[] = $d->nombre_club;
+            if($d->foto)
+                $row[] = '<a href="'.base_url('upload/'.$d->foto).'" target="_blank"><img src="'.base_url('upload/'.$d->foto).'" class="img-responsive" /></a>';
+            else
+                $row[] = '(Sin foto)';
+
+            // $row[] = ($d->estado==1)? 'Activo':'Inactivo';
 
             if ($title == 'Transferencia') {
                 $row[] = ' <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="view_trasferencia('.$d->id_jugador.')">
@@ -89,8 +94,8 @@ class Jugador extends CI_Controller {
 
         $output = array(
             "draw" => $_POST['draw'],
-            "recordsTotal" => $this->dbase->count_all(),
-            "recordsFiltered" => $this->dbase->count_filtered(),
+            "recordsTotal" => $this->dbase->count_all_ju(),
+            "recordsFiltered" => $this->dbase->count_filtered_ju(),
             "data" => $data,
         );
         echo json_encode($output);
@@ -98,31 +103,50 @@ class Jugador extends CI_Controller {
 
      public function post_data()
     {
+        // datos de persona
         $data = array(
-                'n_registro_fbf'   => $this->input->post('n_registro_fbf'),
-                'nombres'          => $this->input->post('nombres'),
-                'apellido_paterno' => $this->input->post('apellido_paterno'),
-                'apellido_materno' => $this->input->post('apellido_materno'),
-                'categoria'        => $this->input->post('categoria'),
-                'lfpb_asociacion_liga_provincial' => $this->input->post('lfpb_asociacion_liga_provincial'),
-                'nacionalidad'     => $this->input->post('nacionalidad'),
-                'estado_civil'     => $this->input->post('estado_civil'),
-                'ciudad'           => $this->input->post('ciudad'),
-                'fecha_nacimiento' => $this->input->post('fecha_nacimiento'),
-                'foto'             => $this->input->post('foto'),
-                'nombre_padre'     => $this->input->post('nombre_padre'),
-                'nombre_madre'     => $this->input->post('nombre_madre'),
-                'edad'             => $this->input->post('edad'),
-                'c_i'              => $this->input->post('c_i'),
-                'sexo'             => $this->input->post('sexo'),
-                'domicilio'        => $this->input->post('domicilio'),
-                'procede_del_club' => $this->input->post('procede_del_club'),
-                'posicion'         => $this->input->post('posicion'),
-                'estatura'         => $this->input->post('estatura'),
-                'peso'             => $this->input->post('peso'),
-                'estado'           => $this->input->post('estado'),
-            );
+            'nombres'          => $this->input->post('nombres'),
+            'apellido_paterno' => $this->input->post('apellido_paterno'),
+            'apellido_materno' => $this->input->post('apellido_materno'),
+            'foto'             => $this->input->post('foto'),
+            'telefono'         => $this->input->post('telefono'),
+            'celular'          => $this->input->post('celular'),
+            'direccion'        => $this->input->post('direccion'),
+            'ciudad'           => $this->input->post('ciudad'),
+            'fecha_nacimiento' => $this->input->post('fecha_nacimiento'),
+            'sexo'             => $this->input->post('sexo'),
+            'profesion'        => $this->input->post('profesion'),
+            'nacionalidad'     => $this->input->post('nacionalidad'),
+            'email'            => $this->input->post('email'),
+            'usuario'          => $this->input->post('usuario'),
+            'password'         => $this->input->post('password'),
+        ); 
        
+        return $data;
+    }
+
+    public function post_data_jugador()
+    {
+        $data = array(
+            'n_registro_fbf'   => $this->input->post('n_registro_fbf'),
+            'lfpb_asociacion_liga_provincial' => $this->input->post('lfpb_asociacion_liga_provincial'),
+            'nombre_padre'     => $this->input->post('nombre_padre'),
+            'nombre_madre'     => $this->input->post('nombre_madre'),
+            'estado_civil'     => $this->input->post('estado_civil'),
+            'c_i'              => $this->input->post('c_i'),
+            'estatura'         => $this->input->post('estatura'),
+            'cont_amarilla'    => $this->input->post('cont_amarilla'),
+            'estado'           => $this->input->post('estado'),
+
+            // 'n_registro_fbf'   => $this->input->post('n_registro_fbf'),
+            // 'categoria'        => $this->input->post('categoria'),
+            // 'edad'             => $this->input->post('edad'),
+            // 'domicilio'        => $this->input->post('domicilio'),
+            // 'procede_del_club' => $this->input->post('procede_del_club'),
+            // 'posicion'         => $this->input->post('posicion'),
+            // 'peso'             => $this->input->post('peso'),
+        );
+
         return $data;
     }
 
@@ -134,24 +158,74 @@ class Jugador extends CI_Controller {
 
     public function ajax_add()
     {
-        $this->_validate();
+        // $this->_validate();
         $data = $this->post_data();
-        $insert = $this->dbase->save($data);
+        $dataJugador = $this->post_data_jugador();
+
+        if(!empty($_FILES['foto']['name']))
+        {
+            $upload = $this->_do_upload();
+            $data['foto'] = $upload;
+        }
+        $insert = $this->dbase->save_ju($data, $dataJugador);
         echo json_encode(array("status" => TRUE));
     }
 
     public function ajax_update()
     {
-        $this->_validate();
+        //$this->_validate();
         $data = $this->post_data();
-        $this->dbase->update($this->input->post('id_jugador'), $data);
+        $dataJugador = $this->post_data_jugador();
+        
+        if($this->input->post('remove_photo')){
+            if(file_exists('upload/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
+                unlink('upload/'.$this->input->post('remove_photo'));
+            $data['foto'] = '';
+        }
+        if(!empty($_FILES['photo']['name'])){
+            $upload = $this->_do_upload();
+
+            //delete file
+            $person = $this->dbase->get_by_id($this->input->post('id_jugador'));
+            if(file_exists('upload/'.$person->photo) && $person->photo)
+                unlink('upload/'.$person->photo);
+ 
+            $data['foto'] = $upload;
+        }
+
+        $this->dbase->update_ju($this->input->post('id_jugador'), $data, $dataJugador);
         echo json_encode(array("status" => TRUE));
     }
 
     public function ajax_delete($id)
     {
+        $person = $this->dbase->get_by_id($id);
+        if(file_exists('upload/'.$person->photo) && $person->photo)
+            unlink('upload/'.$person->photo);
         $this->dbase->delete_by_id($id);
         echo json_encode(array("status" => TRUE));
+    }
+
+    private function _do_upload()
+    {
+        $config['upload_path']          = 'upload/';
+        $config['allowed_types']        = 'gif|jpg|png';
+        $config['max_size']             = 5000; //set max size allowed in Kilobyte
+        $config['max_width']            = 1000; // set max width image allowed
+        $config['max_height']           = 1000; // set max height allowed
+        $config['file_name']            = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
+ 
+        $this->load->library('upload', $config);
+ 
+        if(!$this->upload->do_upload('photo')) //upload and validate
+        {
+            $data['inputerror'][] = 'photo';
+            $data['error_string'][] = 'Upload error: '.$this->upload->display_errors('',''); //show ajax error
+            $data['status'] = FALSE;
+            echo json_encode($data);
+            exit();
+        }
+        return $this->upload->data('file_name');
     }
 
     public function get_jugador($id)
@@ -185,6 +259,9 @@ class Jugador extends CI_Controller {
         // print_r($club_actual_jugador->id_club);
         // exit();
         $clubs = $this->dbase->get_clubs($club_actual_jugador->id_club);
+
+        // 5 y 6 son los conceptos de transferencia
+        $conc_transf = $this->dbase->get_concepto_transferencia();
         // if (!isset($id_club_actual_jugador)) {
         //     $club_actual_jugador = $this->db->get_where('club', array('id_club' => $id_club_actual_jugador->id_club_destino))->row()->nombre_club;
         // }
@@ -216,7 +293,21 @@ class Jugador extends CI_Controller {
                   }
         $jug_tr .= '</tbody>
             </table>';
-        echo json_encode(array('jug_tr' => $jug_tr, 'equipo_actual' => $club_actual_jugador, 'clubs' => $clubs, 'id_jugador'=>$this->input->post('id_jugador')));
+        echo json_encode(array('jug_tr' => $jug_tr, 'equipo_actual' => $club_actual_jugador, 'clubs' => $clubs, 'id_jugador'=>$this->input->post('id_jugador'), 'c_t' => $conc_transf));
+    }
+
+    public function get_tipo_transf()
+    {
+        $id_conc_transf = $this->input->post('id_conc_transf');
+        // print_r($id_conc_transf);
+        // exit();
+        // $motivo_trans = $this->db->get_where('precio_concepto', array(
+        //     'id_concepto' => $id_conc_transf,
+        //     'id_categoria' => 1,
+        // ))->result();
+        // print_r($motivo_trans);
+        $motivo_trans = $this->dbase->get_motivo_trasnferencia($id_conc_transf);
+        echo json_encode(array('m_t' => $motivo_trans));
     }
 
     public function categorias()
@@ -224,7 +315,7 @@ class Jugador extends CI_Controller {
         $opcion = 'Categorias';
         $data = array(
             'opcion'            => $opcion,
-            'controllerajax'    => 'jugador',
+            'controllerajax'    => 'jugador/',
             'titulo_navegation' => $this->window->titulo_navegacion('A.CH.F',$opcion)
         );
         $data['vista'] = 'v_jugador_categoria';
@@ -236,8 +327,10 @@ class Jugador extends CI_Controller {
         $proviene = $this->input->post('proviene');
         $destino = $this->input->post('destino');
         $id_jugador = $this->input->post('id_jugador');
+        $concep_transf = $this->input->post('concep_transf');
+        $id_precioconcepto = $this->input->post('motivo_transf');
 
-        if ($destino == -1) {
+        if ($destino == -1 || $id_precioconcepto == -1 || $concep_transf == -1) {
             echo json_encode(array('status' => FALSE));
         } else {
             $dataTransferencia = array(
@@ -245,11 +338,13 @@ class Jugador extends CI_Controller {
                 'id_jugador' => $id_jugador,
                 'id_club' => $proviene,
                 'id_club_destino' => $destino,
+                'id_precioconcepto' => $id_precioconcepto,
             );
 
             $data = [
-                'id_equipo' => $destino,
+                'id_inscripcionequipo' => $destino,
             ];
+            // print_r($data);
             $this->dbase->update_inscripcionjugador($id_jugador, $proviene, $data);
             // $this->dbase->update_inscripcionjugador(1, 9, $data);
 

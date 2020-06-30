@@ -35,7 +35,7 @@ class Torneo extends CI_Controller {
             $row = array();
 
             $row[] = $no;
-            $row[] = $d->nombre;
+            $row[] = $d->nombretorneo;
             $row[] = $d->fecha_inicio;
             $row[] = $d->fecha_fin;
             $row[] = ($d->estado==1)? 'Activo':'Inactivo';
@@ -56,11 +56,11 @@ class Torneo extends CI_Controller {
         }
 
         $output = array(
-                        "draw" => $_POST['draw'],
-                        "recordsTotal" => $this->dbase->count_all(),
-                        "recordsFiltered" => $this->dbase->count_filtered(),
-                        "data" => $data,
-                );
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->dbase->count_all(),
+            "recordsFiltered" => $this->dbase->count_filtered(),
+            "data" => $data,
+        );
         echo json_encode($output);
     }
 
@@ -73,7 +73,7 @@ class Torneo extends CI_Controller {
     public function post_data()
     {
         $data = array(
-            'id_categoria' => $this->input->post('categoria'),
+            'nombretorneo' => $this->input->post('nombretorneo'),
             'fecha_inicio'     => $this->input->post('fecha_inicio'),
             'fecha_fin'        => $this->input->post('fecha_fin'),
             'estado'        => $this->input->post('estado'),
@@ -89,7 +89,7 @@ class Torneo extends CI_Controller {
 
     public function ajax_add()
     {
-        $this->_validate();
+        // $this->_validate();
         $data = $this->post_data();
         $insert = $this->dbase->save($data);
         echo json_encode(array("status" => TRUE));
@@ -97,7 +97,7 @@ class Torneo extends CI_Controller {
 
     public function ajax_update()
     {
-        $this->_validate();
+        // $this->_validate();
         $data = $this->post_data();
         $this->dbase->update($this->input->post('id_torneo'), $data);
         echo json_encode(array("status" => TRUE));
@@ -127,6 +127,13 @@ class Torneo extends CI_Controller {
         {
             $data['inputerror'][] = 'fecha_inicio';
             $data['error_string'][] = 'La Fecha de Inicio del Torneo es requerida';
+            $data['status'] = FALSE;
+        }
+
+        if($this->input->post('fecha_fin') == '')
+        {
+            $data['inputerror'][] = 'fecha_fin';
+            $data['error_string'][] = 'La Fecha de Fin del Torneo es requerida';
             $data['status'] = FALSE;
         }
         

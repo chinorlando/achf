@@ -41,8 +41,9 @@
                             <th>Apellido Materno</th>
                             <th>Posicion</th>
                             <th>Categoría</th>
-                            <th>Equipo</th>
-                            <th>Estado</th>
+                            <!-- <th>Equipo</th> -->
+                            <!-- <th>Estado</th> -->
+                            <th>Foto</th>
                             <th>Opciones</th>
                         </tr>
                     </thead> 
@@ -65,13 +66,6 @@
                         <input type="hidden" value="" name="id_jugador"/> 
                         <div class="form-body">
                             <div class="form-group">
-                                <label class="control-label col-md-3">Numero Registro F.B.F.</label>
-                                <div class="col-md-9">
-                                    <input name="n_registro_fbf" placeholder="Numero Registro FBF" class="form-control" type="text">
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <label class="control-label col-md-3">Nombres</label>
                                 <div class="col-md-9">
                                     <input name="nombres" placeholder="Nombres" class="form-control" type="text">
@@ -93,30 +87,23 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3">Categoria</label>
+                                <label class="control-label col-md-3">Teléfono fijo</label>
                                 <div class="col-md-9">
-                                    <input name="categoria" placeholder="Categoria" class="form-control" type="text">
+                                    <input name="telefono" placeholder="Telefono fijo" class="form-control" type="text">
                                     <span class="help-block"></span>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3">L.F.P.B. - Asociacion - Liga Provincial</label>
+                                <label class="control-label col-md-3">Celular</label>
                                 <div class="col-md-9">
-                                    <input name="lfpb_asociacion_liga_provincial" placeholder="L.F.P.B. Asociacion Liga Provincial" class="form-control" type="text">
+                                    <input name="celular" placeholder="Celular" class="form-control" type="text">
                                     <span class="help-block"></span>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3">Nacionalidad</label>
+                                <label class="control-label col-md-3">Dirección</label>
                                 <div class="col-md-9">
-                                    <input name="nacionalidad" placeholder="Nacionalidad" class="form-control" type="text">
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Estado Civil</label>
-                                <div class="col-md-9">
-                                    <input name="estado_civil" placeholder="Estado Civil" class="form-control" type="text">
+                                    <input name="direccion" placeholder="Dirección" class="form-control" type="text">
                                     <span class="help-block"></span>
                                 </div>
                             </div>
@@ -128,37 +115,9 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3">Fecha de Nacimiento</label>
+                                <label class="control-label col-md-3">Fecha de nacimiento</label>
                                 <div class="col-md-9">
-                                    <input name="fecha_nacimiento" placeholder="Fecha de Nacimiento" class="form-control" type="text">
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Nombre Del Padre</label>
-                                <div class="col-md-9">
-                                    <input name="nombre_padre" placeholder="Nombre Del Padre" class="form-control" type="text">
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Nombre De La Madre</label>
-                                <div class="col-md-9">
-                                    <input name="nombre_madre" placeholder="Nombre De La Madre" class="form-control" type="text">
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>                        
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Edad</label>
-                                <div class="col-md-9">
-                                    <input name="edad" placeholder="Edad" class="form-control" type="text">
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Carnet de Identidad</label>
-                                <div class="col-md-9">
-                                    <input name="c_i" placeholder="Carnet de Identidad" class="form-control" type="text">
+                                    <input name="fecha_nacimiento" placeholder="9999-99-99" class="form-control" type="text">
                                     <span class="help-block"></span>
                                 </div>
                             </div>
@@ -170,23 +129,67 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3">Domicilio</label>
+                                <label class="control-label col-md-3">Profesión</label>
                                 <div class="col-md-9">
-                                    <input name="domicilio" placeholder="Domicilio" class="form-control" type="text">
+                                    <input name="profesion" placeholder="Profesión" class="form-control" type="text">
                                     <span class="help-block"></span>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3">Procede del Club</label>
+                                <label class="control-label col-md-3">Nacionalidad</label>
                                 <div class="col-md-9">
-                                    <input name="procede_del_club" placeholder="Procede del Club" class="form-control" type="text">
+                                    <input name="nacionalidad" placeholder="Nacionalidad" class="form-control" type="text">
                                     <span class="help-block"></span>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3">Posicion</label>
+                                <label class="control-label col-md-3">Email</label>
                                 <div class="col-md-9">
-                                    <input name="posicion" placeholder="Posicion" class="form-control" type="text">
+                                    <input name="email" placeholder="miemail@email.com" class="form-control" type="text">
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Nº registro FBF</label>
+                                <div class="col-md-9">
+                                    <input name="n_registro_fbf" placeholder="n_registro_fbf" class="form-control" type="text">
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">LFPB Asociación Liga provincial</label>
+                                <div class="col-md-9">
+                                    <input name="lfpb_asociacion_liga_provincial" placeholder="liga" class="form-control" type="text">
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Nombre del padre</label>
+                                <div class="col-md-9">
+                                    <input name="nombre_padre" placeholder="Nombre completo" class="form-control" type="text">
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Nombre de la madre</label>
+                                <div class="col-md-9">
+                                    <input name="nombre_madre" placeholder="Nombre completo" class="form-control" type="text">
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Estadp civil</label>
+                                <div class="col-md-9">
+                                    <input name="estado_civil" placeholder="Estado civil" class="form-control" type="text">
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">C. I.</label>
+                                <div class="col-md-9">
+                                    <input name="c_i" placeholder="C. I." class="form-control" type="text">
                                     <span class="help-block"></span>
                                 </div>
                             </div>
@@ -197,13 +200,35 @@
                                     <span class="help-block"></span>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Peso</label>
+
+                            <div class="form-group" id="photo-preview">
+                                <label class="control-label col-md-3">Photo</label>
                                 <div class="col-md-9">
-                                    <input name="peso" placeholder="Peso" class="form-control" type="text">
+                                    (Sin foto)
                                     <span class="help-block"></span>
                                 </div>
-                            </div>                            
+                            </div>                       
+                            <div class="form-group">
+                                <label class="control-label col-md-3" id="label-photo">Subir Foto </label>
+                                <div class="col-md-9">
+                                    <input name="photo" type="file">
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Usuario</label>
+                                <div class="col-md-9">
+                                    <input name="usuario" placeholder="Usuario" class="form-control" type="text">
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Contraseña</label>
+                                <div class="col-md-9">
+                                    <input name="password" placeholder="Contraseña" class="form-control" type="text">
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <label class="control-label col-md-3">Estado</label>
                                 <div class="col-md-9">

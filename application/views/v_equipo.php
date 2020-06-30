@@ -9,6 +9,16 @@
         $(document).ready(function() {
             //alert('oso');
             get_table('<?php echo $opcion; ?>','<?php echo base_url().$controllerajax; ?>');
+            // function get_torneo(titulo, controlador) {
+                controller = '<?php echo base_url().$controllerajax; ?>';
+                $.get(controller + '/get_persona_presi', function(data) {
+                    var torneo = $.parseJSON(data);
+                    $.each(torneo, function(index, val) {
+                        $('#presidente').append('<option value="'+val.id_persona+'">'+val.nombres+' '+val.apellido_paterno+' '+val.apellido_materno+'</option>');
+                    });
+                });
+            // }
+
         });
     </script>
     <button type="button" class="btn btn-primary btn-icon icon-left"  onclick="add_row()">
@@ -29,21 +39,21 @@
         </div>
         <!-- /.box-header -->
         <div class="box-body">
-          <div class="row">
-            <div class="col-md-12">
-                <table id="table" class="table table-striped mb-none">
+          <div class="row ">
+            <div class="col-md-12 responsive">
+                <table id="table" class="table table-striped mb-none responsive">
                     <thead>
                         <tr>
                             <th>Nro.</th>
-                            <th>Nombre del Equipo</th>
-                            <th>Direccion</th>
-                            <th>Ciudad</th>
-                            <th>Escudo</th>
-                            <th>Fecha de Fundacion</th>
                             <th>Presidente</th>
-                            <th>Entrenador</th>
-                            <th>Observaciones</th>              
+                            <th>Club</th>
+                            <th>Dirección</th>
+                            <th>Ciudad</th>
+                            <th>Fecha fundación</th>
+                            <th>Escudo</th>
                             <th>Estado</th>
+                            <!-- <th>Observaciones</th>              
+                            <th>Estado</th> -->
                             <th>Opciones</th>
                         </tr>
                     </thead> 
@@ -62,12 +72,20 @@
                 </div>
                 <div class="modal-body form">
                     <form action="#" id="form" class="form-horizontal">
-                        <input type="hidden" value="" name="id_estadio"/> 
+                        <input type="text" value="" name="id_club"/> 
                         <div class="form-body">
                             <div class="form-group">
-                                <label class="control-label col-md-3">Nombre del Equipo</label>
+                                <label class="control-label col-md-3">Nombre del Club</label>
                                 <div class="col-md-9">
-                                    <input name="nombre_equipo" placeholder="Nombre del Equipo" class="form-control" type="text">
+                                    <input name="nombre_club" placeholder="Nombre del Equipo" class="form-control" type="text">
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Presidente</label>
+                                <div class="col-md-9">
+                                    <!-- <input name="presidente" placeholder="Presidente" class="form-control" type="text"> -->
+                                    <select name="presidente" id="presidente" class="form-control"></select>
                                     <span class="help-block"></span>
                                 </div>
                             </div>
@@ -85,13 +103,13 @@
                                     <span class="help-block"></span>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class="control-label col-md-3">Escudo</label>
                                 <div class="col-md-9">
                                     <input name="escudo" placeholder="Escudo" class="form-control" type="text">
                                     <span class="help-block"></span>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <label class="control-label col-md-3">Fecha de Fundacion</label>
                                 <div class="col-md-9">
@@ -99,27 +117,22 @@
                                     <span class="help-block"></span>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Presidente</label>
+
+                            <div class="form-group" id="photo-preview">
+                                <label class="control-label col-md-3">Escudo</label>
                                 <div class="col-md-9">
-                                    <input name="presidente" placeholder="Presidente" class="form-control" type="text">
+                                    (Sin foto)
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>                       
+                            <div class="form-group">
+                                <label class="control-label col-md-3" id="label-photo">Subir escudo</label>
+                                <div class="col-md-9">
+                                    <input name="photo" type="file">
                                     <span class="help-block"></span>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Entrenador</label>
-                                <div class="col-md-9">
-                                    <input name="entrenador" placeholder="Entrenador" class="form-control" type="text">
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Observaciones</label>
-                                <div class="col-md-9">
-                                    <input name="observaciones" placeholder="Observaciones" class="form-control" type="text">
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>                                      
+
                             <div class="form-group">
                                 <label class="control-label col-md-3">Estado</label>
                                 <div class="col-md-9">

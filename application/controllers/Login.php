@@ -45,7 +45,8 @@ class Login extends CI_Controller {
         $where = array('usuario'=>$username,'password'=>$password);
         $datos = $this->dbper->get_row_by_field($where);
         $num_rows = count($datos);
-        //print_r($datos);
+        // print_r($datos);
+        // exit();
         
         $login_status = '0';
         $redirect_url = '';
@@ -55,6 +56,8 @@ class Login extends CI_Controller {
             $redirect_url = 'Login/inicio';
             $this->menu($datos->id_persona);
         }
+        // print_r('expression');
+        // exit();
         echo $login_status;
     }
 
@@ -149,7 +152,8 @@ class Login extends CI_Controller {
                     'menu'            => $menu,
                     'logged_in'       => TRUE
                 );
-        print_r($data);
+        // print_r($data);
+        // exit();
         $this->session->set_userdata($data);
     }
 }

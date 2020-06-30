@@ -28,6 +28,8 @@ class Curriculo extends CI_Controller {
     public function ajax_list()
     {
         $list = $this->dbase->get_datatables_jugador();
+        // print_r($list);
+        // exit();
         $data = array();
         $no = isset($_POST['start'])? $_POST['start'] : 0;
         foreach ($list as $d) {
@@ -42,7 +44,11 @@ class Curriculo extends CI_Controller {
             $row[] = $d->posicion;
             // $row[] = $d->categoria;
             // $row[] = $d->club;
-            $row[] = ($d->estado==1)? 'Activo':'Inactivo';
+            // $row[] = ($d->estado==1)? 'Activo':'Inactivo';
+            if($d->foto)
+                $row[] = '<a href="'.base_url('upload/'.$d->foto).'" target="_blank"><img src="'.base_url('upload/'.$d->foto).'" class="img-responsive" /></a>';
+            else
+                $row[] = '(Sin foto)';
 
             $row[] = '  <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="view_curriculum('.$d->id_jugador.')">
                             <i class="fa fa-eye"></i>
@@ -60,11 +66,11 @@ class Curriculo extends CI_Controller {
         }
 
         $output = array(
-                        "draw"              => $_POST['draw'],
-                        "recordsTotal"      => $this->dbase->count_all(),
-                        "recordsFiltered"   => $this->dbase->count_filtered(),
-                        "data"              => $data,
-                );
+            "draw"              => $_POST['draw'],
+            "recordsTotal"      => $this->dbase->count_all_ju(),
+            "recordsFiltered"   => $this->dbase->count_filtered_ju(),
+            "data"              => $data,
+        );
         echo json_encode($output);
     }
 

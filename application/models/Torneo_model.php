@@ -6,8 +6,8 @@ class Torneo_model extends MY_Model {
     {
         parent::__construct();
 
-        $this->table  = 'v_torneocategoria';
-        $this->column = array('id_torneo', 'nombre', 'fecha_inicio','fecha_final', 'estado');
+        $this->table  = 'torneo';
+        $this->column = array('id_torneo', 'nombretorneo', 'fecha_inicio','fecha_final', 'estado');
         $this->order  = array('id_torneo' => 'asc');
         $this->id = 'id_torneo';
 

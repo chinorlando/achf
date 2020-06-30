@@ -125,7 +125,12 @@ select id_torneo, nombre,fecha_inicio, fecha_fin, t.estado from torneo t
 join categoria c on c.id_categoria = t.id_categoria 
 
 
-create view v_categoria_torneo as 
+create view v_categoria_torneo as -- ya no usamos
 SELECT torneo.id_torneo, categoria.nombre from torneo
 join categoria on categoria.id_categoria = torneo.id_categoria
 GROUP by torneo.id_torneo, categoria.nombre
+
+// consulta para *end
+create view v_torneo_activo as
+SELECT id_torneo, nombretorneo from torneo
+where estado = 1

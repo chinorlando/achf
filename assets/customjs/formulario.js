@@ -55,7 +55,8 @@ function get_table(titulo,controlador) //controller = baseurl+controller
 
     });
 
-    llenardatos_torneo();
+    // esto estamos comentando
+    // llenardatos_torneo();
     
     //datepicker
     /*
@@ -107,6 +108,10 @@ function add_row(
     $('.help-block').empty(); // clear error string
     $('#modal_form').modal('show'); // show bootstrap modal
     $('.modal-title').text('Adicionar '+title); // Set Title to Bootstrap modal title
+
+    $('#photo-preview').hide(); // hide photo preview modal
+    $('#label-photo').text('Subir imagen'); // label photo upload
+
     $('#btnSave').show();
 }
 
@@ -125,6 +130,7 @@ function edit_row(id)
         dataType: "JSON",
         success: function(data)
         {
+            console.log(data);
 			$.each(data, function (index, itemData) {
 			    $('[name="'+index+'"]').val(itemData);
 			});
@@ -132,6 +138,18 @@ function edit_row(id)
             $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Editar '+title); // Set title to Bootstrap modal title
             $('#btnSave').show();
+
+            $('#photo-preview').show(); // show photo preview modal
+ 
+            if (data.foto) {
+                $('#label-photo').text('Cambiar Fotografía'); // label photo upload
+                $('#photo-preview div').html('<img src="'+CFG.url+'upload/'+data.foto+'" class="img-responsive">'); // show photo
+                $('#photo-preview div').append('<input type="checkbox" name="remove_photo" value="'+data.foto+'"/> Remover fotografía al guardar'); // remove photo
+ 
+            } else {
+                $('#label-photo').text('Subir imagen'); // label photo upload
+                $('#photo-preview div').text('(Sin imagen)');
+            }
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
@@ -168,6 +186,8 @@ function view_row(id)
         dataType: "JSON",
         success: function(data)
         {
+            console.log(data);
+            
 			$.each(data, function (index, itemData) {
 			    $('[name="'+index+'"]').val(itemData);
 			});
@@ -175,6 +195,18 @@ function view_row(id)
             $('#btnSave').hide();
             $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Ver '+title); // Set title to Bootstrap modal title
+
+            $('#photo-preview').show(); // show photo preview modal
+            if (data.foto) {
+                $('#label-photo').text('Cambiar Fotografía'); // label photo upload
+                $('#photo-preview div').html('<img src="'+CFG.url+'upload/'+data.foto+'" class="img-responsive">'); // show photo
+                $('#photo-preview div').append('<input type="checkbox" name="remove_photo" value="'+data.foto+'"/> Remover fotografía al guardar'); // remove photo
+ 
+            } else {
+                $('#label-photo').text('Subir imagen'); // label photo upload
+                $('#photo-preview div').text('(Sin imagen)');
+            }
+
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
@@ -241,7 +273,7 @@ function save_row()
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-            alert('Error adding / update data');
+            alert('Error al añadir / actualizar');
             $('#btnSave').text('Guardar'); //change button text
             $('#btnSave').attr('disabled',false); //set button enable 
 
@@ -325,6 +357,10 @@ function view_trasferencia(id_jugador) {
             $('select[name=destino]').append('<option value="'+val.id_club+'">'+val.nombre_club +'</option>');
         });
 
+        $.each(date.c_t, function(index, val) {
+            $('select[name=concep_transf]').append('<option value="'+val.id_concepto+'">'+val.nombre +'</option>');
+        });
+
         
         // reload_table();
     })
@@ -368,7 +404,7 @@ function add_row_transferencia() {
 $("body").on("submit", "#form_trasferencia", function(e){
     e.preventDefault();
     $.ajax({
-        url: controller +"/save_transferencia",
+        url: controller +"save_transferencia",
         type: "POST",
         dataType: 'JSON',
         data: $('#form_trasferencia').serialize(),
@@ -381,7 +417,8 @@ $("body").on("submit", "#form_trasferencia", function(e){
                 table.ajax.reload()
             } else {
                 $('#modal_form').modal('show');
-                alert('Debe llenar el campo Club destino.');
+                // alert('Debe llenar el campo Club destino.');
+                alert('Debe llenar todos los campos.');
             }
         },
         error: function (jqXHR, textStatus, errorThrown){
@@ -400,22 +437,23 @@ function get_torneo(titulo, controlador) {
     $.get(controller + '/get_torneos', function(data) {
         var torneo = $.parseJSON(data);
         $.each(torneo, function(index, val) {
-            $('#torneo').append('<option value="'+val.id_torneo+'">'+val.nombre+'</option>');
+            $('#categoria').append('<option value="'+val.id_categoria+'">'+val.nombre+'</option>');
         });
     });
 }
 
 $(document).ready(function(){
 
-    $('#torneo').change(function(e) {
-      var id_torneo = $('#torneo').val();
+    $('#categoria').change(function(e) {
+      var id_categoria = $('#categoria').val();
       $.ajax({
         url: controller+'/show_equipos',
         type: "POST",
         cache: true,
-        data: {id_torneo: id_torneo},
+        data: {id_categoria: id_categoria},
         success: function(data) {
-            var equipos = $.parseJSON(data);
+            // var equipos = $.parseJSON(data);
+            var equipos = JSON.parse(data);
             $('#equipos_bolo').html(equipos.cent);
             if (equipos.num_bolos) {
                 $('#btn_fin_bolos').hide();
@@ -423,7 +461,8 @@ $(document).ready(function(){
                 if (equipos.sorteado) {
                     $('#btn_fin_bolos').hide();
                     $('#btn_sort').hide();
-                    funcsorteo();
+                    // funcsorteo();
+                    // sorteo_equipos();
                 }
             } else {
                 $('#btn_fin_bolos').show();
@@ -467,6 +506,34 @@ $(document).ready(function(){
     //     }
     //   });
     // });
+
+    $('#concep_transf').change(function(e) {
+      var id_conc_transf = $('#concep_transf').val();
+      $.ajax({
+        url: controller+'get_tipo_transf',
+        type: "POST",
+        cache: true,
+        data: {id_conc_transf: id_conc_transf},
+        success: function(data) {
+            // var equipos = $.parseJSON(data);
+            // $('#motivo_transf')[0].reset();
+            // $("#motivo_transf :selected").remove();
+            // $("#motivo_transf :selected").empty();
+            // $("#motivo_transf :selected").empty();
+            // $('#motivo_transf :option:selected').remove();
+            // $('#motivo_transf').select2({}); 
+            var equipos = JSON.parse(data);
+            $.each(equipos.m_t, function(index, val) {
+                $('#motivo_transf').append('<option value="'+val.id_precioconcepto+'">'+val.descripcion+'</option>');
+            });
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error al obtener datos.');
+        }
+      });
+    });
+
 
 });
 
@@ -569,11 +636,12 @@ function fin_bolos() {
     $('#btn_fin_bolos').hide(0,function() {
         $("input").attr('disabled','disabled');
 
-        var id_torneo = $('#torneo').val();
+        // var id_torneo = $('#torneo').val();
+        var id_categoria = $('#categoria').val();
 
-        $.post(controller+'/save_torneosorteado',
+        $.post(controller+'/save_categoriasorteado',
             {
-                id_torneo: id_torneo,
+                id_categoria: id_categoria,
                 // id_campeonato: id_campeonato,
             },
             function(data, textStatus, xhr) {
@@ -590,36 +658,20 @@ function fin_bolos() {
 }
 
 function sorteo_equipos() {
-    var id_torneo = $('#torneo').val();
-    // var id_campeonato = $('#campeonato').val();
-    // console.log(id_campeonato);
-    $.post(controller+'/update_torneosorteado',
-        {
-            id_torneo: id_torneo,
-            // id_campeonato: id_campeonato,
-        },
-        function(data, textStatus, xhr) {
-            // alert('Se actualizaron los datos.');
-          funcsorteo();
-        },
-    );
-    $('#btn_fin_bolos').hide();
-    $('#btn_sort').hide();
-}
-
-function funcsorteo() {
-    var id_torneo = $('#torneo').val();
+    var id_categoria = $('#categoria').val();
       $.ajax({
         url: controller+'/sorteo',
         type: "POST",
         cache: true,
-        data: {id_torneo: id_torneo},
+        data: {id_categoria: id_categoria},
         success: function(data) {
             var carrera = $.parseJSON(data);
+            // var carrera = JSON.parse(data);
             console.log(carrera.status);
             if (carrera.status) {
                 $('.programacionpartidos').html(carrera.cent);
                 // $(".verticalTableHeader").each(function(){$(this).height($(this).width())})
+                funcsorteo();
             } else {
                 if (carrera.status != 'negativo') {
                     $('.programacionpartidos').html('');
@@ -632,6 +684,24 @@ function funcsorteo() {
             alert('Error al obtener datos.');
         }
       });
+}
+
+function funcsorteo() {
+    var id_categoria = $('#categoria').val();
+    // var id_campeonato = $('#campeonato').val();
+    // console.log(id_campeonato);
+    $.post(controller+'/update_categoriasorteado',
+        {
+            id_categoria: id_categoria,
+            // id_campeonato: id_campeonato,
+        },
+        function(data, textStatus, xhr) {
+            // alert('Se actualizaron los datos.');
+          // funcsorteo();
+        },
+    );
+    $('#btn_fin_bolos').hide();
+    $('#btn_sort').hide();
 }
 
 
@@ -694,3 +764,4 @@ function edit_alumno() {
 function anotal_gol(asd, asd) {
     alert(eso);
 }
+

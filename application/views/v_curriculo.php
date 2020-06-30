@@ -42,7 +42,7 @@
                             <th>Posicion</th>
                             <!-- <th>Categoría</th> -->
                             <!-- <th>Equipo</th> -->
-                            <th>Estado</th>
+                            <th>Foto</th>
                             <th>Opciones</th>
                         </tr>
                     </thead> 

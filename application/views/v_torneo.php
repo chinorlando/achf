@@ -38,6 +38,7 @@
                             <th>Nombre</th>
                             <th>fecha_inicio</th>
                             <th>fecha final</th>
+                            <th>Estado</th>
                             <th>Opciones</th>
                         </tr>
                     </thead> 
@@ -56,9 +57,9 @@
                 </div>
                 <div class="modal-body form">
                     <form action="#" id="form" class="form-horizontal">
-                        <input type="hidden" value="" name="id_estadio"/> 
+                        <input type="text" value="" name="id_torneo"/> 
                         <div class="form-body">
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class="control-label col-md-3">Categoria:</label>
                                 <div class="col-md-9">
                                     <select class="form-control" name="torneo_camp" id="torneo_camp">
@@ -66,7 +67,17 @@
                                     </select>
                                     <span class="help-block"></span>
                                 </div>
+                            </div> -->
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Nombre del torneo:</label>
+                                <div class="col-md-9">
+                                    <!-- <div class="input-group"> -->
+                                    <input name="nombretorneo" id="nombretorneo" placeholder="Nombre del torneo" class="form-control" type="text">
+                                    <span class="help-block"></span>
+                                    <!-- </div> -->
+                                </div>
                             </div>
+
                             <div class="form-group">
                                 <label class="control-label col-md-3">Fecha inicio:</label>
                                 <div class="col-md-9">

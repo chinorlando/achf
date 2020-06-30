@@ -42,7 +42,7 @@
                             <th>Posicion</th>
                             <th>Categoría</th>
                             <th>Equipo</th>
-                            <th>Estado</th>
+                            <!-- <th>Estado</th> -->
                             <th>Opciones</th>
                         </tr>
                     </thead> 
@@ -240,23 +240,56 @@
                             <div class="col-lg-6">
                                 <div class="box-body">
                                     <div class="form-group">
-                                        <label for="">proviene</label>
+                                        <label for="">Proviene</label>
                                         <input type="hidden" class="form-control" name="proviene">
                                         <input type="hidden" class="form-control" name="id_jugador">
                                         <input type="text" class="form-control" name="proviene_nombre">
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="input-group">
+                                
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4">
+                                    <!-- <div class="input-group"> -->
+                                        <div class="box-body">
                                         <div class="form-group" data-select2-id="13">
-                                            <label>Minimal</label>
+                                            <label>Destino</label>
                                             <select name="destino" id="destino" class="form-control select2 select2-hidden-accessible" style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true">
-                                                <option value="-1">Seleccionar un equipo</option>
+                                                <option value="-1">Seleccionar...</option>
                                             </select>
                                         </div>
-                                    </div>
+                                        </div>
+
+                                    <!-- </div> -->
                                 </div>
-                            </div>
+                                <div class="col-lg-4">
+                                    <!-- <div class="input-group"> -->
+                                        <div class="box-body">
+                                        <div class="form-group" data-select2-id="13">
+                                            <label>Concepto</label>
+                                            <select name="concep_transf" id="concep_transf" class="form-control select2" style="width: 100%;">
+                                                <option value="-1">Seleccionar trasferencia</option>
+                                            </select>
+                                        </div>
+                                        </div>
+
+                                    <!-- </div> -->
+                                </div>
+                                <div class="col-lg-4">
+                                    <!-- <div class="input-group"> -->
+                                        <div class="box-body">
+                                        <div class="form-group" data-select2-id="13">
+                                            <label>Tipo de transferencia</label>
+                                            <select name="motivo_transf" id="motivo_transf" class="form-control select2" style="width: 100%;">
+                                                <option value="-1">Seleccionar tipo</option>
+                                            </select>
+                                        </div>
+                                        </div>
+
+                                    <!-- </div> -->
+                                </div>
                         </div>
                         <hr>
                         <br>

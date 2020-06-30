@@ -62,14 +62,14 @@ class Registro extends CI_Controller {
             $crud->set_rules('nombres', 'Nombre(s)', 'trim|callback_alpha_dash_space');
             $crud->set_rules('apellido_paterno', 'apellido_paterno', 'trim|callback_alpha_dash_space');
             $crud->set_rules('apellido_materno', 'apellido_paterno', 'trim|callback_alpha_dash_space');
-            $crud->required_fields('nombres','apellido_paterno','email','ci','fecha_nacimiento','direccion','foto','usuario');
+            $crud->required_fields('nombres','apellido_paterno','email','ci','fecha_nacimiento','direccion','foto');
 
             $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi',
                 'Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));
             $crud->field_type('sexo','dropdown',array('M'=>'MASCULINO', 'F'=>'FEMENINO'));
 
 
-            $crud->set_field_upload('foto','assets/uploads/fotos');
+            $crud->set_field_upload('foto','upload');
             $crud->callback_before_upload(array($this,'image_callback_before_upload'));
             $crud->order_by('id_persona','desc');
 
@@ -96,7 +96,7 @@ class Registro extends CI_Controller {
             $ext = pathinfo($value['name'], PATHINFO_EXTENSION);
         }
 
-        $allowed_formats = array("jpg");
+        $allowed_formats = array("jpg", "png", "jpeg");
         if(in_array($ext,$allowed_formats))
         {
             return true;
@@ -514,7 +514,7 @@ class Registro extends CI_Controller {
             $crud->set_table('equipo');
             $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
             $crud->field_type('genero','dropdown',array('M'=>'Masculino', 'F'=>'Femenino'));
-            $crud->set_field_upload('escudo','assets/uploads/equipo');
+            $crud->set_field_upload('escudo','upload/equipo');
             $crud->callback_before_upload(array($this,'image_callback_before_upload'));
 
             $crud->display_as('id_personacargo','Entrenador');
@@ -584,7 +584,7 @@ class Registro extends CI_Controller {
             $crud->set_table('club');
             $crud->set_relation('id_personacargo','persona','{nombres} {apellido_paterno} {apellido_materno}');
             $crud->display_as('id_personacargo','Presidente');
-            $crud->set_field_upload('escudo','assets/uploads/escudo');
+            $crud->set_field_upload('escudo','upload/escudo');
             $crud->callback_before_upload(array($this,'image_callback_before_upload'));
 
             $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
@@ -659,7 +659,7 @@ class Registro extends CI_Controller {
     function torneo_equipoCrud() {
         try {
             $crud = new grocery_CRUD();
-            $crud->set_theme('bootstrap');
+            // $crud->set_theme('bootstrap');
             $crud->set_subject('Inscripcion de equipos');
             $crud->set_table('inscripcionequipo');
 
@@ -669,8 +669,11 @@ class Registro extends CI_Controller {
             $crud->set_relation('id_club','club','{nombre_club}');
             $crud->display_as('id_club','Club');
 
-            $crud->set_primary_key('id_torneo','v_categoria_torneo');
-            $crud->set_relation('id_torneo','v_categoria_torneo','{nombre}');
+            $crud->set_relation('id_categoria','categoria','{nombre}');
+            $crud->display_as('id_categoria','Categoria');
+
+            $crud->set_primary_key('id_torneo','v_torneo_activo');
+            $crud->set_relation('id_torneo','v_torneo_activo','{nombretorneo}');
             $crud->display_as('id_torneo','Torneo');
 
             $crud->field_type('genero','dropdown',array('M'=>'Masculino', 'F'=>'Femenino'));
@@ -679,6 +682,7 @@ class Registro extends CI_Controller {
                 $crud->set_css('assets/grocery_crud/css/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS);
                 $crud->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.datepicker.config.js');
             }
+            $crud->display_as('fecha','Fecha inscripción');
 
             $crud->callback_add_field('fecha',array($this,'_add_default_date_value'));
 
@@ -801,7 +805,7 @@ class Registro extends CI_Controller {
             $crud->set_theme('bootstrap');
             $crud->set_subject('Estadio');
             $crud->set_table('estadio');
-            $crud->set_field_upload('foto','assets/uploads/estadio');
+            $crud->set_field_upload('foto','upload/estadio');
             $crud->callback_before_upload(array($this,'image_callback_before_upload'));
             $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi',
             'Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));            
@@ -913,7 +917,7 @@ class Registro extends CI_Controller {
             // $crud->set_relation('id_persona','persona','{apellido_paterno} {apellido_materno} {nombres}');
 
 
-            // $crud->set_field_upload('foto','assets/uploads/partidos');
+            // $crud->set_field_upload('foto','upload/partidos');
             // $crud->callback_before_upload(array($this,'image_callback_before_upload'));
             // $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi',
             // 'Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));            

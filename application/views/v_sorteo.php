@@ -32,7 +32,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                       <label>Torneo</label>
-                      <select class="form-control" name="torneo" id="torneo">
+                      <select class="form-control" name="categoria" id="categoria">
                         <option value="-1">Seleccione...</option>
                       </select>
                     </div>

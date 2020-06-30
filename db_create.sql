@@ -264,14 +264,14 @@ create table inscripcionequipo(
 	id_personacargo int not null,
 	id_club int not null,
 	genero varchar(9),
-	-- id_categoria int not null,
+	id_categoria int not null,
 	fecha date not null,
 	num_bolo int,
 	id_torneo int not null,
 	-- id_equipo int(11) NOT NULL,
 	constraint fk_inscripcionequipo_persona foreign KEY(id_personacargo) references persona(id_persona),
 	constraint fk_inscripcionequipo_club foreign KEY(id_club) references club(id_club),
-	-- constraint fk_inscripcionequipo_categoria foreign key(id_categoria) references categoria(id_categoria),
+	constraint fk_inscripcionequipo_categoria foreign key(id_categoria) references categoria(id_categoria),
 	constraint fk_inscripcionequipo_torneo foreign key(id_torneo) references torneo (id_torneo)
 );
 
@@ -338,6 +338,17 @@ create table pagogeneral(
 	id_inscripcionequipo int not null,
 
 	constraint fk_pagogeneral_inscripcionequipo foreign key(id_inscripcionequipo) references inscripcionequipo(id_inscripcionequipo)
+);
+
+create table inscripcionjugador(
+	dorsal int AUTO_INCREMENT PRIMARY KEY,
+	posicion varchar(100) not null,
+	peso float not null,
+	id_jugador int not null,
+	id_inscripcionequipo int not null,
+
+	constraint fk_inscripcionjugador_jugador foreign key(id_jugador) references jugador(id_jugador),
+	constraint fk_inscripcionjugador_inscripcionequipo foreign key(id_inscripcionequipo) references inscripcionequipo(id_inscripcionequipo)
 );
 
 

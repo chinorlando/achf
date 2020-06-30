@@ -39,31 +39,43 @@ class Planillero extends CI_Controller {
     {
         // optien todos lo torneos que por lo menos tengan 4 equipos inscritos
         $torneos = $this->dbase->get_torneo_almost_four_teams();
-        // print_r($torneo);
+        // print_r($torneos);
         echo json_encode($torneos);
 
         // $nivel_curso = $this->db->get('torneo')->result();
         // echo json_encode($nivel_curso);
     }
 
+    public function get_torneo_activo()
+    {
+        $id_torneo = $this->db->get_where('torneo', array(
+                'estado' => 1,
+            ))->row()->id_torneo;
+        return $id_torneo;
+    }
+
     public function show_equipos()
     {
-        $id_torneo = $this->input->post('id_torneo');
-        $equipos_club = $this->dbase->get_equipos_by_torneo($id_torneo);
+        // $id_torneo = $this->input->post('id_torneo');
+        $id_torneo = $this->get_torneo_activo();
+
+        $id_categoria = $this->input->post('id_categoria');
+        $equipos_club = $this->dbase->get_equipos_by_torneo($id_torneo, $id_categoria);
         // print_r($equipos_club);
         // exit();
 
         $sorteado = FALSE;
 
         // si existe por lo menos un registro en tabla torneosorteado-->entonces el numero de bolos ya fue asignado a todos los equipos
-        if ($this->dbase->counttorneo($id_torneo)) { // , $id_camp_actual
+        if ($this->dbase->counttorneo($id_torneo, $id_categoria)) { // , $id_camp_actual
             $dis = 'disabled';
             $num_bolos = TRUE;
 
             // $estado si 0 => partidos aun no serteado, 1 => partidos sorteados
-            $estado = $this->db->get_where('torneosorteado', array(
+            $estado = $this->db->get_where('categoriasorteado', array(
                 'id_torneo' => $id_torneo,
-            ))->row()->estado;
+                'id_categoria' => $id_categoria,
+            ))->row()->sorteado;
             
             if ($estado) {
                 $sorteado = TRUE;
@@ -135,8 +147,9 @@ class Planillero extends CI_Controller {
 
     public function if_save_num_bolos()
     {
+        $id_torneo = $this->get_torneo_activo();
         $id_club = $_POST["id_club"];
-        $id_torneo = $_POST["id_torneo"];
+        // $id_torneo = $_POST["id_torneo"];
         $num_bolo = json_decode($_POST["datos"])->num_bolo;
 
         $data =['num_bolo' => $num_bolo];
@@ -147,33 +160,50 @@ class Planillero extends CI_Controller {
 
     }
 
-    public function save_torneosorteado()
+    public function save_categoriasorteado()
     {
+        $id_torneo = $this->get_torneo_activo();
         $data = [
             'fecha_sorteo' => date('Y-m-d'),
-            'id_torneo' => $this->input->post('id_torneo'),
-            'estado' => 0
+            'id_categoria' => $this->input->post('id_categoria'),
+            'id_torneo' => $id_torneo,
+            'sorteado' => 0
         ];
-        $this->dbase->save_torneosorteo($data);
+        $this->dbase->save_categoriasorteo($data);
 
         echo json_encode(array('status' => TRUE));
     }
 
-    public function update_torneosorteado()
+    public function update_categoriasorteado()
     {
-        $id_torneo = $this->input->post('id_torneo');
+        $id_torneo = $this->get_torneo_activo();
+        $id_categoria = $this->input->post('id_categoria');
 
         $data = [
-            'estado' => 1
+            'sorteado' => 1
         ];
-        $this->dbase->update_torneosorteado($id_torneo, $data);
+        $this->dbase->update_categoriasorteado($id_torneo, $id_categoria, $data);
     }
 
     public function sorteo()
     {
+        $id_torneo = $this->get_torneo_activo();
+        $sorteado = $this->db->get_where('categoriasorteado', array(
+            'id_torneo' => $id_torneo,
+            'id_categoria' => $this->input->post('id_categoria'),
+        ))->row()->sorteado;
+
+        if ($sorteado == 1) {
+            echo json_encode(array('status'=>'ya esta sorteado '));
+        } else {
+            
+        
+        
+        
         // $torneo = 1;
-        $torneo = $this->input->post('id_torneo');
-        self::$equipos = $this->dbase->get_equipos_by_torneo($torneo);
+        // $torneo = $this->input->post('id_torneo');
+        $torneo = $this->get_torneo_activo();
+        self::$equipos = $this->dbase->get_equipos_by_torneo_1($torneo);
         // self::$equipos = array('A','B','C','D','E','F','G','H','I','J','K');
 
         // print_r('<pre>');
@@ -183,7 +213,8 @@ class Planillero extends CI_Controller {
         $cantidad = count(self::$equipos);
 
         if (count(self::$equipos) < 4) {
-            if ($this->input->post('id_torneo') == -1) {
+            // if ($this->input->post('id_torneo') == -1) {
+            if ($this->input->post('id_categoria') == -1) {
                 echo json_encode(array('status'=>'negativo'));
             } else{
                 echo json_encode(array('status'=>FALSE));
@@ -284,6 +315,10 @@ class Planillero extends CI_Controller {
 
             echo json_encode(array('status'=>TRUE, 'cent' => $cent));
         }
+
+
+
+        }
     }
 
     public function fillauxiliar1($NumPlayers, $intWeeks)
@@ -344,7 +379,8 @@ class Planillero extends CI_Controller {
     {
         // print_r(self::$equipos);
         //     exit();
-        $torneo = $this->input->post('id_torneo');
+        // $torneo = $this->input->post('id_torneo');
+        $torneo = $this->get_torneo_activo();
         for ($intRow=2; $intRow <= $NumPlayers; $intRow++) { 
             for ($intCol=1; $intCol <= $intRow-1; $intCol++) {
                 
@@ -384,12 +420,14 @@ class Planillero extends CI_Controller {
 
     public function rol_part()
     {
+        // si la categoria y de un torneo ya esta sorteado entonces recien mostrar lo siguiente 
+        // en otro caso solo mandar un mensaje
         $partidos = $this->dbase->get_partidos();
         // print_r('<pre>');
         // print_r($partidos);
         $cent = '';
         $torneo = 1;
-        $cantidad = count($this->dbase->get_equipos_by_torneo($torneo));
+        $cantidad = count($this->dbase->get_equipos_by_torneo_1($torneo));
         if ($cantidad % 2 == 0){
             $cant = $cantidad - 1;
         } else {
@@ -1323,6 +1361,184 @@ $textohtml .= '<div class="col-md-12">';
 $textohtml .= '</div>';
                 break;
 
+            case 5:
+
+                $precioconcepto = $this->db->get_where('precio_concepto', array(
+                    'id_concepto' => $id_concepto,
+                    'id_categoria' => 1,
+                ))->result();
+
+                // foreach ($precioconcepto as $value) {
+                //     $trasnferencias = $this->db->get_where('transferencias', array(
+                //         'id_precioconcepto' => $value->id_precioconcepto,
+                //         'pagado' => 0,
+                //     ))->result();
+                //     count($trasnferencias);
+                    
+                // }
+
+
+                // $trasnferencias = $this->db->get_where('transferencias', array(
+                //     'id_club_destino' => $id_club,
+                //     'pagado' => 0,
+                // ))->result();
+                // foreach ($trasnferencias as $val) {
+                //     print_r($val->id_precioconcepto);
+
+                // }
+                // exit();
+
+
+
+$textohtml .= '<div class="col-md-12">';
+  $textohtml .= '<div class="box">';
+    // $textohtml .= '<div class="box-header">';
+    //   $textohtml .= '<h3 class="box-title">Condensed Full Width Table</h3>';
+    // $textohtml .= '</div>';
+    $textohtml .= '<div class="box-body no-padding">';
+      $textohtml .= '<table class="table table-condensed">';
+        $textohtml .= '<tr>';
+          $textohtml .= '<th>Descripción</th>';
+          $textohtml .= '<th>Precio</th>';
+          $textohtml .= '<th>Cantidad</th>';
+          $textohtml .= '<th>Total parcial</th>';
+        $textohtml .= '</tr>';
+
+    // foreach ($motivos as $val) {
+        
+    //     $textohtml .= '<tr>';
+    //       $textohtml .= '<td>'.$val->descripcion.'</td>';
+    //       $textohtml .= '<td>'.$val->precio.'</td>';
+    //       $textohtml .= '<td>
+    //                         <div class="input-group">
+    //                             <input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]">
+    //                             <span class="input-group-addon">
+    //                               <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$val->precio.'" value="'.$val->precio.'" class="flat-red concepto_valores">
+    //                             </span>
+    //                             <input type="number" min="1" class="form-control cantidad_num" name="cantidad[]" value="1" disabled>
+    //                         </div>
+    //                     </td>';
+    //       $textohtml .= '<td><span class="badge bg-red">0</span></td>';
+    //     $textohtml .= '</tr>';
+    // }
+    foreach ($motivos as $val) {
+        // print_r($val);
+        // exit();
+        $transferencias = $this->db->get_where('transferencias', array(
+                'id_precioconcepto' => $val->id_precioconcepto,
+                'pagado' => 0,
+            ))->result();
+        if (count($transferencias)>0) {
+            // print_r('itero');
+            foreach ($transferencias as $value) {
+                // count($trasnferencias);
+                $jugador = $this->db->get_where('jugador', array(
+                    'id_jugador' => $value->id_jugador,
+                ))->row()->id_persona;
+                $persona = $this->db->get_where('persona', array(
+                    'id_persona' => $jugador,
+                ))->row();
+                // print_r($persona);
+                // exit();
+            $textohtml .= '<tr>';
+              $textohtml .= '<td>'.$val->descripcion.'</td>';
+              $textohtml .= '<td>'.$val->precio.'</td>';
+              $textohtml .= '<td>
+
+
+                <div class="input-group">
+                    <input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]">
+                    <span class="input-group-addon">
+                      <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$val->precio.'" value="'.$val->precio.'" class="flat-red concepto_valores">
+                    </span>
+                    <input type="hidden" min="1" class="form-control" name="cantidad[]" value="1" disabled>
+                    <input type="text" class="form-control" name="'.$value->id_jugador.'" value="'.$persona->nombres.' '.$persona->apellido_paterno.' '.$persona->apellido_materno.'" disabled>
+                    <input type="hidden" name="jugador[]" value="'.$value->id_jugador.'">
+                </div>';
+
+
+               $textohtml .= '</td>';
+              $textohtml .= '<td><span class="badge bg-red">0</span></td>';
+            $textohtml .= '</tr>';
+            }
+            
+        } else {
+            continue;
+        }
+    }
+
+      $textohtml .= '</table>';
+    $textohtml .= '</div>';
+  $textohtml .= '</div>';
+$textohtml .= '</div>';
+                break;
+
+            case 6:
+
+                $precioconcepto = $this->db->get_where('precio_concepto', array(
+                    'id_concepto' => $id_concepto,
+                    'id_categoria' => 1,
+                ))->result();
+
+$textohtml .= '<div class="col-md-12">';
+  $textohtml .= '<div class="box">';
+    // $textohtml .= '<div class="box-header">';
+    //   $textohtml .= '<h3 class="box-title">Condensed Full Width Table</h3>';
+    // $textohtml .= '</div>';
+    $textohtml .= '<div class="box-body no-padding">';
+      $textohtml .= '<table class="table table-condensed">';
+        $textohtml .= '<tr>';
+          $textohtml .= '<th>Descripción</th>';
+          $textohtml .= '<th>Precio</th>';
+          $textohtml .= '<th>Cantidad</th>';
+          $textohtml .= '<th>Total parcial</th>';
+        $textohtml .= '</tr>';
+    foreach ($motivos as $val) {
+        $transferencias = $this->db->get_where('transferencias', array(
+                'id_precioconcepto' => $val->id_precioconcepto,
+                'pagado' => 0,
+            ))->result();
+        if (count($transferencias)>0) {
+            foreach ($transferencias as $value) {
+                $jugador = $this->db->get_where('jugador', array(
+                    'id_jugador' => $value->id_jugador,
+                ))->row()->id_persona;
+                $persona = $this->db->get_where('persona', array(
+                    'id_persona' => $jugador,
+                ))->row();
+            $textohtml .= '<tr>';
+              $textohtml .= '<td>'.$val->descripcion.'</td>';
+              $textohtml .= '<td>'.$val->precio.'</td>';
+              $textohtml .= '<td>
+
+
+                <div class="input-group">
+                    <input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]">
+                    <span class="input-group-addon">
+                      <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$val->precio.'" value="'.$val->precio.'" class="flat-red concepto_valores">
+                    </span>
+                    <input type="hidden" min="1" class="form-control" name="cantidad[]" value="1" disabled>
+                    <input type="text" class="form-control" name="'.$value->id_jugador.'" value="'.$persona->nombres.' '.$persona->apellido_paterno.' '.$persona->apellido_materno.'" disabled>
+                    <input type="hidden" name="jugador[]" value="'.$value->id_jugador.'">
+                </div>';
+
+
+               $textohtml .= '</td>';
+              $textohtml .= '<td><span class="badge bg-red">0</span></td>';
+            $textohtml .= '</tr>';
+            }
+            
+        } else {
+            continue;
+        }
+    }
+
+      $textohtml .= '</table>';
+    $textohtml .= '</div>';
+  $textohtml .= '</div>';
+$textohtml .= '</div>';
+                break;
+
             case 7:
                 $players_y = $this->dbase->list_jugadoresby_clubequipo($id_club);
                 $textohtml .= '<div class="col-md-12">';
@@ -1420,18 +1636,24 @@ $textohtml .= '</div>';
         if (isset($_POST['precioconcepto'])) {
             if (isset($_POST['check_monto'])) {
                 $i=0;
+                $j=0;
                 $montototal = $this->input->post('precio_motivo_total');
                 $id_torneo = $this->input->post('id_torneo');
                 $id_motivo = $this->input->post('motivo');
+                
+                $id_categoria = $this->input->post('categoria');
+                $id_club = $this->input->post('club');
 
                 $precioconcepto = $_POST['precioconcepto'];
                 $cantidad = $_POST['cantidad'];
+
+                $id_inscripcionequipo = $this->dbase->get_inscripcionequipo($id_torneo, $id_categoria, $id_club)->id_inscripcionequipo;
 
                 $datosmontogeneral = [
                     'fecha' => date("Y-m-d"),
                     'montototal' => $montototal,
                     'observacion' => '',
-                    'id_torneo' => $id_torneo,
+                    'id_inscripcionequipo' => $id_inscripcionequipo,
                 ];
                 $id_pagogeneral = $this->dbase->insert_montogeneral($datosmontogeneral);
                 // print_r($datosmontogeneral);
@@ -1449,9 +1671,26 @@ $textohtml .= '</div>';
                     // exit();
 
                     // ya hay una funcion en el modelo save_pago_yellow() que hace los mismo borrar uno
-                    // $this->dbase->save_pago($datos);
+                    $this->dbase->save_pago($datos);
                     $i++;
                 }
+
+                // print_r($_POST['jugador']);
+                // exit();
+
+                if(isset($_POST['jugador'])){
+                    $id_jugador = $_POST['jugador'];
+                    foreach($_POST['precioconcepto'] as $preconc) {
+                        $datostrasnf= [
+                            'pagado' => 1
+                        ];
+
+                        $this->dbase->update_transferencia($id_club, $id_jugador[$j], $preconc, $datostrasnf);
+                        $j++;
+                    }
+                } 
+
+
                 
             }
             echo json_encode(array("status" => TRUE));
