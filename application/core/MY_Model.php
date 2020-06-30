@@ -492,11 +492,14 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
-    public function get_jugadores_por_equipo($id_equipo)
+    public function get_jugadores_por_equipo($id_equipo, $id_partidos)
     {
         $this->db->from('inscripcionequipo');
         $this->db->join('inscripcionjugador', 'inscripcionjugador.id_inscripcionequipo = inscripcionequipo.id_inscripcionequipo');
+        $this->db->join('habilitado', 'habilitado.id_jugador = inscripcionjugador.id_jugador');
         $this->db->where('inscripcionequipo.id_inscripcionequipo', $id_equipo);
+        $this->db->where('habilitado.id_partidos', $id_partidos);
+        $this->db->order_by('inscripcionjugador.posicion');
         $query = $this->db->get();
         return $query->result();
     }
@@ -967,7 +970,7 @@ class MY_Model extends CI_Model
             join club c on c.id_club = e.id_club
             join persona p on p.id_persona = j.id_persona
             join resultado_partido rp on rp.id_jugador = j.id_jugador 
-            where c.id_club = ? and rp.accion = 1
+            where c.id_club = ? and rp.accion = 1 and rp.pagado = 0
             group by j.id_jugador, rp.id_partidos, ij.dorsal';
         $query = $this->db->query($sql, array($id_club));
         return $query->result();

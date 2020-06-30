@@ -508,8 +508,8 @@ class Planillero extends CI_Controller {
 
     public function gopartido($id_partido, $id_e1, $id_e2)
     {
-        $jugad_equi1 = $this->dbase->get_jugadores_por_equipo($id_e1);
-        $jugad_equi2 = $this->dbase->get_jugadores_por_equipo($id_e2);
+        $jugad_equi1 = $this->dbase->get_jugadores_por_equipo($id_e1, $id_partido);
+        $jugad_equi2 = $this->dbase->get_jugadores_por_equipo($id_e2, $id_partido);
         // print_r('<pre>');
         // print_r($jugad_equi1);
         // // print_r($jugad_equi1[0]->id_club);
@@ -1825,7 +1825,7 @@ $textohtml .= '</div>';
                         $cent .= '<td>'.$persona->apellido_paterno.' '.$persona->apellido_materno.', '.$persona->nombres.'</td>';
                         $cant = $this->dbase->verificar_habilitado($id_partido, $value->id_jugador);
                         $checked = ($cant > 0) ? 'checked' : '' ;
-                        $cent .= '<td><input class="playered" type="checkbox" name="jugador" id_par="'.$id_partido.'" id_jug="'.$value->id_jugador.'" value="'.$value->id_jugador.'" '.$checked.'></td>';
+                        $cent .= '<td><input class="playered" type="checkbox" name="jugador" id_par="'.$id_partido.'" id_jug="'.$value->id_jugador.'" value="'.$value->id_jugador.'" '.$checked.' '.$ena.'></td>';
                       $cent .= '</tr>';
                   }
                   
