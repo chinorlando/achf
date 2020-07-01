@@ -106,6 +106,14 @@ class Jugador extends CI_Controller {
      public function post_data()
     {
         // datos de persona
+        if (isset($this->input->post('password') && isset($this->input->post('usuario')))) {
+            $usuario = $this->input->post('password');
+            $password = sha1($this->input->post('password'));
+        } else {
+            $usuario = '';
+            $password = '';
+        }
+        
         $data = array(
             'nombres'          => $this->input->post('nombres'),
             'apellido_paterno' => $this->input->post('apellido_paterno'),
@@ -120,8 +128,8 @@ class Jugador extends CI_Controller {
             'profesion'        => $this->input->post('profesion'),
             'nacionalidad'     => $this->input->post('nacionalidad'),
             'email'            => $this->input->post('email'),
-            'usuario'          => $this->input->post('usuario'),
-            'password'         => sha1($this->input->post('password')),
+            'usuario'          => $usuario,
+            'password'         => $password,
         ); 
        
         return $data;
