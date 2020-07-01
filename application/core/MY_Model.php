@@ -503,6 +503,19 @@ class MY_Model extends CI_Model
         $query = $this->db->get();
         return $query->result();
     }
+
+    public function get_jugadores_por_equipo_hab($id_equipo)
+    {
+        $this->db->from('inscripcionequipo');
+        $this->db->join('inscripcionjugador', 'inscripcionjugador.id_inscripcionequipo = inscripcionequipo.id_inscripcionequipo');
+        // $this->db->join('habilitado', 'habilitado.id_jugador = inscripcionjugador.id_jugador');
+        $this->db->where('inscripcionequipo.id_inscripcionequipo', $id_equipo);
+        // $this->db->where('habilitado.id_partidos', $id_partidos);
+        $this->db->order_by('inscripcionjugador.posicion');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     /////////////////////////rol de partidos end //////////////////////////////////
 
 
