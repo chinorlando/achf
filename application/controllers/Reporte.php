@@ -76,7 +76,7 @@ class Reporte extends CI_Controller {
         $detalle_pago=$this->Reporte_model->get_pagos_equipo($id_club,$id_categoria, $id_torneo);
         $detalle_pago_equipo=$this->Reporte_model->get_pago_general($detalle_pago[0]->id_inscripcionequipo);
 
-        $this->load->library('pdf');
+        $this->load->library('Pdf');
         $pdf = $this->pdf->load();
 
         $tz = 'America/La_Paz';
