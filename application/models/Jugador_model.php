@@ -71,7 +71,7 @@ class Jugador_model extends MY_Model {
 
     public function update_ju($id,$data, $dataJugador)
     {    
-    	$this->db->trans_start(true);
+    	$this->db->trans_start();
 	        $id = $this->security->xss_clean($id);
 	        $dataJugador = $this->security->xss_clean($dataJugador);
 
