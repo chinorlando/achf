@@ -11,10 +11,10 @@
                 <tr>
                   <th>Nro.</th>
                   <th>NOMBRE DEL EQUIPO/CLUB</th>
-                  <th>DIRECCION</th>
                   <th>CIUDAD</th>
                   <th>FUNDACION</th>
-                  <th>ACCIONES</th>
+                  <th>PAGOS</th>
+                  <th>JUGADORES</th>
                 </tr>
                 <tbody>
                 <?php echo $note?>

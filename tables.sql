@@ -400,3 +400,7 @@ create table categoriasorteado(
   constraint fk_sorteoequipos_categoria foreign key(id_categoria) references categoria(id_categoria),
   constraint fk_sorteoequipos_torneo foreign key(id_torneo) references torneo(id_torneo)
 );
+
+
+
+INSERT INTO `menus` (`id`, `id_menu_principal`, `nombre`, `directorio`, `icono`, `imagen`, `color`, `orden`, `estado`) VALUES (41, 11, 'Jugadores', 'reporte/jugador', NULL, NULL, NULL, NULL, '1');

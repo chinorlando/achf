@@ -460,6 +460,8 @@ class Planillero extends CI_Controller {
                                         $cent .= '<th class="col-lg-1 text-center">Score</th>';
                                         $cent .= '<th class="col-lg-3">Visitante</th>';
                                         $cent .= '<th class="col-lg-1">Accion</th>';
+                                        $cent .= '<th class="col-lg-1">Arbitro</th>';
+                                        $cent .= '<th class="col-lg-1">Planillero</th>';
                                     $cent .= '</tr>';
                                 $cent .= '</thead>';
                                 $cent .= '<tbody>';
@@ -489,7 +491,14 @@ class Planillero extends CI_Controller {
                                             $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gohabilitacion/'.$partido->id_partidos.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">Habilitación</a></td>';
                                         } else {
                                             $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gopartido/'.$partido->id_partidos.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">Entrar</a></td>';
+                                            $cent .= '<td class="col-lg-4"><a href="'.base_url().'Reporte/pdf_informe_arbitro/'.$partido->id_partidos.'" target="_blank"><button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-danger" ">
+                                            <i class="fa fa-file-pdf-o"></i>
+                                        </button></a></td>';
+                                        $cent .= '<td class="col-lg-4"><a href="'.base_url().'Reporte/pdf_informe_planillero/'.$partido->id_partidos.'" target="_blank"><button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-warning" ">
+                                        <i class="fa fa-file-pdf-o"></i>
+                                    </button></a></td>';
                                         }
+
                                         
                                         // $cent .= '<th class="col-lg-1"><a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Ver" onclick="go_to_match('.$partido->id_partidos.'/'.$partido->id_eq1.','.$partido->id_eq2.')"><i class="glyphicon glyphicon-pencil"></i> Ver</a></th>';
                                     $cent .= '</tr>';
@@ -1152,8 +1161,10 @@ class Planillero extends CI_Controller {
             <td>';
             if (!$this->dbase->get_siexiste($partido->id_partidos)) {
                 $cent .= '<a class="btn btn-sm btn-primary id_match" href="javascript:void(0)" title="Editar asignación." onclick="add_arbitros('.$partido->id_partidos.')">Agregar datos</a>';
+
             } else {
                 $cent .= '<a class="btn btn-sm btn-success id_match" href="javascript:void(0)" title="Añadir árbitros, cancha, fecha y hora." onclick="edit_arbitros('.$partido->id_partidos.')">Editar</a>';
+
             }
             $cent .= '</td>
           </tr>';
