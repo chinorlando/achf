@@ -553,38 +553,38 @@ class Registro extends CI_Controller {
     //---------- Modulo jugador_categoria cambio a inscripcionjugador ------------    
 
     //------------------ Modulo equipo ----------------------------------------
-      function equipo(){
-        $this->_viewOutPut('equipoCrud');
-    }
-    function equipoCrud() {
-        try {
-            $crud = new grocery_CRUD();
-            $crud->set_theme('bootstrap');
-            $crud->set_subject('Equipo');
-            $crud->set_table('equipo');
-            $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
-            $crud->field_type('genero','dropdown',array('M'=>'Masculino', 'F'=>'Femenino'));
-            $crud->set_field_upload('escudo','upload/equipo');
-            $crud->callback_before_upload(array($this,'image_callback_before_upload'));
+    //   function equipo(){
+    //     $this->_viewOutPut('equipoCrud');
+    // }
+    // function equipoCrud() {
+    //     try {
+    //         $crud = new grocery_CRUD();
+    //         $crud->set_theme('bootstrap');
+    //         $crud->set_subject('Equipo');
+    //         $crud->set_table('equipo');
+    //         $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+    //         $crud->field_type('genero','dropdown',array('M'=>'Masculino', 'F'=>'Femenino'));
+    //         $crud->set_field_upload('escudo','upload/equipo');
+    //         $crud->callback_before_upload(array($this,'image_callback_before_upload'));
 
-            $crud->display_as('id_personacargo','Entrenador');
-            $crud->set_relation('id_personacargo','persona','{apellido_paterno} {apellido_materno} {nombres}');
+    //         $crud->display_as('id_personacargo','Entrenador');
+    //         $crud->set_relation('id_personacargo','persona','{apellido_paterno} {apellido_materno} {nombres}');
 
-            $crud->display_as('id_club','Club');
-            $crud->set_relation('id_club','club','{nombre_club}');
+    //         $crud->display_as('id_club','Club');
+    //         $crud->set_relation('id_club','club','{nombre_club}');
 
-            $crud->display_as('id_categoria','Categoria');
-            $crud->set_relation('id_categoria','categoria','{nombre}');
+    //         $crud->display_as('id_categoria','Categoria');
+    //         $crud->set_relation('id_categoria','categoria','{nombre}');
 
-            // $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi','Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));
-            $crud->unset_print();
-            $crud->unset_export();
-            $output = $crud->render();
-            $this->__salida_output($output);
-        } catch (Exception $e) {
-            show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
-        }
-    }
+    //         // $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi','Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));
+    //         $crud->unset_print();
+    //         $crud->unset_export();
+    //         $output = $crud->render();
+    //         $this->__salida_output($output);
+    //     } catch (Exception $e) {
+    //         show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+    //     }
+    // }
     //------------------ Fin Modulo equipo ----------------------------------------    
     
     //------------------ Modulo equipo ----------------------------------------
@@ -703,7 +703,8 @@ class Registro extends CI_Controller {
     //------------------ Fin Modulo torneo ----------------------------------------    
     
      //------------------ Modulo torneo_equipo ----------------------------------------
-     function torneo_equipo(){
+    //  function torneo_equipo(){
+    function equipo(){
         $this->_viewOutPut('torneo_equipoCrud');
     }
     function torneo_equipoCrud() {
