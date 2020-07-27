@@ -49,7 +49,7 @@ class Planillero extends CI_Controller {
     public function get_torneo_activo()
     {
         $id_torneo = $this->db->get_where('torneo', array(
-                'estado' => 0,
+                'estado' => 1,
             ))->row()->id_torneo;
         return $id_torneo;
     }

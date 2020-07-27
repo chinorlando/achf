@@ -268,9 +268,11 @@ class MY_Model extends CI_Model
     public function get_all_clubs()
     {
         // $this->db->distinct();
-        $this->db->select('id_club, nombre_club');
-        $this->db->from('club');
-        $this->db->order_by('nombre_club', 'asc');
+        $this->db->select('c.id_club, c.nombre_club');
+        $this->db->from('inscripcionequipo i');
+        $this->db->join('club c', 'c.id_club = i.id_club');
+        $this->db->join('torneo t', 't.id_torneo = i.id_torneo');
+        $this->db->order_by('c.nombre_club', 'asc');
 
         $query = $this->db->get();
         return $query->result();
@@ -1031,7 +1033,7 @@ class MY_Model extends CI_Model
         $sql = "select t.id_torneo from inscripcionequipo i 
             join torneo t on t.id_torneo = i.id_torneo
             join categoria c on c.id_categoria = i.id_categoria 
-            where t.estado = 0 and i.id_club = ? and i.id_categoria = ?";
+            where t.estado = 1 and i.id_club = ? and i.id_categoria = ?";
         $query = $this->db->query($sql, array($id_club, $id_categoria));
         return $query->row();
     }
@@ -1118,7 +1120,7 @@ class MY_Model extends CI_Model
 
         $sql = 'select t.id_torneo, c.id_categoria, c.nombre, count(i.id_torneo) as inscritos
             FROM inscripcionequipo i, torneo t, categoria c
-            where t.id_torneo = i.id_torneo and i.id_categoria = c.id_categoria and t.estado = 0
+            where t.id_torneo = i.id_torneo and i.id_categoria = c.id_categoria and t.estado = 1
             GROUP BY c.nombre, t.id_torneo
             HAVING COUNT(i.id_torneo) >=4';
         $query = $this->db->query($sql); 

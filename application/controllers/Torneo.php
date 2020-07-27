@@ -46,11 +46,11 @@ class Torneo extends CI_Controller {
                         <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="edit_row('.$d->id_torneo.')">
                             <i class="fa fa-pencil"></i>
                         </button>    
-                        <!--
-                        <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="delete_row('.$d->id_torneo.')">
+                        
+                        <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-danger" onclick="delete_row('.$d->id_torneo.')">
                             <i class="fa fa-trash-o"></i>
                         </button>
-                        -->
+                        
                         ';
             $data[] = $row;
         }
