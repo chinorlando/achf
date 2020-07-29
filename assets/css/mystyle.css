@@ -1,10 +1,10 @@
 .login-page {
-    background: url(../images/login_cover.jpeg) no-repeat;
+    background: url(../images/login_cover.jpg) repeat;
     background-size: cover;
 }
 
 .inicio-page {
-    background: url(../images/inicio_cover.jpeg) repeat;
+    background: url(../images/inicio_cover.jpg) no-repeat;
     background-size: cover;
 }
 

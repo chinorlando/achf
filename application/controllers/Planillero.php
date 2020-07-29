@@ -992,8 +992,8 @@ class Planillero extends CI_Controller {
             )
         )->row()->id_torneo;
 
-        // $html_y_c .= '<input type="text" name="id_torneo" id="id_torneo" value="'.$id_torneo.'" style="display:none;">';
-        $html_y_c .= '<input type="text" name="id_torneo" id="id_torneo" value="'.$id_torneo.'" style="">';
+        $html_y_c .= '<input type="text" name="id_torneo" id="id_torneo" value="'.$id_torneo.'" style="display:none;">';
+        // $html_y_c .= '<input type="text" name="id_torneo" id="id_torneo" value="'.$id_torneo.'" style="">';
 
         foreach ($amarillas as $amarilla) {
             if ($amarilla->pagado == 1) {
@@ -1051,7 +1051,7 @@ class Planillero extends CI_Controller {
             $i++;
         }
         $html_y_c .= '<div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="monto_pagar" id="monto_pagar" value="montito" readonly>
+            <input type="text" class="form-control" name="monto_pagar" id="monto_pagar" value="0" readonly>
                 <span class="input-group-btn">
                   <button type="button" class="btn btn-success btn-flat">Bs.</button>
                 </span>
@@ -1063,10 +1063,10 @@ class Planillero extends CI_Controller {
     public function agregarinput($precio, $id_jugador, $id_partido, $i, $checked, $disabled, $id_precioconcepto)
     {
         $h = '<div class="form-group">
-          <input type="checkbox" value="'.$id_precioconcepto.'" name="precioconcepto[]" '.$disabled.' >
+          <input type="checkbox" value="'.$id_precioconcepto.'" name="precioconcepto[]" '.$disabled.' style="display:none;">
           <label>
-            <input type="text" value="'.$id_jugador.'" name="jugador">
-            <input type="text" value="'.$id_partido.'" name="partido">
+            <input type="hidden" value="'.$id_jugador.'" name="jugador">
+            <input type="hidden" value="'.$id_partido.'" name="partido">
             <input type="checkbox" tu-attr-precio="'.$precio.'" class="flat-red amarilla_check" name="amarilla_check[]" value="'.$precio.'" '.$checked.' '.$disabled.'> '.$i.'º amarilla
           </label>
         </div>';
@@ -1499,7 +1499,7 @@ $textohtml .= '<div class="col-md-12">';
           $textohtml .= '<td>'.$val->precio.'</td>';
           $textohtml .= '<td>
                             <div class="input-group">
-                                <input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]">
+                                <input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]" style="display: none;">
                                 <span class="input-group-addon">
                                   <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$val->precio.'" value="'.$val->precio.'" class="flat-red concepto_valores">
                                 </span>
@@ -1738,7 +1738,7 @@ $textohtml .= '</div>';
             default:
                 foreach ($motivos as $val) {
                     $textohtml.=
-                    '<input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]">
+                    '<input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]" style="display:none;">
                     <label>
                       <input type="hidden" name="cantidad[]" value="1">
                       <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$val->precio.'" value="'.$val->precio.'" class="flat-red monto_motivo"> '  .$val->descripcion.

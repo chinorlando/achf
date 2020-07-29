@@ -58,7 +58,7 @@
 						<!-- <select class="form-control select2" id="monto" name="monto" style="width: 100%;">
 							<option value="-1">Seleccionar monto...</option>
 						</select> -->
-						<input class="form-control monto" type="input" name="precio_motivo_total" id="precio_motivo_total" value="momomomomomo" readonly>
+						<input class="form-control monto" type="input" name="precio_motivo_total" id="precio_motivo_total" value="0" readonly>
 						<!-- <input type="input" name="id_monto" id="id_monto" hidden="hidden"> -->
 					</div>
 				</div>

@@ -36,8 +36,8 @@
                         <tr>
                             <th>Nro.</th>
                             <th>Nombre</th>
-                            <th>fecha_inicio</th>
-                            <th>fecha final</th>
+                            <th>Inicia </th>
+                            <th>Termina</th>
                             <th>Estado</th>
                             <th>Opciones</th>
                         </tr>
@@ -122,8 +122,8 @@
 
 <script type="text/javascript">
     $('#fecha_inicio').datetimepicker({
-      // format: 'YYYY/MM/DD',
-      format: 'DD/MM/YYYY',
+      format: 'YYYY/MM/DD',
+      // format: 'DD/MM/YYYY',
     });
     $('#fecha_fin').datetimepicker({
       format: 'YYYY/MM/DD',

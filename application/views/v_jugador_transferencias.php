@@ -231,7 +231,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Large Modal</h4>
+                    <h4 class="modal-title">Transferencias</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -245,7 +245,7 @@
                                         <label for="">Proviene</label>
                                         <input type="hidden" class="form-control" name="proviene">
                                         <input type="hidden" class="form-control" name="id_jugador">
-                                        <input type="text" class="form-control" name="proviene_nombre">
+                                        <input type="text" class="form-control" name="proviene_nombre" disabled>
                                     </div>
                                 </div>
                                 
@@ -299,7 +299,7 @@
                     <div class="transferencias"></div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                     <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
             </form>
@@ -311,7 +311,7 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Large Modal</h4>
+          <h4 class="modal-title">Transferencia</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
         </button>
@@ -320,8 +320,8 @@
 
     </form>
     <div class="modal-footer justify-content-between">
-      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      <button type="button" class="btn btn-primary">Save changes</button>
+      <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      <button type="button" class="btn btn-primary">Guardar cambios</button>
   </div>
 </div>
 </div>

@@ -10,6 +10,6 @@
 </section>
 
 <section class="content contenido_inicio inicio-page">
-      <h1></h1>
+      <h1></h1><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br> <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
       
 </section>
