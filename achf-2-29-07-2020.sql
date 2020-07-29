@@ -4046,7 +4046,7 @@ ALTER TABLE `inscripcionequipo`
 -- Filtros para la tabla `inscripcionjugador`
 --
 ALTER TABLE `inscripcionjugador`
-  ADD CONSTRAINT `fk_inscripcionjugador_inscripcionequipo` FOREIGN KEY (`id_inscripcionequipo`) REFERENCES `inscripcionequipo1` (`id_inscripcionequipo`),
+  ADD CONSTRAINT `fk_inscripcionjugador_inscripcionequipo` FOREIGN KEY (`id_inscripcionequipo`) REFERENCES `inscripcionequipo` (`id_inscripcionequipo`),
   ADD CONSTRAINT `fk_inscripcionjugador_jugador` FOREIGN KEY (`id_jugador`) REFERENCES `jugador` (`id_jugador`);
 
 --
@@ -4079,8 +4079,8 @@ ALTER TABLE `pagogeneral`
 --
 ALTER TABLE `partidos`
   ADD CONSTRAINT `fk_partidos_estadio` FOREIGN KEY (`id_estadio`) REFERENCES `estadio` (`id_estadio`),
-  ADD CONSTRAINT `fk_partidos_inscripcionequipo1` FOREIGN KEY (`id_inscripcion1`) REFERENCES `inscripcionequipo1` (`id_inscripcionequipo`),
-  ADD CONSTRAINT `fk_partidos_inscripcionequipo2` FOREIGN KEY (`id_inscripcion2`) REFERENCES `inscripcionequipo1` (`id_inscripcionequipo`),
+  ADD CONSTRAINT `fk_partidos_inscripcionequipo1` FOREIGN KEY (`id_inscripcion1`) REFERENCES `inscripcionequipo` (`id_inscripcionequipo`),
+  ADD CONSTRAINT `fk_partidos_inscripcionequipo2` FOREIGN KEY (`id_inscripcion2`) REFERENCES `inscripcionequipo` (`id_inscripcionequipo`),
   ADD CONSTRAINT `fk_partidos_planilleo` FOREIGN KEY (`id_planillero`) REFERENCES `planillero` (`id_planillero`),
   ADD CONSTRAINT `fk_partidos_torneo` FOREIGN KEY (`id_torneo`) REFERENCES `torneo` (`id_torneo`);
 
