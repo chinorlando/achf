@@ -221,20 +221,51 @@ CREATE TABLE roles_menus_principales (
 -- );
 
 -- 3
-create table inscripcionequipo(
-	id_inscripcionequipo int PRIMARY key AUTO_INCREMENT,
-	id_personacargo int not null,
-	id_club int not null,
-	genero varchar(9),
-	id_categoria int not null,
-	fecha date not null,
-	num_bolo int,
-	id_torneo int not null,
 
-	constraint fk_inscripcionequipo_persona foreign KEY(id_personacargo) references persona(id_persona),
-	constraint fk_inscripcionequipo_club foreign KEY(id_club) references club(id_club),
-	constraint fk_inscripcionequipo_categoria foreign key(id_categoria) references categoria(id_categoria),
-	constraint fk_inscripcionequipo_torneo foreign key(id_torneo) references torneo (id_torneo)
+create table equipo(
+  id_equipo int PRIMARY KEY AUTO_INCREMENT,
+  genero char(1) NOT NULL,
+  id_personacargo int NOT NULL COMMENT 'entrenador',
+  id_club int NOT NULL,
+  id_categoria int NOT NULL,
+
+  constraint fk_equipo_persona foreign key (id_personacargo) references persona(id_persona),
+  constraint fk_equipo_club foreign key(id_club) references club(id_club),
+  constraint fk_equipo_categoria foreign key(id_categoria) references categoria(id_categoria)
+);
+
+-- create table inscripcionequipo(
+-- 	id_inscripcionequipo int PRIMARY key AUTO_INCREMENT,
+-- 	id_personacargo int not null,
+-- 	id_club int not null,
+-- 	genero varchar(9),
+-- 	id_categoria int not null,
+-- 	fecha date not null,
+-- 	num_bolo int,
+-- 	id_torneo int not null,
+
+-- 	constraint fk_inscripcionequipo_persona foreign KEY(id_personacargo) references persona(id_persona),
+-- 	constraint fk_inscripcionequipo_club foreign KEY(id_club) references club(id_club),
+-- 	constraint fk_inscripcionequipo_categoria foreign key(id_categoria) references categoria(id_categoria),
+-- 	constraint fk_inscripcionequipo_torneo foreign key(id_torneo) references torneo (id_torneo)
+-- );
+
+create table inscripcionequipo(
+  id_inscripcionequipo int PRIMARY key AUTO_INCREMENT,
+  -- id_personacargo int not null,
+  -- id_club int not null,
+  -- genero varchar(9),
+  -- id_categoria int not null,
+  fecha date not null,
+  num_bolo int,
+  id_equipo int not null,
+  id_torneo int not null,
+
+  -- constraint fk_inscripcionequipo_persona foreign KEY(id_personacargo) references persona(id_persona),
+  -- constraint fk_inscripcionequipo_club foreign KEY(id_club) references club(id_club),
+  -- constraint fk_inscripcionequipo_categoria foreign key(id_categoria) references categoria(id_categoria),
+  constraint fk_inscripcionequipo_equipo foreign key(id_equipo) references equipo (id_equipo),
+  constraint fk_inscripcionequipo_torneo foreign key(id_torneo) references torneo (id_torneo)
 );
 
 CREATE TABLE partidos (
@@ -400,6 +431,17 @@ create table categoriasorteado(
   constraint fk_sorteoequipos_categoria foreign key(id_categoria) references categoria(id_categoria),
   constraint fk_sorteoequipos_torneo foreign key(id_torneo) references torneo(id_torneo)
 );
+
+create table suspencion_partido(
+  id_suspencionpartido int PRIMARY KEY AUTO_INCREMENT,
+  id_partidos int not null,
+  observaciones text,
+  fecha_reprogramacion datetime ,
+  estado_sus tinyint COMMENT '1=partido reprogramado finalizado 0=sigue suspendido el partido',
+
+  constraint fk_suspencionpartido_partido foreign key (id_partidos) references partidos(id_partidos)
+);
+
 
 
 

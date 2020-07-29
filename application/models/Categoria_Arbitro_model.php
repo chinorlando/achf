@@ -6,7 +6,7 @@ class Categoria_Arbitro_model extends MY_Model {
     {
         parent::__construct();
 
-        $this->table  = 'Categoria_Arbitro';
+        $this->table  = 'categoria_arbitro';
         $this->column = array('id_catarbitro','nombre', 'estado');
         $this->order  = array('id_catarbitro' => 'asc');
         $this->id = 'id_catarbitro';

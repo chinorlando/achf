@@ -323,8 +323,8 @@ class Registro extends CI_Controller {
             $crud->set_theme('bootstrap');
             $crud->set_subject('Arbitro');
             $crud->set_table('arbitro');
-            $crud->add_fields('id_persona', 'id_catarbitro', 'disciplina', 'observaciones','estado');
-            $crud->columns('id_persona','id_catarbitro','disciplina');
+            // $crud->add_fields('id_persona', 'id_catarbitro', 'disciplina', 'observaciones','estado');
+            // $crud->columns('id_persona','id_catarbitro','disciplina');
             $crud->display_as('id_persona','Persona');
             $crud->display_as('id_catarbitro','Categoria Arbitro');
             $crud->set_relation('id_persona','persona','{apellido_paterno} {apellido_materno} {nombres}');
@@ -409,9 +409,10 @@ class Registro extends CI_Controller {
             $crud->set_theme('bootstrap');
             $crud->set_subject('Planillero');
             $crud->set_table('planillero');
-            $crud->display_as('id_persona','Persona');
+            $crud->display_as('id_persona','Planillero');
             $crud->set_relation('id_persona','persona','{apellido_paterno} {apellido_materno} {nombres}');
             $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+            $crud->field_type('disciplinas','dropdown',array('FUTBOL'=>'FUTBOL', 'FUTSAL'=>'FUTSAL'));
             $crud->unset_print();
             $crud->unset_export();
             $output = $crud->render();
@@ -556,15 +557,48 @@ class Registro extends CI_Controller {
       function equipo(){
         $this->_viewOutPut('equipoCrud');
     }
+    // function equipoCrud() {
+    //     try {
+    //         $crud = new grocery_CRUD();
+    //         $crud->set_theme('bootstrap');
+    //         $crud->set_subject('Equipo');
+    //         $crud->set_table('inscripcionequipo');
+    //         $crud->columns('id_personacargo','id_club','genero','id_categoria','fecha');
+    //         $crud->add_fields('id_personacargo','id_club','genero','id_categoria','fecha');
+    //         $crud->edit_fields('id_personacargo','id_club','genero','id_categoria','fecha');
+
+    //         $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
+    //         $crud->field_type('genero','dropdown',array('M'=>'Masculino', 'F'=>'Femenino'));
+    //         $crud->set_field_upload('escudo','upload/equipo');
+    //         $crud->callback_before_upload(array($this,'image_callback_before_upload'));
+
+    //         $crud->display_as('id_personacargo','Entrenador');
+    //         $crud->set_relation('id_personacargo','persona','{apellido_paterno} {apellido_materno} {nombres}');
+
+    //         $crud->display_as('id_club','Club');
+    //         $crud->set_relation('id_club','club','{nombre_club}');
+
+    //         $crud->display_as('id_categoria','Categoria');
+    //         $crud->set_relation('id_categoria','categoria','{nombre}');
+
+    //         // $crud->field_type('ciudad','dropdown',array('La Paz'=>'La Paz', 'Chuquisaca'=>'Chuquisaca', 'Oruro'=>'Oruro', 'Potosi'=>'Potosi','Santa Cruz'=>'Santa Cruz', 'Beni'=>'Beni', 'Pando'=>'Pando', 'Tarija'=>'Tarija', 'Cochabamba'=>'Cochabamba'));
+    //         $crud->unset_print();
+    //         $crud->unset_export();
+    //         $output = $crud->render();
+    //         $this->__salida_output($output);
+    //     } catch (Exception $e) {
+    //         show_error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+    //     }
+    // }
     function equipoCrud() {
         try {
             $crud = new grocery_CRUD();
             $crud->set_theme('bootstrap');
             $crud->set_subject('Equipo');
-            $crud->set_table('inscripcionequipo');
-            $crud->columns('id_personacargo','id_club','genero','id_categoria','fecha');
-            $crud->add_fields('id_personacargo','id_club','genero','id_categoria','fecha');
-            $crud->edit_fields('id_personacargo','id_club','genero','id_categoria','fecha');
+            $crud->set_table('equipo');
+            $crud->columns('id_personacargo','id_club','genero','id_categoria');
+            $crud->add_fields('id_personacargo','id_club','genero','id_categoria');
+            $crud->edit_fields('id_personacargo','id_club','genero','id_categoria');
 
             $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
             $crud->field_type('genero','dropdown',array('M'=>'Masculino', 'F'=>'Femenino'));
@@ -605,7 +639,7 @@ class Registro extends CI_Controller {
             $crud->set_relation_n_n('id_jugador', 'jugador', 'persona', 'id_jugador', 'id_jugador', '{nombres} {apellido_paterno} {apellido_materno}');
             $crud->display_as('id_jugador','Jugador');
 
-            $crud->set_primary_key('id_inscripcionequipo','v_equipo');
+            $crud->set_primary_key('id_equipo','v_equipo');
             $crud->set_relation('id_inscripcionequipo','v_equipo','{nombre_club} - {nombre}');
             $crud->display_as('id_inscripcionequipo','Equipo');
 
@@ -693,8 +727,12 @@ class Registro extends CI_Controller {
             $crud->set_subject('Torneo');
             $crud->set_table('torneo');
             
-            $crud->set_relation('id_categoria','categoria','{nombre}');
-            $crud->display_as('id_categoria','Categoria');
+            // $crud->set_relation('id_categoria','categoria','{nombre}');
+            // $crud->display_as('id_categoria','Categoria');
+
+            $crud->display_as('nombretorneo','Nombre del Torneo');
+            $crud->display_as('fecha_inicio','Inicia');
+            $crud->display_as('fecha_fin','Termina');
 
             $crud->field_type('estado','dropdown',array('1'=>'Activo', '0'=>'Inactivo'));
             $crud->unset_print();
@@ -708,8 +746,7 @@ class Registro extends CI_Controller {
     //------------------ Fin Modulo torneo ----------------------------------------    
     
      //------------------ Modulo torneo_equipo ----------------------------------------
-     function torneo_equipo(){
-    // function equipo(){
+    function torneo_equipo(){
         $this->_viewOutPut('torneo_equipoCrud');
     }
     function torneo_equipoCrud() {

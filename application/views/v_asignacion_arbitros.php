@@ -59,6 +59,7 @@
                   <label>Árbitro Principal</label>
                   <select class="form-control select2" name="arbitro_principal" id="arbitro_principal" style="width: 100%;">
                   </select>
+                  <span class="help-block"></span>
                 </div>
               </div>
 
@@ -67,6 +68,7 @@
                   <label>Asistente 1</label>
                   <select class="form-control select2" name="arbitro_asistente_1" id="arbitro_asistente_1" style="width: 100%;">
                   </select>
+                  <span class="help-block"></span>
                 </div>
               </div>
 
@@ -75,6 +77,7 @@
                   <label>Asistente 2</label>
                   <select class="form-control select2" name="arbitro_asistente_2" id="arbitro_asistente_2" style="width: 100%;">
                   </select>
+                  <span class="help-block"></span>
                 </div>
               </div>
 
@@ -83,6 +86,7 @@
                   <label>Asistente 3</label>
                   <select class="form-control select2" name="arbitro_asistente_3" id="arbitro_asistente_3" style="width: 100%;">
                   </select>
+                  <span class="help-block"></span>
                 </div>
               </div>
 
@@ -91,6 +95,7 @@
                   <label>Planillero</label>
                   <select class="form-control select2" name="planillero" id="planillero" style="width: 100%;">
                   </select>
+                  <span class="help-block"></span>
                 </div>
               </div>
 
@@ -99,6 +104,7 @@
                   <label>Cancha:</label>
                   <select class="form-control select2" name="cancha" id="cancha" style="width: 100%;">
                   </select>
+                  <span class="help-block"></span>
                 </div>
               </div>
 
@@ -107,6 +113,7 @@
                   <label>Date:</label>
                   <div class="input-group date">
                     <input type="text" class="form-control pull-right" id="fecha_hora_partido" name="fecha_hora_partido">
+                    <span class="help-block"></span>
                     <div class="input-group-addon">
                       <i class="fa fa-calendar"></i>
                     </div>
@@ -138,6 +145,20 @@
   var save_method;
   $(document).ready(function(){
     llenararbitros();
+
+    // $("input").change(function(){
+    //     $(this).parent().parent().removeClass('has-error');
+    //     $(this).next().empty();
+    // });
+    // $("textarea").change(function(){
+    //     $(this).parent().removeClass('has-error');
+    //     $(this).next().empty();
+    // });
+    // $("select").change(function(){
+    //     $(this).parent().parente().removeClass('has-error');
+    //     $(this).next().empty();
+    // });
+
   });
 
   function add_arbitros(id_partido) {
@@ -193,7 +214,12 @@
           // reload_table();
           alert("Los datos han sido guardados.");
         } else {
-          
+          for (var i = 0; i < data.inputerror.length; i++) {
+            $('[name="'+data.inputerror[i]+'"]').parent().addClass('has-error');
+            $('[name="'+data.inputerror[i]+'"]').next().text(data.error_string[i]);
+          }
+          $(".btnSave").text("Actualizar");
+          $(".btnSave").attr("disabled", false);
         }
         // $(".btnSave").text("Añadir");
         // $(".btnSave").attr("disabled", false);
@@ -271,6 +297,68 @@
         $('[name="cancha"]').val(data.id_estad);
         $('[name="cancha"]').select2({});
         $('[name="fecha_hora_partido"]').val(data.jornada);
+
+        
+        $("#modal-arbitro").modal("show");
+        $(".modal-title").text("Actualizar Árbitro");
+        $(".btnSave").text("Actualizar");
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        alert("Error get data from ajax");
+      }
+    });
+  }
+
+  function edit_arbitros_reprogramacion(id) {
+    save_method = "update";
+    $("#form_arbitro")[0].reset();
+    $(".form-group").removeClass("has-error"); // clear error class
+    $(".help-block").empty(); // clear error string
+
+    //Ajax Load data from ajax
+    $.ajax({
+      url: CFG.url + "planillero/edit_arbitros/" + id,
+      type: "GET",
+      dataType: "JSON",
+      success: function(data) {
+        $('[name="id_partido"]').val(data.id_partido);
+
+        for (var  i in data) {
+          for (var  j in data[i]) {
+            if (data[i][j].hasOwnProperty('id_arbitro')) {
+              // data[i][j].check = true;
+              // alert(data[i][j].id_arbitro);
+              console.log(j);
+              if (j==0) {
+                console.log('estoy en el cero');
+                $('[name="arbitro_principal"]').val(data[i][j].id_arbitro);
+                // para que al editar quede seleccionado el elemento a editar
+                $('[name="arbitro_principal"]').select2({});
+              }
+              if (j==1) {
+                console.log('estoy en el uno');
+                $('[name="arbitro_asistente_1"]').val(data[i][j].id_arbitro);
+                $('[name="arbitro_asistente_1"]').select2({});
+              }
+              if (j==2) {
+                console.log('estoy en el dos');
+                $('[name="arbitro_asistente_2"]').val(data[i][j].id_arbitro);
+                $('[name="arbitro_asistente_2"]').select2({});
+              }
+              if (j==3) {
+                console.log('estoy en el tres');
+                $('[name="arbitro_asistente_3"]').val(data[i][j].id_arbitro);
+                $('[name="arbitro_asistente_3"]').select2({});
+              }
+            }
+          }
+        }
+
+        $('[name="planillero"]').val(data.plani);
+        $('[name="planillero"]').select2({});
+        $('[name="cancha"]').val(data.id_estad);
+        $('[name="cancha"]').select2({});
+        $('[name="fecha_hora_partido"]').val();
 
         
         $("#modal-arbitro").modal("show");

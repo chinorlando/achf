@@ -23,7 +23,7 @@
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title">Default Modal</h4>
+					<h4 class="modal-title">Pagar amarillas</h4>
 				</div>
 				<?php echo form_open("#", array('id'=>'form_amarillas_jugador', "method"=>"POST")); ?>
 				<div class="modal-body">
@@ -43,6 +43,7 @@
 <script type="text/javascript">
 
 	$(document).ready(function() {
+		$('#prueba').hide();
 
 		$(document).on('click keyup','.amarilla_check',function() {
 			
@@ -214,6 +215,41 @@
 		});
 	}
 
+	function suspender_partido(id_partido, id_e1, id_e2) {
+		$('#id_partido').val(id_partido);
+	}
+
+	function save_suspencion() {
+		id_partido = $('#id_partido').val();
+		observaciones = $('#observaciones').val();
+		fecha = $('#fecha').val();
+		$.ajax({
+			type: "POST",
+			data: {id_partido:id_partido, observaciones:observaciones, fecha:fecha},
+			url: CFG.url+'planillero/ajax_suspender_partido',
+			dataType: "JSON",
+			success: function(data)
+			{
+				if (data.status) {;
+					$("td>select").attr("disabled", true);
+					$("#finalizarb").attr("disabled", true);
+					$("#suspenderb").attr("disabled", true);
+					$('#modal-suspencion').modal('hide');
+				} else {
+					for (var i = 0; i < data.inputerror.length; i++) {
+	                    $('[name="'+data.inputerror[i]+'"]').parent().addClass('has-error'); //select parent twice to select div form-group class and add has-error class
+	                    $('[name="'+data.inputerror[i]+'"]').next().text(data.error_string[i]); //select span help-block class set text error string
+                	}
+				}
+
+			},
+			error: function (jqXHR, textStatus, errorThrown)
+			{
+				alert('Error al intentar suspender el partido.');
+			}
+		});
+	}
+
 
 	///////////////////// pago de amarillas ////////////////////////////////
 	function mostrar_amarillas(id_jugador, id_partido) {
@@ -266,6 +302,44 @@
 
 
 </script>
+
+<div class="modal fade" id="modal-suspencion">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Suspender partido</h4>
+      </div>
+      <div class="modal-body">
+      	<div class="row">
+	        <div class="col-md-12">
+	          <div class="box box-primary">
+	            <form>
+	              <div class="box-body">
+	                <div class="form-group">
+	                	<input type="text" name="id_partido" id="id_partido">
+	                  <label>Observaciones</label>
+	                  <textarea class="form-control" rows="3" placeholder="Ingrese ..." id="observaciones" name="observaciones"></textarea>
+	                  <span class="help-block"></span>
+	                </div>
+	                <!-- <div class="form-group">
+	                  <label>Nueva fecha</label>
+	                  <input type="text" class="form-control" name="fecha" id="fecha" placeholder="Fecha de reprogramación">
+	                </div> -->
+	              </div>
+	            </form>
+	          </div>
+	      	</div>
+      	</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" onclick="save_suspencion()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- <script>
 

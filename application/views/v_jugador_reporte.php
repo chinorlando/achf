@@ -37,8 +37,8 @@
                             <th>F. Nacimiento</th>
                             <th>CI</th>
                             <th>Nº FBF</th>
-                            <th>Foto</th>
                             <th>Sexo</th>
+                            <th>Foto</th>
                             <th>Nacionalidad</th>
                             <th>Club</th>
                             <th>Ficha</th>

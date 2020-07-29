@@ -426,7 +426,7 @@ Sucre – Bolivia</b></span></td>
         font-style: normal;"><b>FEDERACIÓN BOLIVIANA DE FUTBOL</b></span><br><span style="color:black; font-size:12pt; font-weight: normal;
         font-style: normal;"><b>REGISTRO UNICO DEPORTIVO</b></span><br><span style="color:black; font-size:9pt; font-weight: normal;
         font-style: normal;"><b>Ficha individual</b></span></div></td>
-        <td width="20%" class="barcodecell"><barcode code="'.$dt.'" type="QR" class="barcode" size="0.5"
+        <td width="20%" align="center"><img src="'.base_url().'/assets/uploads/reporte/asoc.PNG" width="70px" /></td>
         error="M"/></td>
         </tr></table>
         ';

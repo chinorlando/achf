@@ -9,8 +9,8 @@
       <div class="box box-default">
         <div class="box-header with-border">
           <h3 class="box-title">Rol de partidos</h3>
-         <a href="<?php echo base_url()?>/Reporte/pdf_rol_partidos" target="_blank"> <button type="button" class="btn btn-box" ><i class="fa fa-file-pdf-o"></i></button>Rol Partidos PDF</a>
-         <a href="<?php echo base_url()?>/Reporte/pdf_rol_partidos_arbitros" target="_blank"> <button type="button" class="btn btn-box" ><i class="fa fa-file-pdf-o"></i></button>Rol Partidos Arbitro PDF</a>
+         <a href="<?php echo base_url()?>Reporte/pdf_rol_partidos" target="_blank"> <button type="button" class="btn btn-box" ><i class="fa fa-file-pdf-o"></i></button>Rol Partidos PDF</a>
+         <a href="<?php echo base_url()?>Reporte/pdf_rol_partidos_arbitros" target="_blank"> <button type="button" class="btn btn-box" ><i class="fa fa-file-pdf-o"></i></button>Rol Partidos Arbitro PDF</a>
           <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>

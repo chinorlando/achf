@@ -118,6 +118,14 @@ JOIN club on club.id_club = equipo.id_club
 JOIN categoria on categoria.id_categoria = equipo.id_categoria
 GROUP BY equipo.id_equipo
 
+-- sierve -- 
+CREATE VIEW v_equipo AS
+SELECT equipo.id_equipo, club.nombre_club, categoria.nombre from inscripcionequipo
+join equipo on equipo.id_equipo = inscripcionequipo.id_equipo
+JOIN club on club.id_club = equipo.id_club
+JOIN categoria on categoria.id_categoria = equipo.id_categoria
+GROUP BY equipo.id_equipo
+
 
 -- para la mostrar torneo
 create view v_torneocategoria as
