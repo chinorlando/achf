@@ -32,6 +32,8 @@
 
   <link href="<?php echo base_url() ?>assets/datatables/datatables.min.css" rel="stylesheet" />
 
+  <link rel="stylesheet" href="<?php echo base_url() ?>assets/css/mystyle.css">
+
   <!-- jQuery 3 -->
 <script src="<?php echo base_url() ?>assets/bower_components/jquery/dist/jquery.min.js"></script>
 

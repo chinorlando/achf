@@ -1,0 +1,22 @@
+.login-page {
+    background: url(../images/login_cover.jpeg) no-repeat;
+    background-size: cover;
+}
+
+.inicio-page {
+    background: url(../images/inicio_cover.jpeg) repeat;
+    background-size: cover;
+}
+
+.contenido_inicio {
+    /*min-height: 1024px;
+    padding: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: 15px;
+    padding-right: 15px;*/
+}
+
+.contenido_inicio {
+	/*height: 100%;*/
+}
