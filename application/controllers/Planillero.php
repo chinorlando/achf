@@ -153,8 +153,9 @@ class Planillero extends CI_Controller {
         $num_bolo = json_decode($_POST["datos"])->num_bolo;
 
         $data =['num_bolo' => $num_bolo];
+        $id_categoria = $_POST["id_categoria"];
         
-        $this->dbase->update_inscripcionequipo($id_club, $id_torneo, $data);
+        $this->dbase->update_inscripcionequipo($id_club, $id_torneo, $id_categoria, $data);
 
         echo json_encode(array('status' => TRUE));
 
@@ -203,11 +204,12 @@ class Planillero extends CI_Controller {
         // $torneo = 1;
         // $torneo = $this->input->post('id_torneo');
         $torneo = $this->get_torneo_activo();
-        self::$equipos = $this->dbase->get_equipos_by_torneo_1($torneo);
+        $id_categoria = $this->input->post('id_categoria');
+        self::$equipos = $this->dbase->get_equipos_by_torneo($torneo, $id_categoria);
         // self::$equipos = array('A','B','C','D','E','F','G','H','I','J','K');
 
         // print_r('<pre>');
-        // print_r(self::$Equipo);
+        // print_r(self::$equipos);
         // exit();
 
         $cantidad = count(self::$equipos);

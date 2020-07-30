@@ -603,9 +603,11 @@ function calcular(id_numero){
     var formData = new FormData($('#form_bolo')[0]);
 
     var id_torneo = $('#torneo').val();
+    var id_categoria = $('#categoria').val();
     
     formData.append('id_club', id_numero);
     formData.append('id_torneo', id_torneo);
+    formData.append('id_categoria', id_categoria);
     formData.append('datos', aInfo);
     // formData.append('csrf_test_name', CFG.token);
 

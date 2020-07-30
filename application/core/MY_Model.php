@@ -420,12 +420,18 @@ class MY_Model extends CI_Model
 
     ///////////////////////////////////////////////////////////////////////
     ////////////////asignacion bolos begin ////////////////
-    public function update_inscripcionequipo($id_club, $id_torneo, $datos)
+    public function update_inscripcionequipo($id_club, $id_torneo, $id_categoria, $datos)
     {
-        $this->db->join('equipo eq', 'eq.id_equipo = i.id_equipo');
-        $this->db->where('eq.id_club', $id_club);
-        $this->db->where('i.id_torneo', $id_torneo);
-        $this->db->update('inscripcionequipo i', $datos);
+        // $this->db->join('equipo eq', 'eq.id_equipo = i.id_equipo');
+        // $this->db->where('eq.id_club', $id_club);
+        // $this->db->where('i.id_torneo', $id_torneo);
+        // $this->db->update('inscripcionequipo i', $datos);
+
+        $sql = 'UPDATE inscripcionequipo i
+                INNER JOIN equipo eq ON eq.id_equipo = i.id_equipo
+                SET num_bolo = ?
+                WHERE eq.id_club = ? AND i.id_torneo = ? and eq.id_categoria = ?';
+        $query = $this->db->query($sql, array($datos['num_bolo'], $id_club, $id_torneo, $id_categoria));
     }
 
     ////////////////asignacion bolos end ////////////////    
@@ -451,7 +457,7 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
-    public function get_equipos_by_torneo_1($id_torneo)
+    public function get_equipos_by_torneo_1($id_torneo, $id_categoria)
     {
         // $this->db->select('inscripcion.num_bolo, club.nombre_club');
         $this->db->from('inscripcionequipo ie');
@@ -459,9 +465,10 @@ class MY_Model extends CI_Model
         // $this->db->join('equipo', 'equipo.id_equipo = inscripcion.id_equipo');
         // $this->db->join('torneo', 'torneo.id_torneo = inscripcion.id_torneo');
         $this->db->join('club', 'club.id_club = eq.id_club');
-        $this->db->join('categoriasorteado', 'categoriasorteado.id_torneo = ie.id_torneo');
+        // $this->db->join('categoriasorteado', 'categoriasorteado.id_torneo = ie.id_torneo');
         // $this->db->join('campeonato', 'campeonato.id_campeonato = torneosorteado.id_campeonato');
         $this->db->where('ie.id_torneo', $id_torneo);
+        $this->db->where('eq.id_categoria', $id_categoria);
         $query = $this->db->get();
         return $query->result();
     }
@@ -480,7 +487,7 @@ class MY_Model extends CI_Model
     public function counttorneo($id_torneo, $id_categoria) // , $id_campeonato
     {
         $this->db->from('categoriasorteado');
-        $this->db->where('id_torneo', $id_categoria);
+        $this->db->where('id_torneo', $id_torneo);
         $this->db->where('id_categoria', $id_categoria);
         // $this->db->where('accion', $accion);
         $query = $this->db->get();
@@ -509,6 +516,8 @@ class MY_Model extends CI_Model
             // 'id_inscripcion1' => date("Y-m-d H:i:s"),
         );
         // print_r($data);
+        // exit();
+
         // TODO: descomentara la siguiente linea para guardar los partidos sorteados
         $this->db->insert('partidos', $data);
         // $idcab=$this->db->insert_id();
