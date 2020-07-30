@@ -23,11 +23,11 @@ CREATE TABLE persona (
   foto varchar(255) DEFAULT 'user.jpg',
   telefono varchar(25) DEFAULT NULL,
   celular varchar(25) DEFAULT NULL,
-  dirección varchar(100) DEFAULT NULL,
+  direccion varchar(100) DEFAULT NULL,
   ciudad varchar(100) DEFAULT NULL,
   fecha_nacimiento date DEFAULT NULL,
   sexo varchar(1) DEFAULT NULL,
-  profesión varchar(50) DEFAULT NULL,
+  profesion varchar(50) DEFAULT NULL,
   nacionalidad varchar(100) DEFAULT NULL,
   email varchar(150) DEFAULT NULL,
   usuario varchar(150) DEFAULT NULL,
@@ -141,7 +141,7 @@ create  table torneo(
   nombretorneo varchar(255) not null,
 	fecha_inicio date null,
 	fecha_fin date null,
-	estado int null,
+	estado int null
 
 	-- fecha_sorteo date not null,
 	-- sorteado tinyint COMMENT '1=equipos sorteados. 0=equipos no sorteados'
@@ -292,11 +292,11 @@ CREATE TABLE arbitro (
   id_arbitro int PRIMARY KEY AUTO_INCREMENT,
   id_persona int NOT NULL,
   id_catarbitro int NOT NULL,
-  id_partidos int NOT NULL,
+  -- id_partidos int NOT NULL,
 
   constraint fk_arbitro_persona foreign key (id_persona) references persona(id_persona),
-  constraint fk_arbitro_categoriaarbitro foreign key (id_catarbitro) references categoria_arbitro(id_catarbitro),
-  constraint fk_arbitro_partidos foreign key (id_partidos) references partidos(id_partidos)
+  constraint fk_arbitro_categoriaarbitro foreign key (id_catarbitro) references categoria_arbitro(id_catarbitro)
+  -- constraint fk_arbitro_partidos foreign key (id_partidos) references partidos(id_partidos)
 );
 
 -- 4
@@ -345,7 +345,7 @@ CREATE TABLE games(
 	-- date datetime,
     hscore tinyint,
     ascore tinyint,
-	id_equipo_h int, 
+	  id_equipo_h int, 
     id_equipo_a int, 
     id_partidos int,
     constraint fk_games_equipo_h foreign key (id_equipo_h) references inscripcionequipo(id_inscripcionequipo),

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 30-07-2020 a las 16:45:50
+-- Tiempo de generación: 30-07-2020 a las 19:10:08
 -- Versión del servidor: 8.0.21-0ubuntu0.20.04.3
 -- Versión de PHP: 5.6.40-29+ubuntu20.04.1+deb.sury.org+1
 
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `pb_probar`
+-- Base de datos: `pb_probar1`
 --
 
 -- --------------------------------------------------------
@@ -39,16 +39,16 @@ CREATE TABLE `arbitro` (
 -- Volcado de datos para la tabla `arbitro`
 --
 
-INSERT INTO `arbitro` (`id_arbitro`, `id_persona`, `id_catarbitro`) VALUES
-(1, 6, 1),
-(2, 7, 1),
-(3, 8, 1),
-(4, 9, 2),
-(5, 12, 2),
-(6, 13, 2),
-(7, 14, 2),
-(8, 15, 2),
-(9, 16, 2);
+INSERT INTO `arbitro` (`id_arbitro`, `id_persona`, `id_catarbitro`, `id_partidos`) VALUES
+(1, 6, 1, 1),
+(2, 7, 1, 1),
+(3, 8, 1, 1),
+(4, 9, 2, 1),
+(5, 12, 2, 1),
+(6, 13, 2, 1),
+(7, 14, 2, 1),
+(8, 15, 2, 1),
+(9, 16, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -3966,186 +3966,6 @@ ALTER TABLE `suspencion_partido`
 --
 ALTER TABLE `torneo`
   MODIFY `id_torneo` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `arbitro`
---
-ALTER TABLE `arbitro`
-  ADD CONSTRAINT `fk_arbitro_categoriaarbitro` FOREIGN KEY (`id_catarbitro`) REFERENCES `categoria_arbitro` (`id_catarbitro`),
-  ADD CONSTRAINT `fk_arbitro_partidos` FOREIGN KEY (`id_partidos`) REFERENCES `partidos` (`id_partidos`),
-  ADD CONSTRAINT `fk_arbitro_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`);
-
---
--- Filtros para la tabla `arbitro_partido`
---
-ALTER TABLE `arbitro_partido`
-  ADD CONSTRAINT `fk_arbitropartido_arbitro` FOREIGN KEY (`id_arbitro`) REFERENCES `arbitro` (`id_arbitro`),
-  ADD CONSTRAINT `fk_arbitropartido_partidos` FOREIGN KEY (`id_partidos`) REFERENCES `partidos` (`id_partidos`);
-
---
--- Filtros para la tabla `categoriasorteado`
---
-ALTER TABLE `categoriasorteado`
-  ADD CONSTRAINT `fk_sorteoequipos_categoria` FOREIGN KEY (`id_categoria`) REFERENCES `categoria` (`id_categoria`),
-  ADD CONSTRAINT `fk_sorteoequipos_torneo` FOREIGN KEY (`id_torneo`) REFERENCES `torneo` (`id_torneo`);
-
---
--- Filtros para la tabla `club`
---
-ALTER TABLE `club`
-  ADD CONSTRAINT `fk_club_persona` FOREIGN KEY (`id_personacargo`) REFERENCES `persona` (`id_persona`);
-
---
--- Filtros para la tabla `costos`
---
-ALTER TABLE `costos`
-  ADD CONSTRAINT `fk_costos_concepto` FOREIGN KEY (`id_concepto`) REFERENCES `concepto` (`id_concepto`);
-
---
--- Filtros para la tabla `curriculo_jugador`
---
-ALTER TABLE `curriculo_jugador`
-  ADD CONSTRAINT `fk_currijugador_jugador` FOREIGN KEY (`id_jugador`) REFERENCES `jugador` (`id_jugador`);
-
---
--- Filtros para la tabla `equipo`
---
-ALTER TABLE `equipo`
-  ADD CONSTRAINT `fk_equipo_categoria` FOREIGN KEY (`id_categoria`) REFERENCES `categoria` (`id_categoria`),
-  ADD CONSTRAINT `fk_equipo_club` FOREIGN KEY (`id_club`) REFERENCES `club` (`id_club`),
-  ADD CONSTRAINT `fk_equipo_persona` FOREIGN KEY (`id_personacargo`) REFERENCES `persona` (`id_persona`);
-
---
--- Filtros para la tabla `games`
---
-ALTER TABLE `games`
-  ADD CONSTRAINT `fk_games_equipo_a` FOREIGN KEY (`id_equipo_a`) REFERENCES `inscripcionequipo` (`id_inscripcionequipo`),
-  ADD CONSTRAINT `fk_games_equipo_h` FOREIGN KEY (`id_equipo_h`) REFERENCES `inscripcionequipo` (`id_inscripcionequipo`),
-  ADD CONSTRAINT `fk_games_partido` FOREIGN KEY (`id_partidos`) REFERENCES `partidos` (`id_partidos`);
-
---
--- Filtros para la tabla `habilitado`
---
-ALTER TABLE `habilitado`
-  ADD CONSTRAINT `fk_habilitado_jugador` FOREIGN KEY (`id_jugador`) REFERENCES `jugador` (`id_jugador`),
-  ADD CONSTRAINT `fk_habilitado_partido` FOREIGN KEY (`id_partidos`) REFERENCES `partidos` (`id_partidos`);
-
---
--- Filtros para la tabla `inscripcionequipo`
---
-ALTER TABLE `inscripcionequipo`
-  ADD CONSTRAINT `fk_inscripcionequipo_equipo` FOREIGN KEY (`id_equipo`) REFERENCES `equipo` (`id_equipo`),
-  ADD CONSTRAINT `fk_inscripcionequipo_torneo` FOREIGN KEY (`id_torneo`) REFERENCES `torneo` (`id_torneo`);
-
---
--- Filtros para la tabla `inscripcionjugador`
---
-ALTER TABLE `inscripcionjugador`
-  ADD CONSTRAINT `fk_inscripcionjugador_inscripcionequipo` FOREIGN KEY (`id_inscripcionequipo`) REFERENCES `inscripcionequipo` (`id_inscripcionequipo`),
-  ADD CONSTRAINT `fk_inscripcionjugador_jugador` FOREIGN KEY (`id_jugador`) REFERENCES `jugador` (`id_jugador`);
-
---
--- Filtros para la tabla `jugador`
---
-ALTER TABLE `jugador`
-  ADD CONSTRAINT `fk_jugador_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`);
-
---
--- Filtros para la tabla `menus`
---
-ALTER TABLE `menus`
-  ADD CONSTRAINT `fk_menu_menuprincipal` FOREIGN KEY (`id_menu_principal`) REFERENCES `menus_principales` (`id`);
-
---
--- Filtros para la tabla `pago`
---
-ALTER TABLE `pago`
-  ADD CONSTRAINT `fk_pago_pagogeneral` FOREIGN KEY (`id_pagogeneral`) REFERENCES `pagogeneral` (`id_pagogeneral`),
-  ADD CONSTRAINT `fk_pago_precioconcepto` FOREIGN KEY (`id_precioconcepto`) REFERENCES `precio_concepto` (`id_precioconcepto`);
-
---
--- Filtros para la tabla `pagogeneral`
---
-ALTER TABLE `pagogeneral`
-  ADD CONSTRAINT `fk_pagogeneral_inscripcionequipo` FOREIGN KEY (`id_inscripcionequipo`) REFERENCES `inscripcionequipo` (`id_inscripcionequipo`);
-
---
--- Filtros para la tabla `partidos`
---
-ALTER TABLE `partidos`
-  ADD CONSTRAINT `fk_partidos_estadio` FOREIGN KEY (`id_estadio`) REFERENCES `estadio` (`id_estadio`),
-  ADD CONSTRAINT `fk_partidos_inscripcionequipo1` FOREIGN KEY (`id_inscripcion1`) REFERENCES `inscripcionequipo` (`id_inscripcionequipo`),
-  ADD CONSTRAINT `fk_partidos_inscripcionequipo2` FOREIGN KEY (`id_inscripcion2`) REFERENCES `inscripcionequipo` (`id_inscripcionequipo`),
-  ADD CONSTRAINT `fk_partidos_planilleo` FOREIGN KEY (`id_planillero`) REFERENCES `planillero` (`id_planillero`),
-  ADD CONSTRAINT `fk_partidos_torneo` FOREIGN KEY (`id_torneo`) REFERENCES `torneo` (`id_torneo`);
-
---
--- Filtros para la tabla `personas_roles`
---
-ALTER TABLE `personas_roles`
-  ADD CONSTRAINT `fk_personaroles_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`),
-  ADD CONSTRAINT `fk_personaroles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`);
-
---
--- Filtros para la tabla `persona_cargo`
---
-ALTER TABLE `persona_cargo`
-  ADD CONSTRAINT `fk_personacargo_cargo` FOREIGN KEY (`id_cargo`) REFERENCES `cargo` (`id_cargo`),
-  ADD CONSTRAINT `fk_personacargo_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`);
-
---
--- Filtros para la tabla `planillero`
---
-ALTER TABLE `planillero`
-  ADD CONSTRAINT `fk_planillero_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`);
-
---
--- Filtros para la tabla `precio_concepto`
---
-ALTER TABLE `precio_concepto`
-  ADD CONSTRAINT `fk_precioconcepto_categoria` FOREIGN KEY (`id_categoria`) REFERENCES `categoria` (`id_categoria`),
-  ADD CONSTRAINT `fk_precioconcepto_concepto` FOREIGN KEY (`id_concepto`) REFERENCES `concepto` (`id_concepto`),
-  ADD CONSTRAINT `fk_precioconcepto_motivo` FOREIGN KEY (`id_motivo`) REFERENCES `motivo` (`id_motivo`);
-
---
--- Filtros para la tabla `resultado_partido`
---
-ALTER TABLE `resultado_partido`
-  ADD CONSTRAINT `fk_resultpartido_jugador` FOREIGN KEY (`id_jugador`) REFERENCES `jugador` (`id_jugador`),
-  ADD CONSTRAINT `fk_resultpartido_partido` FOREIGN KEY (`id_partidos`) REFERENCES `partidos` (`id_partidos`);
-
---
--- Filtros para la tabla `roles_menus_principales`
---
-ALTER TABLE `roles_menus_principales`
-  ADD CONSTRAINT `fk_rolesmenusprincipales_menuprincipal` FOREIGN KEY (`id_menu_principal`) REFERENCES `menus_principales` (`id`),
-  ADD CONSTRAINT `fk_rolesmenusprincipales_rol` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`);
-
---
--- Filtros para la tabla `suspencion`
---
-ALTER TABLE `suspencion`
-  ADD CONSTRAINT `fk_suspencion_jugador` FOREIGN KEY (`id_jugador`) REFERENCES `jugador` (`id_jugador`),
-  ADD CONSTRAINT `fk_suspencion_partidos` FOREIGN KEY (`id_partidos`) REFERENCES `partidos` (`id_partidos`);
-
---
--- Filtros para la tabla `suspencion_partido`
---
-ALTER TABLE `suspencion_partido`
-  ADD CONSTRAINT `fk_suspencionpartido_partido` FOREIGN KEY (`id_partidos`) REFERENCES `partidos` (`id_partidos`);
-
---
--- Filtros para la tabla `transferencias`
---
-ALTER TABLE `transferencias`
-  ADD CONSTRAINT `fk_transferencias_club` FOREIGN KEY (`id_club`) REFERENCES `club` (`id_club`),
-  ADD CONSTRAINT `fk_transferencias_clubdestino` FOREIGN KEY (`id_club_destino`) REFERENCES `club` (`id_club`),
-  ADD CONSTRAINT `fk_transferencias_jugador` FOREIGN KEY (`id_jugador`) REFERENCES `jugador` (`id_jugador`),
-  ADD CONSTRAINT `fk_transferencias_precioconcepto` FOREIGN KEY (`id_precioconcepto`) REFERENCES `precio_concepto` (`id_precioconcepto`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
