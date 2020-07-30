@@ -1430,6 +1430,14 @@ class Planillero extends CI_Controller {
         echo json_encode(array("status" => TRUE, 'categorias'=>$categorias));
     }
 
+    public function get_categoria_by_club_inscripcion()
+    {
+        $id_club = $this->input->post('id_club');
+        $categorias = $this->dbase->get_categoria_inscripcion($id_club);
+
+        echo json_encode(array("status" => TRUE, 'categorias'=>$categorias));
+    }
+
     public function get_concepto()
     {
         $conceptos = $this->dbase->get_conceptos();
@@ -2029,6 +2037,53 @@ $textohtml .= '</div>';
     ///////////////////// habilitacion de jugadores para el partido end  ///////////////////////
 
     ////////// suspencion de partidos begin  ///////////////
+    public function inscripcion_equipo()
+    {
+        $opcion = 'Inscripcion de equipo';
+        $data = array(
+            'opcion'            => $opcion,
+            'controllerajax'    => 'planillero',
+            'titulo_navegation' => $this->window->titulo_navegacion('Empresa',$opcion)
+        );
+
+        $data['vista']  = 'v_torneo_equipo';
+        $this->load->view('plantilla/header');
+        $this->load->view($data['vista'],$data);
+        $this->load->view('plantilla/footer');
+    }
+
+    ////////// suspencion de partidos begin  ///////////////
+    public function get_club()
+    {
+        $clubs = $this->dbase->obtenerclub();
+        echo json_encode($clubs);
+    }
+
+    public function get_torneo()
+    {
+        $torneos = $this->dbase->obtenertorneo();
+        echo json_encode($torneos);
+    }
+
+    public function ajax_inscripcion()
+    {
+        $this->_validate_inscripcion();
+        
+        $id_club = $this->input->post('club');
+        $id_categoria = $this->input->post('categorias');
+        $id_torneo = $this->input->post('torneo');
+
+        $data = [
+            'id_club' => $id_club,
+            'id_categoria' => $id_categoria,
+            'id_torneo' => $id_torneo,
+        ];
+
+        $this->dbase->saveInscripcion($data);
+        echo json_encode(array('status' => TRUE));
+    }
+
+    ////////// suspencion de partidos begin  ///////////////
     public function ajax_suspender_partido()
     {
         $this->_validate();
@@ -2093,7 +2148,7 @@ $textohtml .= '</div>';
 
         if($this->input->post('arbitro_asistente_2') == '')
         {
-            $data['inputerror'][] = 'arbitro_asistente_1';
+            $data['inputerror'][] = 'arbitro_asistente_2';
             $data['error_string'][] = 'Debe llenar este campo';
             $data['status'] = FALSE;
         }
@@ -2132,7 +2187,43 @@ $textohtml .= '</div>';
             exit();
         }
     }
+
+    private function _validate_inscripcion()
+    {
+        $data = array();
+        $data['error_string'] = array();
+        $data['inputerror'] = array();
+        $data['status'] = TRUE;
+
+        if($this->input->post('club') == '')
+        {
+            $data['inputerror'][] = 'club';
+            $data['error_string'][] = 'Debe llenar este campo';
+            $data['status'] = FALSE;
+        }
+
+        if($this->input->post('categorias') == '')
+        {
+            $data['inputerror'][] = 'categorias';
+            $data['error_string'][] = 'Debe llenar este campo';
+            $data['status'] = FALSE;
+        }
+
+        if($this->input->post('torneo') == '')
+        {
+            $data['inputerror'][] = 'torneo';
+            $data['error_string'][] = 'Debe llenar este campo';
+            $data['status'] = FALSE;
+        }
+
+        if($data['status'] === FALSE)
+        {
+            echo json_encode($data);
+            exit();
+        }
+    }
     /////// validadiciones ////////
+
 
 
 

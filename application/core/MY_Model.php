@@ -1038,6 +1038,17 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
+    public function get_categoria_inscripcion($id_club)
+    {
+        $this->db->from('equipo eq');
+        $this->db->join('categoria c', 'c.id_categoria = eq.id_categoria');
+        // $this->db->join('inscripcionequipo e', 'e.id_equipo = eq.id_equipo');
+        // $this->db->join('club', 'club.id_club = eq.id_club');
+        $this->db->where('eq.id_club',$id_club);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     public function get_categoria_by_jugador($id_jugador, $id_club)
     {
         $this->db->from('equipo eq');
@@ -1224,6 +1235,39 @@ class MY_Model extends CI_Model
         $this->db->update('suspencion_partido', $datos);
     }
     ////////// suspencion de partidos end  ///////////////
+
+    // inscripcionequipo //
+    public function obtenerclub()
+    {
+        $this->db->from('club c');
+        // $this->db->join('club c', 'c.id_club = e.id_club');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function obtenertorneo()
+    {
+        $this->db->from('torneo');
+        $this->db->where('estado', 1);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function saveInscripcion($data)
+    {
+        $id_equipo = $this->db->get_where('equipo', array(
+            'id_club' => $data['id_club'],
+            'id_categoria' => $data['id_categoria'],
+        ))->row()->id_equipo;
+
+        $data_inscripcion = [
+            'fecha' => date('YYYY-MM-DD'),
+            'id_equipo' => $id_equipo,
+            'id_torneo' => $data['id_torneo']
+        ];
+        $this->db->insert('inscripcionequipo', $data_inscripcion);
+    }
+    // inscripcionequipo //
 
 
 
