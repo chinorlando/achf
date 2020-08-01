@@ -121,7 +121,7 @@ class Planillero extends CI_Controller {
                           $codhtml.='<td>'.$i++.'</td>';
                           $codhtml.='<td>'.$value->nombre_club.'</td>';
                           $codhtml.='<td>';
-                            $codhtml.='<input type="text" id="bolo'.$value->id_club.'" name="bolo" value="'.$value->num_bolo.'"'.$dis.'>';
+                            $codhtml.='<input type="text" id="bolo'.$value->id_inscripcionequipo.'" name="bolo" value="'.$value->num_bolo.'"'.$dis.'>';
                           $codhtml.='</td>';
                           // $codhtml.='<input type="hidden" id="campeonato" name="campeonato" value="'.$id_camp_actual.'">';
                           // $codhtml.='<input type="hidden" id="torneo'.$value->id_club.'" name="torneo" value="'.$id_torneo.'">';
@@ -224,14 +224,19 @@ class Planillero extends CI_Controller {
         } else {
             // ordenacion
             foreach (self::$equipos as $key => $value) {
-                $aux[] = $value->num_bolo;
+                // $aux[] = $value->num_bolo;
+                $aux[] = $value->id_inscripcionequipo;
             }
             array_multisort($aux,SORT_ASC, self::$equipos);
             // ordenacion
 
             foreach (self::$equipos as $key => $value) {
+                // self::$Equipo[$value->num_bolo] = $value->nombre_club;
+                // self::$bolo[$value->num_bolo] = $value->num_bolo;
                 self::$Equipo[$value->num_bolo] = $value->nombre_club;
-                self::$bolo[$value->num_bolo] = $value->num_bolo;
+                self::$bolo[$value->num_bolo] = $value->id_inscripcionequipo;
+
+
             // foreach (self::$equipos as $key ) {
             //     self::$Equipo[] = $key;
             }
@@ -412,7 +417,7 @@ class Planillero extends CI_Controller {
             'opcion'            => $opcion,
             'controllerajax'    => 'planillero',
             'titulo_navegation' => $this->window->titulo_navegacion('Empresa',$opcion),
-            'rol_partidos'      => $this->rol_part(),
+            // 'rol_partidos'      => $this->rol_part(),
         );
         $data['vista']  = 'v_rol_partidos';
         $this->load->view('plantilla/header');
@@ -420,16 +425,35 @@ class Planillero extends CI_Controller {
         $this->load->view('plantilla/footer');
     }
 
-    public function rol_part()
+    public function get_categoria_rol()
+    {
+        $torneos = $this->dbase->obtener_categoria_rol_partido();
+        echo json_encode($torneos);
+    }
+
+    public function get_rol_partidos()
+    {
+        $id_categoria = $this->input->post('id_categoria');
+        // print_r($id_categoria);
+        // exit();
+        $this->rol_part($id_categoria);
+    }
+
+    public function rol_part($id_categoria)
     {
         // si la categoria y de un torneo ya esta sorteado entonces recien mostrar lo siguiente 
         // en otro caso solo mandar un mensaje
-        $partidos = $this->dbase->get_partidos();
+        $partidos = $this->dbase->get_partidos($id_categoria);
         // print_r('<pre>');
         // print_r($partidos);
+        // exit();
         $cent = '';
         $torneo = 1;
-        $cantidad = count($this->dbase->get_equipos_by_torneo_1($torneo));
+        $eso = $this->dbase->get_equipos_by_torneo($torneo,$id_categoria);
+        // print_r($eso);
+        // exit();
+
+        $cantidad = count($eso);
         if ($cantidad % 2 == 0){
             $cant = $cantidad - 1;
         } else {
@@ -516,7 +540,8 @@ class Planillero extends CI_Controller {
             // $cent .= '</div>';
         // $cent .= '</div>';
         }
-        return $cent;
+        // return $cent;
+        echo json_encode($cent);
     }
 
     // public function mensaje_rol_partido()

@@ -430,7 +430,7 @@ class MY_Model extends CI_Model
         $sql = 'UPDATE inscripcionequipo i
                 INNER JOIN equipo eq ON eq.id_equipo = i.id_equipo
                 SET num_bolo = ?
-                WHERE eq.id_club = ? AND i.id_torneo = ? and eq.id_categoria = ?';
+                WHERE i.id_inscripcionequipo = ? AND i.id_torneo = ? and eq.id_categoria = ?';
         $query = $this->db->query($sql, array($datos['num_bolo'], $id_club, $id_torneo, $id_categoria));
     }
 
@@ -525,7 +525,7 @@ class MY_Model extends CI_Model
     ////////////////fixture end //////////////////
 
     /////////////////////////rol de partidos begin ////////////////////////////////
-    public function get_partidos()
+    public function get_partidos($id_categoria)
     {
         // $this->db->select('partidos.id_partidos, partidos.fecha, c1.nombre_club as local, c2.nombre_club as visitante, partidos.jornada, e1.id_equipo as id_eq1, e2.id_equipo id_eq2');
         // $this->db->from('partidos');
@@ -538,7 +538,7 @@ class MY_Model extends CI_Model
         // $this->db->order_by('partidos.jornada, partidos.fecha');
         // // $this->db->where('inscripcion.id_torneo', $id_torneo);
 
-        $this->db->select('partidos.id_partidos, partidos.fecha, c1.nombre_club as local, c2.nombre_club as visitante, partidos.jornada, i1.id_inscripcionequipo as id_eq1, i2.id_inscripcionequipo as id_eq2,partidos.id_estadio,partidos.id_planillero');
+        $this->db->select('partidos.id_partidos, partidos.fecha, c1.nombre_club as local, c2.nombre_club as visitante, partidos.jornada, i1.id_inscripcionequipo as id_eq1, i2.id_inscripcionequipo as id_eq2,partidos.id_estadio,partidos.id_planillero, e1.id_categoria');
         $this->db->from('partidos');
         $this->db->join('inscripcionequipo i1', 'i1.id_inscripcionequipo = partidos.id_inscripcion1');
         $this->db->join('inscripcionequipo i2', 'i2.id_inscripcionequipo = partidos.id_inscripcion2');
@@ -546,6 +546,8 @@ class MY_Model extends CI_Model
         $this->db->join('equipo e2', 'e2.id_equipo = i2.id_equipo');
         $this->db->join('club c1', 'c1.id_club = e1.id_club');
         $this->db->join('club c2', 'c2.id_club = e2.id_club');
+        $this->db->where('e1.id_categoria', $id_categoria);
+        $this->db->where('e2.id_categoria', $id_categoria);
         $this->db->order_by('partidos.jornada');
         $this->db->order_by('partidos.fecha');
         $query = $this->db->get();
@@ -1259,6 +1261,17 @@ class MY_Model extends CI_Model
         $this->db->from('torneo');
         $this->db->where('estado', 1);
         $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function obtener_categoria_rol_partido()
+    {
+        $sql = 'select t.id_torneo, c.id_categoria, c.nombre, count(i.id_torneo) as inscritos
+            FROM inscripcionequipo i, torneo t, categoria c, equipo eq
+            where t.id_torneo = i.id_torneo and eq.id_equipo = i.id_equipo and eq.id_categoria = c.id_categoria and t.estado = 1
+            GROUP BY c.nombre, t.id_torneo
+            HAVING COUNT(i.id_torneo) >=4';
+        $query = $this->db->query($sql); 
         return $query->result();
     }
 

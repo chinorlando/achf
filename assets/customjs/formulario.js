@@ -384,7 +384,7 @@ function view_curriculum(id_jugador) {
         // reload_table();
     })
     .fail(function() {
-        console.log("No se guardo");
+        console.log("No se guardo.");
     });
 }
 
@@ -446,6 +446,7 @@ $(document).ready(function(){
 
     $('#categoria').change(function(e) {
       var id_categoria = $('#categoria').val();
+      $('.programacionpartidos').html('');
       $.ajax({
         url: controller+'/show_equipos',
         type: "POST",

@@ -40,7 +40,7 @@
                 });
             });
 
-            $('#club').change(function(e) {
+            $('#club'.change(function(e) {
               var id_club = $('#club').val();
               $('#categorias').empty();
               $.ajax({
