@@ -447,13 +447,17 @@ class Planillero extends CI_Controller {
         // print_r('<pre>');
         // print_r($partidos);
         // exit();
+        if (count($partidos) == 0) {
+            echo json_encode('');
+            exit();
+        } else {
         $cent = '';
         $torneo = 1;
-        $eso = $this->dbase->get_equipos_by_torneo($torneo,$id_categoria);
-        // print_r($eso);
+        $equipos_torneo = $this->dbase->get_equipos_by_torneo($torneo,$id_categoria);
+        // print_r($equipos_torneo);
         // exit();
 
-        $cantidad = count($eso);
+        $cantidad = count($equipos_torneo);
         if ($cantidad % 2 == 0){
             $cant = $cantidad - 1;
         } else {
@@ -542,6 +546,7 @@ class Planillero extends CI_Controller {
         }
         // return $cent;
         echo json_encode($cent);
+        }
     }
 
     // public function mensaje_rol_partido()

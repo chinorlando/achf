@@ -1,6 +1,6 @@
 <?php  echo $titulo_navegation; ?>
     <section class="content">
-	<script src="<?php echo base_url(); ?>assets/customjs/formulario.js"></script>
+  <script src="<?php echo base_url(); ?>assets/customjs/formulario.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             // get_torneo('<?php echo $opcion; ?>','<?php echo base_url().$controllerajax; ?>')
@@ -34,8 +34,17 @@
                 data: {id_categoria: id_categoria},
                 success: function(data) {
                   datos = $.parseJSON(data);
-                  $('#rolpartidos').html('');
-                  $('#rolpartidos').html(datos);
+                  if (id_categoria != -1) {
+                    if (datos == "") {
+                      alert('Esta categoria aun no ha sido sorteada.');
+                      $('#button_pdf').hide();
+                      $('#rolpartidos').html('');
+                    } else {
+                      $('#button_pdf').show();
+                      $('#rolpartidos').html('');
+                      $('#rolpartidos').html(datos);
+                    }
+                  }
                 },
                 error: function (jqXHR, textStatus, errorThrown){
                     alert('Error al obtener datos.');
@@ -43,13 +52,35 @@
               });
             });
 
+            $('#button_pdf').hide();
+
         });
+
+        function pdf(){
+          var categoria = $('#categoria_rol').val();
+          if (categoria == -1) {
+            alert('Debe seleccionar una categoria.')
+          } else {
+              window.open(CFG.url + 'Reporte/pdf_rol_partidos/'+categoria,'_blank'); 
+          }
+        }
+
+        function pdf_arbitro(){
+          var categoria = $('#categoria_rol').val();
+          if (categoria == -1) {
+            alert('Debe seleccionar una categoria.');
+          } else {
+            window.open(CFG.url + 'Reporte/pdf_rol_partidos_arbitros/'+categoria,'_blank'); 
+          }
+        }
     </script>
       <div class="box box-default">
         <div class="box-header with-border">
           <h3 class="box-title">Rol de partidos</h3>
-         <a href="<?php echo base_url()?>Reporte/pdf_rol_partidos" target="_blank"> <button type="button" class="btn btn-box" ><i class="fa fa-file-pdf-o"></i></button>Rol Partidos PDF</a>
-         <a href="<?php echo base_url()?>Reporte/pdf_rol_partidos_arbitros" target="_blank"> <button type="button" class="btn btn-box" ><i class="fa fa-file-pdf-o"></i></button>Rol Partidos Arbitro PDF</a>
+          <div id="button_pdf">
+           <button type="button" class="btn btn-success" onclick="pdf();" target="_blank"><i class="fa fa-file-pdf-o"></i> Pdf Partidos</button>
+           <button type="button" class="btn btn-warning" onclick="pdf_arbitro();" target="_blank"><i class="fa fa-file-pdf-o"></i> Pdf Partidos Arbitro</button>
+          </div>
           <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
@@ -57,17 +88,17 @@
         </div>
         <div class="box-body">
           <div class="row">
-          	<!-- <div class="col-md-6">
+            <!-- <div class="col-md-6">
               <label>Torneo</label>
               <select class="form-control" name="torneo" id="torneo" style="width: 100%;">
                   <option>Seleccione...</option>
               </select>
               <br>
-          	</div> -->
+            </div> -->
             <div class="col-md-6">
               <label>Categoria</label>
               <select class="form-control" name="categoria_rol" id="categoria_rol" style="width: 100%;">
-                  <option>Seleccione...</option>
+                  <option value="-1">Seleccione...</option>
               </select>
               <br>
             </div>

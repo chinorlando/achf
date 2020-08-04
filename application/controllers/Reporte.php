@@ -712,9 +712,9 @@ Sucre – Bolivia</b></span></td>
     }
 
 
-    public function pdf_rol_partidos()
+    public function pdf_rol_partidos($id_categoria)
     {
-        $partidos = $this->dbase->get_partidos(); 
+        $partidos = $this->dbase->get_partidos($id_categoria); 
         $this->load->library('Pdf');
         $pdf = $this->pdf->load();
 
@@ -724,7 +724,11 @@ Sucre – Bolivia</b></span></td>
         $dt->setTimestamp($timestamp); //adjust the object to correct timestamp
         $cent = '';
         $torneo = 1;
-        $cantidad = count($this->dbase->get_equipos_by_torneo_1($torneo));
+        $rol_partidos = $this->dbase->get_equipos_by_torneo($torneo,$id_categoria);
+        // print_r($eso);
+        // exit();
+
+        $cantidad = count($rol_partidos);
         if ($cantidad % 2 == 0){
             $cant = $cantidad - 1;
         } else {
@@ -848,9 +852,9 @@ Sucre – Bolivia</b></span></td>
     }
 
 
-    public function pdf_rol_partidos_arbitros()
+    public function pdf_rol_partidos_arbitros($id_categoria)
     {
-        $partidos = $this->dbase->get_partidos(); 
+        $partidos = $this->dbase->get_partidos($id_categoria); 
         $this->load->library('Pdf');
         $pdf = $this->pdf->load();
 
@@ -860,7 +864,11 @@ Sucre – Bolivia</b></span></td>
         $dt->setTimestamp($timestamp); //adjust the object to correct timestamp
         $cent = '';
         $torneo = 1;
-        $cantidad = count($this->dbase->get_equipos_by_torneo_1($torneo));
+        $eso = $this->dbase->get_equipos_by_torneo($torneo,$id_categoria);
+        // print_r($eso);
+        // exit();
+
+        $cantidad = count($eso);
         if ($cantidad % 2 == 0){
             $cant = $cantidad - 1;
         } else {
