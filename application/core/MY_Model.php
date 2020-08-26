@@ -525,6 +525,23 @@ class MY_Model extends CI_Model
     ////////////////fixture end //////////////////
 
     /////////////////////////rol de partidos begin ////////////////////////////////
+    public function get_all_partidos()
+    {
+        $this->db->select('partidos.id_partidos, partidos.fecha, c1.nombre_club as local, c2.nombre_club as visitante, partidos.jornada, i1.id_inscripcionequipo as id_eq1, i2.id_inscripcionequipo as id_eq2,partidos.id_estadio,partidos.id_planillero, e1.id_categoria');
+        $this->db->from('partidos');
+        $this->db->join('inscripcionequipo i1', 'i1.id_inscripcionequipo = partidos.id_inscripcion1');
+        $this->db->join('inscripcionequipo i2', 'i2.id_inscripcionequipo = partidos.id_inscripcion2');
+        $this->db->join('equipo e1', 'e1.id_equipo = i1.id_equipo');
+        $this->db->join('equipo e2', 'e2.id_equipo = i2.id_equipo');
+        $this->db->join('club c1', 'c1.id_club = e1.id_club');
+        $this->db->join('club c2', 'c2.id_club = e2.id_club');
+        // $this->db->where('e1.id_categoria', $id_categoria);
+        // $this->db->where('e2.id_categoria', $id_categoria);
+        $this->db->order_by('partidos.jornada');
+        $this->db->order_by('partidos.fecha');
+        $query = $this->db->get();
+        return $query->result();
+    }
     public function get_partidos($id_categoria)
     {
         // $this->db->select('partidos.id_partidos, partidos.fecha, c1.nombre_club as local, c2.nombre_club as visitante, partidos.jornada, e1.id_equipo as id_eq1, e2.id_equipo id_eq2');

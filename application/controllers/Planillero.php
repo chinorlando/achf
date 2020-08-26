@@ -439,6 +439,14 @@ class Planillero extends CI_Controller {
         $this->rol_part($id_categoria);
     }
 
+    public function get_rol_partidos_habilitacion()
+    {
+        $id_categoria = $this->input->post('id_categoria');
+        // print_r($id_categoria);
+        // exit();
+        $this->rol_part($id_categoria);
+    }
+
     public function rol_part($id_categoria)
     {
         // si la categoria y de un torneo ya esta sorteado entonces recien mostrar lo siguiente 
@@ -490,7 +498,7 @@ class Planillero extends CI_Controller {
                                         $cent .= '<th class="col-lg-1 text-center">Score</th>';
                                         $cent .= '<th class="col-lg-3">Visitante</th>';
                                         $cent .= '<th class="col-lg-1">Accion</th>';
-                                    if ($this->uri->segment(2) != 'habilitacion') {
+                                    if ($this->uri->segment(2) != 'get_rol_partidos_habilitacion') {
                                         $cent .= '<th class="col-lg-1">Arbitro</th>';
                                         $cent .= '<th class="col-lg-1">Planillero</th>';
                                     }
@@ -519,7 +527,7 @@ class Planillero extends CI_Controller {
                                         $cent .= '<td class="col-lg-1 text-center">VS</td>';
                                         $cent .= '<td class="col-lg-1 text-center">'.$e2.'</td>';
                                         $cent .= '<td class="col-lg-4">'.$partido->visitante.'</td>';
-                                        if ($this->uri->segment(2) == 'habilitacion') {
+                                        if ($this->uri->segment(2) == 'get_rol_partidos_habilitacion') {
                                             $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gohabilitacion/'.$partido->id_partidos.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">Habilitación</a></td>';
                                         } else {
                                             $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gopartido/'.$partido->id_partidos.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">Entrar</a></td>';
@@ -1266,7 +1274,7 @@ class Planillero extends CI_Controller {
 
     public function asignacion_arbitros()
     {
-        $partidos = $this->dbase->get_partidos();
+        $partidos = $this->dbase->get_all_partidos();
         $opcion = 'Asignacion de arbitros';
         $data = array(
             'opcion'            => $opcion,
@@ -1279,12 +1287,13 @@ class Planillero extends CI_Controller {
 
         $i = 1;
         foreach ($partidos as $partido){
+            $color = ($partido->jornada % 2 == 0) ? "bg-teal disabled" : "bg-info disabled";
           $cent .='<tr>
             <td>'.$i++.'</td>
-            <td>'.$partido->jornada.'</td>
-            <td>'.$partido->local.'</td>
-            <td>VS</td>
-            <td>'.$partido->visitante.'</td>
+            <td class="'.$color.'"><p style="color:#000";><b>'.$partido->jornada.'</b></p></td>
+            <td class="'.$color.'"><p style="color:#000";><b>'.$partido->local.'</b></p></td>
+            <td class="'.$color.'"><p style="color:#000";><b>VS</b></p></td>
+            <td class="'.$color.'"><p style="color:#000";><b>'.$partido->visitante.'</b></p></td>
             <td>';
             if (!$this->dbase->get_siexiste($partido->id_partidos)) {
                 $cent .= '<a class="btn btn-sm btn-primary id_match" href="javascript:void(0)" title="Editar asignación." onclick="add_arbitros('.$partido->id_partidos.')">Agregar datos</a>';
@@ -1906,7 +1915,7 @@ $textohtml .= '</div>';
             'opcion'            => $opcion,
             'controllerajax'    => 'planillero',
             'titulo_navegation' => $this->window->titulo_navegacion('Empresa',$opcion),
-            'rol_partidos'      => $this->rol_part(),
+            // 'rol_partidos'      => $this->rol_part(2),
         );
         $data['vista']  = 'v_habilitaciones';
         $this->load->view('plantilla/header');
