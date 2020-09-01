@@ -528,9 +528,9 @@ class Planillero extends CI_Controller {
                                         $cent .= '<td class="col-lg-1 text-center">'.$e2.'</td>';
                                         $cent .= '<td class="col-lg-4">'.$partido->visitante.'</td>';
                                         if ($this->uri->segment(2) == 'get_rol_partidos_habilitacion') {
-                                            $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gohabilitacion/'.$partido->id_partidos.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">Habilitación</a></td>';
+                                            $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gohabilitacion/'.$partido->id_partidos.'/'.$id_categoria.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">Habilitación</a></td>';
                                         } else {
-                                            $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gopartido/'.$partido->id_partidos.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">Entrar</a></td>';
+                                            $cent .= '<td class="col-lg-4"><a href="'.base_url().'planillero/gopartido/'.$partido->id_partidos.'/'.$id_categoria.'/'.$partido->id_eq1.'/'.$partido->id_eq2.'">Entrar</a></td>';
                                             $cent .= '<td class="col-lg-4"><a href="'.base_url().'Reporte/pdf_informe_arbitro/'.$partido->id_partidos.'" target="_blank"><button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-danger" ">
                                             <i class="fa fa-file-pdf-o"></i>
                                         </button></a></td>';
@@ -562,7 +562,7 @@ class Planillero extends CI_Controller {
     //     # code...
     // }
 
-    public function gopartido($id_partido, $id_e1, $id_e2)
+    public function gopartido($id_partido, $id_categoria, $id_e1, $id_e2)
     {
         // $club_equi1 = $this->dbase->get_club_equipo($id_e1)->nombre_club;
         // $club_equi2 = $this->dbase->get_club_equipo($id_e2)->nombre_club;
@@ -642,7 +642,9 @@ class Planillero extends CI_Controller {
 
 
         foreach ($equipos as $key => $equipo) {
-            $jugad_equi = $this->dbase->get_jugadores_por_equipo($equipo, $id_partido);
+            $jugad_equi = $this->dbase->get_jugadores_por_equipo_hab($equipo, $id_partido);
+            // $jugad_equi = $this->dbase->get_jugadores_por_equipo($equipo, $id_partido, $id_categoria);
+
             // $jugad_equi2 = $this->dbase->get_jugadores_por_equipo($id_e2, $id_partido);
 
         //     print_r('<pre>');
@@ -676,12 +678,12 @@ class Planillero extends CI_Controller {
                     <div class="inner">
                       <h3>'.count($jugad_equi).'</h3>
 
-                      <p>Jugadores en este equipo</p>
+                      <p>Jugadores no habilitados para este equipo.</p>
                     </div>
                     <div class="icon">
                       <i class="ion ion-person-add"></i>
                     </div>
-                    <a href="'.base_url('registro/equipo_jugador').'" class="small-box-footer">Inscribir jugadores <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="'.base_url('planillero/habilitacion').'" class="small-box-footer">Habilitar jugadores <i class="fa fa-arrow-circle-right"></i></a>
                   </div>
                 </div>
               </div>';
@@ -1923,7 +1925,7 @@ $textohtml .= '</div>';
         $this->load->view('plantilla/footer');
     }
 
-    public function gohabilitacion($id_partido, $id_e1, $id_e2)
+    public function gohabilitacion($id_partido, $id_categoria, $id_e1, $id_e2)
     {
         // $jugad_equi1 = $this->dbase->get_jugadores_por_equipo_hab($id_e1);
         // $jugad_equi2 = $this->dbase->get_jugadores_por_equipo_hab($id_e2);
@@ -1965,7 +1967,7 @@ $textohtml .= '</div>';
         }
 
         foreach ($equipos as $key => $equipo) {
-            $jugad_equi = $this->dbase->get_jugadores_por_equipo($equipo, $id_partido);
+            $jugad_equi = $this->dbase->get_jugadores_por_equipo($equipo, $id_partido, $id_categoria);
         //     print_r('<pre>');
         // print_r($jugad_equi);
         // exit();
@@ -2025,7 +2027,7 @@ $textohtml .= '</div>';
                     ))->row();
 
                       $cent .= '<tr>';
-                        $cent .= '<td><a href="pages/examples/invoice.html">'.$value->dorsal.'</a></td>';
+                        $cent .= '<td><a href="#">'.$value->dorsal.'</a></td>';
                         $cent .= '<td>'.$value->posicion.'</td>';
                         $cent .= '<td>'.$persona->apellido_paterno.' '.$persona->apellido_materno.', '.$persona->nombres.'</td>';
                         $cant = $this->dbase->verificar_habilitado($id_partido, $value->id_jugador);

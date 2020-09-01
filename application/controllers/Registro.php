@@ -626,7 +626,7 @@ class Registro extends CI_Controller {
     //------------------ Fin Modulo equipo ----------------------------------------    
     
     //------------------ Modulo equipo ----------------------------------------
-    function equipo_jugador(){
+    function equipo_jugador_CCCCambio_de_nombre(){
         $this->_viewOutPut('equipo_jugadorCrud');
     }
     function equipo_jugadorCrud() {
@@ -636,7 +636,7 @@ class Registro extends CI_Controller {
             $crud->set_subject('Inscripcion Jugador');
             $crud->set_table('inscripcionjugador');
             
-            $crud->set_relation_n_n('id_jugador', 'jugador', 'persona', 'id_jugador', 'id_jugador', '{nombres} {apellido_paterno} {apellido_materno}');
+            $crud->set_relation_n_n('id_jugador', 'jugador', 'persona', 'id_jugador', 'id_persona', '{nombres} {apellido_paterno} {apellido_materno}');
             $crud->display_as('id_jugador','Jugador');
 
             $crud->set_primary_key('id_equipo','v_equipo');

@@ -597,8 +597,39 @@ class MY_Model extends CI_Model
         $query = $this->db->get();
         return $query->row();
     }
-    public function get_jugadores_por_equipo($id_equipo, $id_partidos)
+    public function get_jugadores_por_equipo($id_equipo, $id_partidos, $id_categoria)
     {
+        // $this->db->from('inscripcionequipo');
+        // $this->db->join('inscripcionjugador', 'inscripcionjugador.id_inscripcionequipo = inscripcionequipo.id_inscripcionequipo');
+        // $this->db->join('equipo eq', 'eq.id_equipo = inscripcionequipo.id_equipo');
+        // $this->db->join('habilitado', 'habilitado.id_jugador = inscripcionjugador.id_jugador');
+        // $this->db->where('inscripcionequipo.id_inscripcionequipo', $id_equipo);
+        // $this->db->where('habilitado.id_partidos', $id_partidos);
+        // $this->db->order_by('inscripcionjugador.posicion');
+
+        $this->db->from('jugador j');
+        $this->db->join('inscripcionjugador ij', 'ij.id_jugador = j.id_jugador');
+        $this->db->join('inscripcionequipo ie', 'ie.id_equipo = ij.id_inscripcionequipo');
+        $this->db->join('equipo e', 'e.id_equipo = ie.id_equipo');
+        $this->db->join('club c', 'c.id_club = e.id_club');
+        $this->db->where('c.id_club', $id_equipo);
+        $this->db->where('e.id_categoria', $id_categoria);
+        $this->db->order_by('ij.dorsal');
+
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function get_jugadores_por_equipo_hab($id_equipo, $id_partidos)
+    {
+        // $this->db->from('inscripcionequipo');
+        // $this->db->join('equipo eq', 'eq.id_equipo = inscripcionequipo.id_equipo');
+        // $this->db->join('inscripcionjugador', 'inscripcionjugador.id_inscripcionequipo = inscripcionequipo.id_inscripcionequipo');
+        // // $this->db->join('habilitado', 'habilitado.id_jugador = inscripcionjugador.id_jugador');
+        // $this->db->where('inscripcionequipo.id_inscripcionequipo', $id_equipo);
+        // // $this->db->where('habilitado.id_partidos', $id_partidos);
+        // $this->db->order_by('inscripcionjugador.posicion');
+
         $this->db->from('inscripcionequipo');
         $this->db->join('inscripcionjugador', 'inscripcionjugador.id_inscripcionequipo = inscripcionequipo.id_inscripcionequipo');
         $this->db->join('equipo eq', 'eq.id_equipo = inscripcionequipo.id_equipo');
@@ -606,19 +637,7 @@ class MY_Model extends CI_Model
         $this->db->where('inscripcionequipo.id_inscripcionequipo', $id_equipo);
         $this->db->where('habilitado.id_partidos', $id_partidos);
         $this->db->order_by('inscripcionjugador.posicion');
-        $query = $this->db->get();
-        return $query->result();
-    }
 
-    public function get_jugadores_por_equipo_hab($id_equipo)
-    {
-        $this->db->from('inscripcionequipo');
-        $this->db->join('equipo eq', 'eq.id_equipo = inscripcionequipo.id_equipo');
-        $this->db->join('inscripcionjugador', 'inscripcionjugador.id_inscripcionequipo = inscripcionequipo.id_inscripcionequipo');
-        // $this->db->join('habilitado', 'habilitado.id_jugador = inscripcionjugador.id_jugador');
-        $this->db->where('inscripcionequipo.id_inscripcionequipo', $id_equipo);
-        // $this->db->where('habilitado.id_partidos', $id_partidos);
-        $this->db->order_by('inscripcionjugador.posicion');
         $query = $this->db->get();
         return $query->result();
     }
@@ -1307,6 +1326,13 @@ class MY_Model extends CI_Model
         $this->db->insert('inscripcionequipo', $data_inscripcion);
     }
     // inscripcionequipo //
+
+    ////////////////asignacion a jugador a un equipo ///////////////////////
+    public function saveInscripcionJugadorEquipo($data)
+    {
+        $this->db->insert('inscripcionjugador', $data);
+    }
+    ////////////////asignacion a jugador a un equipo ///////////////////////
 
 
 

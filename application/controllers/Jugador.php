@@ -87,6 +87,16 @@ class Jugador extends CI_Controller {
                     <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="print_row('.$d->id_jugador.')">
                         <i class="fa fa-print"></i>
                     </button>';
+            } elseif ($title == 'Asignacion') {
+                $row[] = ' <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="add_row('.$d->id_jugador.')">
+                        <i class="fa fa-eye"></i>
+                    </button>       
+                    <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="edit_row_asig_juga('.$d->id_jugador.')">
+                        <i class="fa fa-pencil"></i>
+                    </button>    
+                    <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="delete_row_asig_juga('.$d->id_jugador.')">
+                        <i class="fa fa-trash-o"></i>
+                    </button>';
             } elseif (TRUE){
                 $row[] = '.';
             }
@@ -369,6 +379,66 @@ class Jugador extends CI_Controller {
     }
 
     /////////////////////////////////////////////////////////////
+
+    /////////////// asignacion de jugador a un equipo //////////////////////
+    // public function equipo_jugador()
+    // {
+    //     $opcion = 'Asignacion de jugador';
+    //     $data = array(
+    //         'opcion'            => $opcion,
+    //         'controllerajax'    => 'jugador',
+    //         'titulo_navegation' => $this->window->titulo_navegacion('A.CH.F',$opcion)
+    //     );
+    //     $data['vista'] = 'v_jugador_asignacion_equipo';
+    //     $this->salida($data);
+    // }
+
+    public function equipo_jugador()
+    {
+        $opcion = 'Asignacion';
+        $data = array(
+            'opcion'            => $opcion,
+            'controllerajax'    => 'jugador/',
+            'titulo_navegation' => $this->window->titulo_navegacion('A.CH.F',$opcion)
+        );
+        $data['vista'] = 'v_jugador_asignacion_equipo';
+        $this->salida($data);
+    }
+
+    public function get_all_jugadores()
+    {
+        $this->dbase->get_datatables_jug();
+        $query = $this->db->get();
+        $list = $query->result();
+        echo json_encode($list);
+    }
+
+    public function ajax_guardar_inscripcionjugador()
+    {
+        // $this->_validate_inscripcion();
+        $dorsal = $this->input->post('dorsal');
+        $posicion = $this->input->post('posicion');
+        $peso = $this->input->post('peso');
+        $id_jugadores = $this->input->post('jugadores');
+        $id_club = $this->input->post('club');
+        $id_categoria = $this->input->post('categorias');
+
+        $id_equipo = $this->db->get_where('equipo', array('id_club' => $id_club, 'id_categoria' => $id_categoria))->row()->id_equipo;
+
+        $id_inscripcionequipo = $this->db->get_where('inscripcionequipo', array('id_equipo' => $id_equipo))->row()->id_inscripcionequipo;
+
+        $data = [
+            'dorsal' => $dorsal,
+            'posicion' => $posicion,
+            'peso' => $peso,
+            'id_jugador' => $id_jugadores,
+            'id_inscripcionequipo' => $id_inscripcionequipo,
+        ];
+
+        $this->dbase->saveInscripcionJugadorEquipo($data);
+        echo json_encode(array('status' => TRUE));
+    }
+    /////////////// asignacion de jugador a un equipo //////////////////////
     
     private function _validate()
     {

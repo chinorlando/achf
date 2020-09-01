@@ -4,10 +4,15 @@
     <section class="content">
 
     <script src="<?php echo base_url(); ?>assets/customjs/formulario.js"></script>
+    <!-- <script type="text/javascript">
+        $(document).ready(function() {
+            get_table('<?php echo $opcion; ?>','<?php echo base_url().$controllerajax; ?>');
+        });
+    </script> -->
     <script type="text/javascript">
         $(document).ready(function() {
            // alert('oso');
-           // get_table('<?php echo $opcion; ?>','<?php echo base_url().$controllerajax; ?>');
+           get_table('<?php echo $opcion; ?>','<?php echo base_url().$controllerajax; ?>');
 
             // $("input").change(function(){
             //     $(this).parent().removeClass('has-error');
@@ -22,20 +27,20 @@
                 $(this).next().empty();
             });
 
+            $.get(CFG.url + "jugador/get_all_jugadores", function(data) {
+                var tr = $.parseJSON(data);
+                $.each(tr, function(index, val) {
+                    $("#jugadores").append(
+                        '<option value="' + val.id_jugador + '">' + val.apellido_paterno + ' ' + val.apellido_materno + ', ' + val.nombres + "</option>"
+                    );
+                });
+            });
+
            $.get(CFG.url + "planillero/get_club", function(data) {
                 var tr = $.parseJSON(data);
                 $.each(tr, function(index, val) {
                     $("#club").append(
                         '<option value="' + val.id_club + '">' + val.nombre_club + "</option>"
-                    );
-                });
-            });
-
-            $.get(CFG.url + "planillero/get_torneo", function(data) {
-                var tr = $.parseJSON(data);
-                $.each(tr, function(index, val) {
-                    $("#torneo").append(
-                        '<option value="' + val.id_torneo + '">' + val.nombretorneo + "</option>"
                     );
                 });
             });
@@ -67,17 +72,17 @@
             });
         });
 
-        function inscribirEquipo() {
+        function equipoJugador() {
             $.ajax({
-            url: CFG.url + 'planillero/ajax_inscripcion',
+            url: CFG.url + 'jugador/ajax_guardar_inscripcionjugador',
             type: "POST",
             cache: true,
-            data: $("#form_inscripcion").serialize(),
+            data: $("#form_asignacion_jugador_equipo").serialize(),
             success: function(data) {
               var datos = $.parseJSON(data);
               if (datos.status) {
                 alert('Datos guardados exitosamente.');
-                $("#form_inscripcion")[0].reset();
+                $("#form_asignacion_jugador_equipo")[0].reset();
               } else {
                 for (var i = 0; i < datos.inputerror.length; i++) {
                     $('[name="'+datos.inputerror[i]+'"]').parent().addClass('has-error');
@@ -91,8 +96,6 @@
             }
           });
         }
-
-
     </script>
 
 <div class="col-md-6">
@@ -108,10 +111,33 @@
         </div>
         <div class="box-body">
           <div class="row">
-            <form id="form_inscripcion">
+            <form id="form_asignacion_jugador_equipo">
                 <div class="col-md-12">
                   <div class="form-group">
-                    <label>Club</label>
+                    <label>Dorsal</label>
+                    <input class="form-control" name="dorsal" id="dorsal" style="width: 100%;">
+                    <span class="help-block"></span>
+                  </div>
+                  <div class="form-group">
+                    <label>Posición</label>
+                    <input class="form-control" name="posicion" id="posicion" style="width: 100%;">
+                    <span class="help-block"></span>
+                  </div>
+                  <div class="form-group">
+                    <label>Peso</label>
+                    <input class="form-control" name="peso" id="peso" style="width: 100%;">
+                    <span class="help-block"></span>
+                  </div>
+                  <div class="form-group">
+                    <label>Jugadores</label>
+                    <select class="form-control" name="jugadores" id="jugadores" style="width: 100%;">
+                        <option value="-1">Seleccione...</option>
+                    </select>
+                    <span class="help-block"></span>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Club</label> 
                     <select class="form-control" name="club" id="club" style="width: 100%;">
                         <option>Seleccione...</option>
                     </select>
@@ -120,24 +146,17 @@
                   <div class="form-group">
                     <label>Categorias</label>
                     <select class="form-control" name="categorias" id="categorias" style="width: 100%;">
-                        <!-- <option></option> -->
                     </select>
                     <span class="help-block"></span>
                   </div>
-                  <div class="form-group">
-                    <label>Torneos</label>
-                    <select class="form-control" name="torneo" id="torneo" style="width: 100%;">
-                        <option>Seleccione...</option>
-                    </select>
-                    <span class="help-block"></span>
-                  </div>
+                  
                 </div>
             </form>
           </div>
         </div>
         <div class="box-footer">
             <button type="submit" class="btn btn-default">Cancelar</button>
-            <button type="submit" class="btn btn-info pull-right" onclick="inscribirEquipo()">Inscribir</button>
+            <button type="submit" class="btn btn-info pull-right" onclick="equipoJugador()">Inscribir</button>
         </div>
       </div>
     </div>

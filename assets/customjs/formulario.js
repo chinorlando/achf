@@ -97,8 +97,7 @@ function llenardatos_torneo() {
     });
 }
 
-function add_row(
-){
+function add_row(){
     save_method = 'add';
     enabled_form();
     $('#form')[0].reset(); // reset form on modals
