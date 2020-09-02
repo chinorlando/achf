@@ -368,16 +368,65 @@ function view_trasferencia(id_jugador) {
     });
 }
 
-function view_curriculum(id_jugador) {
+// function view_curriculum(id_jugador) {
+//     $.ajax({
+//         url: controller + 'get_curriculum/',
+//         type: 'POST',
+//         dataType: 'JSON',
+//         data: {id_jugador: id_jugador},
+//     })
+//     .done(function(date) {
+//         console.log(date);
+//         $('.transferencias').html(date);
+//         $('#modal_form_curriculum').modal('show'); // show bootstrap modal
+        
+//         // reload_table();
+//     })
+//     .fail(function() {
+//         console.log("No se guardo.");
+//     });
+// }
+
+function load_curri(id_jugador) {
     $.ajax({
         url: controller + 'get_curriculum/',
         type: 'POST',
         dataType: 'JSON',
         data: {id_jugador: id_jugador},
     })
-    .done(function(date) {
-        console.log(date);
-        $('.transferencias').html(date);
+    .done(function(data) {
+        console.log(data);
+
+        var html = `<table class="table table-bordered text-center">
+                  <tbody><tr>
+                    <th>INFORMACIÓN</th>
+                    <th>TRAYECTORIA</th>
+                    <th>LOGROS</th>
+                    <th>PALMARES</th>
+                    <th>Accion</th>
+                  </tr>
+                  <input type="hidden" value="`+id_jugador+`" name="id_jugador" id="id_jugador" class="table_data" data-row_id="`+id_jugador+`" data-column_name="id_jugador"/> `;
+        
+        html += '<td id="informacion" contenteditable placeholder="..."></td>';
+        html += '<td id="trayectoria" contenteditable placeholder="..."></td>';
+        html += '<td id="logros" contenteditable placeholder="..."></td>';
+        html += '<td id="palmares" contenteditable placeholder="..."></td>';
+        html += '<td><button type="button" name="btn_add" id="btn_add" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-plus"></span></button></td></tr>';
+        for(var count = 0; count < data.length; count++)
+        {
+          html += '<tr>';
+          html += '<td class="table_data" data-row_id="'+data[count].id_currijugador+'" data-column_name="informacion" contenteditable>'+data[count].informacion+'</td>';
+          html += '<td class="table_data" data-row_id="'+data[count].id_currijugador+'" data-column_name="trayectoria" contenteditable>'+data[count].trayectoria+'</td>';
+          html += '<td class="table_data" data-row_id="'+data[count].id_currijugador+'" data-column_name="logros" contenteditable>'+data[count].logros+'</td>';
+          html += '<td class="table_data" data-row_id="'+data[count].id_currijugador+'" data-column_name="palmares" contenteditable>'+data[count].palmares+'</td>';
+          html += '<td><button type="button" name="delete_btn" id="'+data[count].id_currijugador+'" class="btn btn-xs btn-danger btn_delete"><span class="glyphicon glyphicon-remove"></span></button></td></tr>';
+        }
+        html += '</tbody></table>';
+
+        $('.transferencias').html(html);
+
+
+        // $('.transferencias').html(html);
         $('#modal_form_curriculum').modal('show'); // show bootstrap modal
         
         // reload_table();
@@ -386,6 +435,75 @@ function view_curriculum(id_jugador) {
         console.log("No se guardo.");
     });
 }
+
+$(document).on('click', '#btn_add', function(){
+    var informacion = $('#informacion').text();
+    var trayectoria = $('#trayectoria').text();
+    var logros = $('#logros').text();
+    var palmares = $('#palmares').text();
+    var id_jugador = $('#id_jugador').val();
+    if(informacion == '')
+    {
+      alert('Ingrese información');
+      return false;
+    }
+    if(trayectoria == '')
+    {
+      alert('Ingrese trayectoria');
+      return false;
+    }
+    if(logros == '')
+    {
+      alert('Ingrese logro');
+      return false;
+    }
+    if(palmares == '')
+    {
+      alert('Ingrese palmares');
+      return false;
+    }
+    $.ajax({
+      url:controller + '/ajax_add',
+      method:"POST",
+      data:{informacion:informacion, trayectoria:trayectoria, logros:logros, palmares:palmares, id_jugador:id_jugador},
+      success:function(data){
+        load_curri(id_jugador);
+      }
+    })
+  });
+
+$(document).on('blur', '.table_data', function(){
+    var id = $(this).data('row_id');
+    var table_column = $(this).data('column_name');
+    var value = $(this).text();
+    var id_jugador = $('#id_jugador').val();
+    console.log(id);
+    $.ajax({
+      url:controller + 'ajax_update',
+      method:"POST",
+      data:{id:id, table_column:table_column, value:value, id_jugador:id_jugador},
+      success:function(data)
+      {
+        load_curri(id_jugador);
+      }
+    })
+  });
+
+$(document).on('click', '.btn_delete', function(){
+    var id = $(this).attr('id');
+    var id_jugador = $('#id_jugador').val();
+    if(confirm("Estas seguro de eliminar este registro?"))
+    {
+      $.ajax({
+        url:controller + 'ajax_delete',
+        method:"POST",
+        data:{id:id, id_jugador:id_jugador},
+        success:function(data){
+          load_curri(id_jugador);
+        }
+      })
+    }
+  });
 
 function add_row_transferencia() {
     save_method = 'add';
@@ -767,3 +885,67 @@ function anotal_gol(asd, asd) {
     alert(eso);
 }
 
+function edit_row_asignacion(id)
+{
+    save_method = 'update';
+    enabled_form();
+    $('#form_asignacion_jugador_equipo')[0].reset(); // reset form on modals
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+
+    //Ajax Load data from ajax
+    $.ajax({
+        url : controller + 'ajax_edit_asignacion/' + id,
+        type: "GET",
+        dataType: "JSON",
+        success: function(data)
+        {
+            // console.log(data.categorias);
+            // $.each(data, function (index, itemData) {
+            //     $('[name="'+index+'"]').val(itemData);
+            // });
+            $('[name="id_inscripcionjugador"]').val(data.id_inscripcionjugador);
+
+            $('[name="dorsal"]').val(data.data_asignacion.dorsal);
+            $('[name="posicion"]').val(data.data_asignacion.posicion);
+            $('[name="peso"]').val(data.data_asignacion.peso);
+            $('[name="jugadores"]').val(data.data_asignacion.id_jugador);
+            $('[name="club"]').val(data.id_club);
+
+            // var cr = JSON.parse(data.categorias);
+            $.each(data.categorias, function(index, val) {
+                $('#categorias').append('<option value="'+val.id_categoria+'">'+val.nombre+'</option>');
+            });
+
+            $('[name="categorias"]').val(data.id_categoria);
+
+            $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
+            $('.modal-title').text('Editar '+title); // Set title to Bootstrap modal title
+            $('#btnSave').show();
+ 
+            
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error get data from ajax');
+        }
+    });
+}
+
+
+function add_row_cur(){
+    save_method = 'add';
+    enabled_form();
+    $('#form')[0].reset(); // reset form on modals
+    //    $('#form select').select2("val", "");
+    //$('#form').trigger("reset");
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+    $('#modal_form').modal('show'); // show bootstrap modal
+    $('.modal-title').text('Adicionar '+title); // Set Title to Bootstrap modal title
+
+    $('#photo-preview').hide(); // hide photo preview modal
+    $('#label-photo').text('Subir imagen'); // label photo upload
+
+    $('#btnSave').show();
+}

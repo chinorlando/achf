@@ -188,7 +188,7 @@ class MY_Model extends CI_Model
         // $this->db->join('persona p', 'p.id_persona = j.id_persona');
         // $this->db->join('categoria ct', 'ct.id_categoria = e.id_categoria');
 
-        $this->db->select('j.id_jugador, ij.dorsal, p.nombres, p.apellido_paterno, p.apellido_materno, p.foto, ij.posicion, ct.nombre as nombre_categoria, c.nombre_club as nombre_club, j.estado, p.fecha_nacimiento, j.c_i, j.n_registro_fbf, p.sexo, p.nacionalidad');
+        $this->db->select('j.id_jugador, ij.dorsal, p.nombres, p.apellido_paterno, p.apellido_materno, p.foto, ij.posicion, ct.nombre as nombre_categoria, c.nombre_club as nombre_club, j.estado, p.fecha_nacimiento, j.c_i, j.n_registro_fbf, p.sexo, p.nacionalidad, ct.nombre');
         $this->db->from('inscripcionjugador ij');
         $this->db->join('inscripcionequipo e', 'e.id_inscripcionequipo = ij.id_inscripcionequipo');
         $this->db->join('equipo eq', 'eq.id_equipo = e.id_equipo');
@@ -278,7 +278,7 @@ class MY_Model extends CI_Model
 
     public function get_all_clubs()
     {
-        // $this->db->distinct();
+        $this->db->distinct();
         $this->db->select('c.id_club, c.nombre_club');
         $this->db->from('inscripcionequipo i');
         $this->db->join('equipo eq', 'eq.id_equipo = i.id_equipo');
@@ -385,7 +385,7 @@ class MY_Model extends CI_Model
 
     public function get_curriculum($id_jugador)
     {
-        $this->db->select('cj.id_jugador, cj.informacion, cj.trayectoria, cj.logros, cj.palmares');
+        $this->db->select('cj.id_currijugador, cj.id_jugador, cj.informacion, cj.trayectoria, cj.logros, cj.palmares');
         $this->db->from('curriculo_jugador cj');
         $this->db->join('jugador', 'jugador.id_jugador = cj.id_jugador');
         $this->db->join('persona', 'persona.id_persona = jugador.id_persona');
@@ -1332,6 +1332,27 @@ class MY_Model extends CI_Model
     {
         $this->db->insert('inscripcionjugador', $data);
     }
+
+    public function get_by_id_asignacion($id)
+    {
+        $id = $this->security->xss_clean($id);
+        $this->db->where('id_jugador', $id);
+        $query = $this->db->get('inscripcionjugador');
+        return $query->row();
+    }
+
+    public function update_ju_asignacion($where, $data)
+    {   
+        $this->db->where('id_inscripcionjugador', $where);
+        $this->db->update('inscripcionjugador', $data);
+    }
+
+    public function delete_by_id_asignacion($id_inscripcionjugador)
+    {
+        $this->db->where('id_inscripcionjugador', $id_inscripcionjugador);
+        $res = $this->db->delete('inscripcionjugador');
+        return $res;
+    }
     ////////////////asignacion a jugador a un equipo ///////////////////////
 
 
@@ -1393,7 +1414,7 @@ class MY_Model extends CI_Model
         return $this->db->count_all_results();
     }
 
-    public function save()
+    public function save($data)
     {
         $data = $this->security->xss_clean($data);
         $this->db->insert($this->table, $data);

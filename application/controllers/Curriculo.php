@@ -7,6 +7,7 @@ class Curriculo extends CI_Controller {
 
         parent::__construct();
         $this->load->Model('Jugador_model','dbase');
+        $this->load->Model('Curriculo_Jugador_model','dbase_curri');
         $this->load->library('Window');
         //isLoggedIn();
     }
@@ -50,13 +51,16 @@ class Curriculo extends CI_Controller {
             else
                 $row[] = '(Sin foto)';
 
-            $row[] = '  <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="view_curriculum('.$d->id_jugador.')">
+            $row[] = '
+                        <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="load_curri('.$d->id_jugador.')">
                             <i class="fa fa-eye"></i>
-                        </button>       
+                        </button>
+                        
+                        <!--
                         <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="edit_row('.$d->id_jugador.')">
                             <i class="fa fa-pencil"></i>
                         </button>    
-                        <!--
+                        
                         <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="delete_row('.$d->id_jugador.')">
                             <i class="fa fa-trash-o"></i>
                         </button>
@@ -74,36 +78,48 @@ class Curriculo extends CI_Controller {
         echo json_encode($output);
     }
 
+    // load_data
+    // public function get_curriculum()
+    // {
+    //     $curriculum = $this->dbase->get_curriculum($this->input->post('id_jugador'));
+    //     $jug_tr = '';
+    //     $jug_tr .= '<table class="table table-bordered text-center">
+    //               <tbody><tr>
+    //                 <th>INFORMACIÓN</th>
+    //                 <th>TRAYECTORIA</th>
+    //                 <th>LOGROS</th>
+    //                 <th>PALMARES</th>
+    //                 <th>Accion</th>
+    //               </tr>';
+    //               foreach ($curriculum as $curri) {
+    //                   $jug_tr .= '<tr>
+    //                     <td>'.
+    //                       $curri->informacion
+    //                     .'</td>
+    //                     <td>'.
+    //                       $curri->trayectoria
+    //                     .'</td>
+    //                     <td>'.
+    //                       $curri->logros
+    //                     .'</td>
+    //                     <td>'.
+    //                       $curri->palmares
+    //                     .'</td>
+    //                     <td>
+    //                       <button type="button" name="btn_add" id="btn_add" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-plus"></span></button>
+    //                     </td>
+    //                   </tr>';
+    //               }
+    //     $jug_tr .= '</tbody>
+    //         </table>';
+    //     echo json_encode($jug_tr);
+    // }
+
     public function get_curriculum()
     {
         $curriculum = $this->dbase->get_curriculum($this->input->post('id_jugador'));
-        $jug_tr = '';
-        $jug_tr .= '<table class="table table-bordered text-center">
-                  <tbody><tr>
-                    <th>INFORMACIÓN</th>
-                    <th>TRAYECTORIA</th>
-                    <th>LOGROS</th>
-                    <th>PALMARES</th>
-                  </tr>';
-                  foreach ($curriculum as $curri) {
-                      $jug_tr .= '<tr>
-                        <td>'.
-                          $curri->informacion
-                        .'</td>
-                        <td>'.
-                          $curri->trayectoria
-                        .'</td>
-                        <td>'.
-                          $curri->logros
-                        .'</td>
-                        <td>'.
-                          $curri->palmares
-                        .'</td>
-                      </tr>';
-                  }
-        $jug_tr .= '</tbody>
-            </table>';
-        echo json_encode($jug_tr);
+        
+        echo json_encode($curriculum);
     }
 
      public function post_data()
@@ -120,31 +136,49 @@ class Curriculo extends CI_Controller {
         return $data;
     }
 
-    public function ajax_edit($id)
-    {
-        $data = $this->dbase->get_by_id($id);
-        echo json_encode($data);
-    }
+    // public function ajax_edit($id)
+    // {
+    //     $data = $this->dbase->get_by_id($id);
+    //     echo json_encode($data);
+    // }
 
     public function ajax_add()
     {
-        $this->_validate();
-        $data = $this->post_data();
-        $insert = $this->dbase->save($data);
+        // $this->_validate();
+        $data = array(
+            'id_jugador'    => $this->input->post('id_jugador'),
+            'informacion'    => $this->input->post('informacion'),
+            'trayectoria'     =>  $this->input->post('trayectoria'),
+            'logros'           =>  $this->input->post('logros'),
+            'palmares'           =>  $this->input->post('palmares'),
+            'foto'           =>  $this->input->post('foto'),
+            'estado'           =>  1,
+        );
+
+        $this->dbase_curri->save($data);
         echo json_encode(array("status" => TRUE));
     }
 
     public function ajax_update()
     {
-        $this->_validate();
-        $data = $this->post_data();
-        $this->dbase->update($this->input->post('id_currijugador'), $data);
+        // $this->_validate();
+        // $data = $this->post_data();
+        // $this->dbase->update($this->input->post('id_currijugador'), $data);
+
+        $data = array(
+            $this->input->post('table_column')  =>  $this->input->post('value')
+        );
+
+        $this->dbase_curri->update_curri($this->input->post('id'), $this->input->post('id_jugador'), $data);
+
         echo json_encode(array("status" => TRUE));
     }
 
-    public function ajax_delete($id)
+    public function ajax_delete()
     {
-        $this->dbase->delete_by_id($id);
+        $id_curri = $this->input->post('id');
+        $id_jugador = $this->input->post('id_jugador');
+        $this->dbase_curri->delete_by_id_curri($id_curri, $id_jugador);
         echo json_encode(array("status" => TRUE));
     }
     

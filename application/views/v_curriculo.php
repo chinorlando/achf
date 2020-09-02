@@ -11,6 +11,13 @@
             get_table('<?php echo $opcion; ?>','<?php echo base_url().$controllerajax; ?>');
         });
     </script>
+    <style type="text/css">
+        [contenteditable]:empty:before{
+          content: attr(placeholder);
+          pointer-events: none;
+          display: block; /* For Firefox */
+        }
+    </style>
     <button type="button" class="btn btn-primary btn-icon icon-left"  onclick="add_row()">
         Adicionar <?php echo $opcion; ?>
         <i class="entypo-plus-squared"></i>
@@ -52,7 +59,7 @@
           </div>
         </div>
       </div>
-    <div class="modal fade" id="modal_form">
+    <!-- <div class="modal fade" id="modal_form">
         <div class="modal-dialog">
             <div class="modal-content">
 
@@ -123,25 +130,23 @@
                     <button type="button" id="btnSave" class="btn btn-info" onclick="save_row()">Guardar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
+            </div>
+        </div>
+    </div> -->
 
     <div class="modal fade" id="modal_form_curriculum" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title">Curriculum</h4>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title"><?php echo $opcion; ?></h3>
             </div>
             <div class="modal-body">
               <div class="transferencias"></div>
             </div>
             <div class="modal-footer justify-content-between">
               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-              <button type="button" class="btn btn-primary">Guardar cambios</button>
+              <!-- <button type="button" class="btn btn-primary">Guardar cambios</button> -->
             </div>
           </div>
         </div>

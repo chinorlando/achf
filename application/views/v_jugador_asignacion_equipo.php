@@ -7,6 +7,20 @@
     <script src="<?php echo base_url(); ?>assets/customjs/formulario.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+
+            $("input").change(function(){
+                $(this).parent().removeClass('has-error');
+                $(this).next().empty();
+            });
+            $("textarea").change(function(){
+                $(this).parent().removeClass('has-error');
+                $(this).next().empty();
+            });
+            $("select").change(function(){
+                $(this).parent().removeClass('has-error');
+                $(this).next().empty();
+            });
+
             get_table('<?php echo $opcion; ?>','<?php echo base_url().$controllerajax; ?>');
 
             $.get(CFG.url + "jugador/get_all_jugadores", function(data) {
@@ -57,7 +71,7 @@
         function add_row_asignacion(){
             save_method = 'add';
             enabled_form();
-            $('#form')[0].reset(); // reset form on modals
+            $('#form_asignacion_jugador_equipo')[0].reset(); // reset form on modals
             //    $('#form select').select2("val", "");
             //$('#form').trigger("reset");
             $('.form-group').removeClass('has-error'); // clear error class
@@ -71,100 +85,99 @@
             $('#btnSave').show();
         }
 
-        function save_row_asignacion()
-        {
-            $('#btnSave').text('guardando...'); //change button text
-            $('#btnSave').attr('disabled',true); //set button disable 
-            // var url;
 
+
+        function save_row_asignacion() {
+            if($('[name="id_inscripcionjugador"]').val() == '')
+                url = CFG.url + 'jugador/ajax_guardar_inscripcionjugador';
+            else
+                url = CFG.url + 'jugador/ajax_update_inscripcionjugador';
             $.ajax({
-            url: CFG.url + 'jugador/ajax_guardar_inscripcionjugador',
-            type: "POST",
-            cache: true,
-            data: $("#form").serialize(),
-            success: function(data) {
-              var datos = $.parseJSON(data);
-              if (datos.status) {
-                alert('Datos guardados exitosamente.');
-                $("#form")[0].reset();
-              } else {
-                for (var i = 0; i < datos.inputerror.length; i++) {
-                    $('[name="'+datos.inputerror[i]+'"]').parent().addClass('has-error');
-                    $('[name="'+datos.inputerror[i]+'"]').next().text(datos.error_string[i]);
+                url: url,
+                type: "POST",
+                cache: true,
+                data: $("#form_asignacion_jugador_equipo").serialize(),
+                success: function(data) {
+                  var datos = $.parseJSON(data);
+                  if (datos.status) {
+                    alert('Datos guardados exitosamente.');
+                    $("#form_asignacion_jugador_equipo")[0].reset();
+                    $('#modal_form').modal('hide'); // show bootstrap modal
+                  } else {
+                    for (var i = 0; i < datos.inputerror.length; i++) {
+                        $('[name="'+datos.inputerror[i]+'"]').parent().addClass('has-error');
+                        $('[name="'+datos.inputerror[i]+'"]').next().text(datos.error_string[i]);
+                      }
                   }
-              }
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                alert('Error al guardar datos.');
-            }
-          });
 
-
-            // if(save_method == 'add') {
-            //     // url = controller + 'ajax_add';
-            //     url: CFG.url + 'jugador/ajax_guardar_inscripcionjugador';
-            // } else {
-            //     url = controller + 'ajax_update';
-            // }
-
-            // $.ajax({
-            //     url : url,
-            //     type: "POST",
-            //     data: $('#form').serialize(),
-            //     dataType: "JSON",
-            //     success: function(data)
-            //     {
-            //         if(data.status) //if success close modal and reload ajax table
-            //         {
-            //             $('#modal_form').modal('hide');
-            //             reload_table();
-            //         }
-            //         else
-            //         {
-            //             for (var i = 0; i < data.inputerror.length; i++) 
-            //             {
-            //                 $('[name="'+data.inputerror[i]+'"]').parent().parent().addClass('has-error'); //select parent twice to select div form-group class and add has-error class
-            //                 $('[name="'+data.inputerror[i]+'"]').next().text(data.error_string[i]); //select span help-block class set text error string
-            //             }
-            //         }
-            //         $('#btnSave').text('Guardar'); //change button text
-            //         $('#btnSave').attr('disabled',false); //set button enable 
-            //     },
-            //     error: function (jqXHR, textStatus, errorThrown)
-            //     {
-            //         alert('Error al añadir / actualizar');
-            //         $('#btnSave').text('Guardar'); //change button text
-            //         $('#btnSave').attr('disabled',false); //set button enable 
-
-            //     }
-            // });
+                  reload_table();
+                },
+                error: function (jqXHR, textStatus, errorThrown)
+                {
+                    alert('Error al guardar datos.');
+                }
+              });
         }
 
+        function reload_table()
+        {
+            table.ajax.reload(null,false); //reload datatable ajax 
+        }
 
-        function equipoJugador() {
-            $.ajax({
-            url: CFG.url + 'jugador/ajax_guardar_inscripcionjugador',
-            type: "POST",
-            cache: true,
-            data: $("#form_asignacion_jugador_equipo").serialize(),
-            success: function(data) {
-              var datos = $.parseJSON(data);
-              if (datos.status) {
-                alert('Datos guardados exitosamente.');
-                $("#form_asignacion_jugador_equipo")[0].reset();
-              } else {
-                for (var i = 0; i < datos.inputerror.length; i++) {
-                    $('[name="'+datos.inputerror[i]+'"]').parent().addClass('has-error');
-                    $('[name="'+datos.inputerror[i]+'"]').next().text(datos.error_string[i]);
-                  }
-              }
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                alert('Error al guardar datos.');
-            }
-          });
+        function delete_row_asignacion(id)
+        {
+            $div = $('<div title="Confirmacion Requerida">');
+            $div.append('<p>Desea borrar este Registro?</p>');
+
+            $div.dialog({
+                modal: true,
+                maxHeight:'auto',
+                width: 'auto',
+                show: "fold",
+                hide: "fold",
+                resizable: false,
+                open: function(event, ui) {
+                    $(this).prev(".ui-dialog-titlebar").css("background","dark");
+                },
+                position: {
+                    my: 'center',
+                    at: 'center'
+                },
+                buttons: {
+                    'Borrar': {
+                        text: 'Borrar',
+                        class: 'btn btn-blue', 
+                        click: function () {
+                            $(this).dialog("close");
+                            $.ajax({
+                                url : controller + 'ajax_delete_asignacion/' + id,
+                                type: "POST",
+                                dataType: "JSON",
+                                success: function(data)
+                                {
+                                    //if success reload ajax table
+                                    //$('#modal_form').modal('hide');
+                                    reload_table();
+                                },
+                                error: function (jqXHR, textStatus, errorThrown)
+                                {
+                                    alert('Error deleting data');
+                                }
+                            });
+                        }
+                    },
+                    'Cancelar': {
+                        text: 'Cancelar',
+                        class: 'btn btn-default', 
+                        click: function () {
+                            $(this).dialog("close")
+                        }
+                    }
+                },
+                close: function (event, ui) {
+                    $(this).remove();
+                }
+            });
         }
     </script>
     <button type="button" class="btn btn-primary btn-icon icon-left"  onclick="add_row_asignacion()">
@@ -200,6 +213,7 @@
                             <th>Sexo</th>
                             <th>Nacionalidad</th>
                             <th>Club</th>
+                            <th>Categoria</th>
                             <th>Estado</th>
                             <th>Opciones</th>
                         </tr>
@@ -219,8 +233,8 @@
                     <h3 class="modal-title"><?php echo $opcion; ?></h3>
                 </div>
                 <div class="modal-body form">
-                    <form action="#" id="form" class="form-horizontal">
-                        <input type="hidden" value="" name="id_jugador"/> 
+                    <form action="#" id="form_asignacion_jugador_equipo" class="form-horizontal">
+                        <input type="text" value="" name="id_inscripcionjugador"/> 
                         <div class="form-body">
                             <div class="form-group">
                                 <label class="control-label col-md-3">Dorsal</label>
@@ -247,7 +261,7 @@
                                 <label class="control-label col-md-3">Jugadores</label>
                                 <div class="col-md-9">
                                     <select class="form-control" name="jugadores" id="jugadores" style="width: 100%;">
-                                        <option value="-1">Seleccione...</option>
+                                        <option>Seleccione...</option>
                                     </select>
                                     <span class="help-block"></span>
                                 </div>

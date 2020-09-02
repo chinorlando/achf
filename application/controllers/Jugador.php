@@ -62,6 +62,7 @@ class Jugador extends CI_Controller {
             $row[] = ($d->sexo=='M')? 'Masculino':'Femenino';
             $row[] = $d->nacionalidad;
             $row[] = $d->nombre_club;
+            $row[] = $d->nombre;
             $row[] = ($d->estado==1)? 'Activo':'Inactivo';
             // $row[] = $d->nombre_categoria;
 
@@ -88,13 +89,11 @@ class Jugador extends CI_Controller {
                         <i class="fa fa-print"></i>
                     </button>';
             } elseif ($title == 'Asignacion') {
-                $row[] = ' <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="add_row('.$d->id_jugador.')">
-                        <i class="fa fa-eye"></i>
-                    </button>       
-                    <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="edit_row_asig_juga('.$d->id_jugador.')">
+                $row[] = '
+                    <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="edit_row_asignacion('.$d->id_jugador.')">
                         <i class="fa fa-pencil"></i>
                     </button>    
-                    <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="delete_row_asig_juga('.$d->id_jugador.')">
+                    <button type="button" class="mb-xs mt-xs mr-xs btn btn-xs btn-info" onclick="delete_row_asignacion('.$d->id_jugador.')">
                         <i class="fa fa-trash-o"></i>
                     </button>';
             } elseif (TRUE){
@@ -415,7 +414,7 @@ class Jugador extends CI_Controller {
 
     public function ajax_guardar_inscripcionjugador()
     {
-        // $this->_validate_inscripcion();
+        $this->_validate_asignacion();
         $dorsal = $this->input->post('dorsal');
         $posicion = $this->input->post('posicion');
         $peso = $this->input->post('peso');
@@ -438,6 +437,53 @@ class Jugador extends CI_Controller {
         $this->dbase->saveInscripcionJugadorEquipo($data);
         echo json_encode(array('status' => TRUE));
     }
+
+    public function ajax_edit_asignacion($id)
+    {
+        $data_asignacion = $this->dbase->get_by_id_asignacion($id);
+        $id_inscripcionequipo = $this->db->get_where('inscripcionjugador', array('id_jugador' => $id))->row()->id_inscripcionequipo;
+        $id_inscripcionjugador = $this->db->get_where('inscripcionjugador', array('id_jugador' => $id))->row()->id_inscripcionjugador;
+        $id_equipo = $this->db->get_where('inscripcionequipo', array('id_inscripcionequipo' => $id_inscripcionequipo))->row()->id_equipo;
+        $id_club = $this->db->get_where('equipo', array('id_equipo' => $id_equipo))->row()->id_club;
+        $nombre_club = $this->db->get_where('club', array('id_club' => $id_club))->row()->nombre_club;
+        $id_categoria = $this->db->get_where('equipo', array('id_equipo' => $id_equipo))->row()->id_categoria;
+
+        $categorias = $this->dbase->get_categoria_inscripcion($id_club);
+
+        echo json_encode(array('data_asignacion' => $data_asignacion, 'id_club' => $id_club, 'categorias' => $categorias, 'id_categoria' => $id_categoria, 'id_inscripcionjugador' => $id_inscripcionjugador));
+    }
+
+    public function ajax_update_inscripcionjugador()
+    {
+        $this->_validate_asignacion();
+        $dorsal = $this->input->post('dorsal');
+        $posicion = $this->input->post('posicion');
+        $peso = $this->input->post('peso');
+        $id_jugadores = $this->input->post('jugadores');
+        $id_club = $this->input->post('club');
+        $id_categoria = $this->input->post('categorias');
+
+        $id_equipo = $this->db->get_where('equipo', array('id_club' => $id_club, 'id_categoria' => $id_categoria))->row()->id_equipo;
+        $id_inscripcionequipo = $this->db->get_where('inscripcionequipo', array('id_equipo' => $id_equipo))->row()->id_inscripcionequipo;
+
+        $data = [
+            'dorsal' => $dorsal,
+            'posicion' => $posicion,
+            'peso' => $peso,
+            'id_jugador' => $id_jugadores,
+            'id_inscripcionequipo' => $id_inscripcionequipo,
+        ];
+
+        $this->dbase->update_ju_asignacion($this->input->post('id_inscripcionjugador'), $data);
+        echo json_encode(array("status" => TRUE));
+    }
+
+    public function ajax_delete_asignacion($id)
+    {
+        $id_inscripcionjugador = $this->db->get_where('inscripcionjugador', array('id_jugador' => $id))->row()->id_inscripcionjugador;
+        $this->dbase->delete_by_id_asignacion($id_inscripcionjugador);
+        echo json_encode(array("status" => TRUE));
+    }
     /////////////// asignacion de jugador a un equipo //////////////////////
     
     private function _validate()
@@ -451,6 +497,57 @@ class Jugador extends CI_Controller {
         {
             $data['inputerror'][] = 'c_i';
             $data['error_string'][] = 'El Carnet de Identidad es requerido';
+            $data['status'] = FALSE;
+        }
+
+        if($data['status'] === FALSE)
+        {
+            echo json_encode($data);
+            exit();
+        }
+    }
+
+    private function _validate_asignacion()
+    {
+        $data = array();
+        $data['error_string'] = array();
+        $data['inputerror'] = array();
+        $data['status'] = TRUE;
+
+        if($this->input->post('dorsal') == '')
+        {
+            $data['inputerror'][] = 'dorsal';
+            $data['error_string'][] = 'El numero de jugador es obligatorio';
+            $data['status'] = FALSE;
+        }
+        if($this->input->post('posicion') == '')
+        {
+            $data['inputerror'][] = 'posicion';
+            $data['error_string'][] = 'La posición es obligatoria.';
+            $data['status'] = FALSE;
+        }
+        if($this->input->post('peso') == '')
+        {
+            $data['inputerror'][] = 'peso';
+            $data['error_string'][] = 'El peso es obligatorio';
+            $data['status'] = FALSE;
+        }
+        if($this->input->post('jugadores') == 'Seleccione...')
+        {
+            $data['inputerror'][] = 'jugadores';
+            $data['error_string'][] = 'Seleccione el jugador';
+            $data['status'] = FALSE;
+        }
+        if($this->input->post('club') == 'Seleccione...')
+        {
+            $data['inputerror'][] = 'club';
+            $data['error_string'][] = 'El club es requerido';
+            $data['status'] = FALSE;
+        }
+        if($this->input->post('categorias') == '')
+        {
+            $data['inputerror'][] = 'categorias';
+            $data['error_string'][] = 'La categoria es requerido';
             $data['status'] = FALSE;
         }
 
