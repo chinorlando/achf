@@ -234,7 +234,7 @@
                 </div>
                 <div class="modal-body form">
                     <form action="#" id="form_asignacion_jugador_equipo" class="form-horizontal">
-                        <input type="text" value="" name="id_inscripcionjugador"/> 
+                        <input type="hidden" value="" name="id_inscripcionjugador"/> 
                         <div class="form-body">
                             <div class="form-group">
                                 <label class="control-label col-md-3">Dorsal</label>
