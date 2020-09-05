@@ -1289,6 +1289,7 @@ class MY_Model extends CI_Model
     {
         $this->db->from('club c');
         // $this->db->join('club c', 'c.id_club = e.id_club');
+        $this->db->order_by('nombre_club');
         $query = $this->db->get();
         return $query->result();
     }
