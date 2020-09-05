@@ -213,7 +213,7 @@
                             <th>Sexo</th>
                             <th>Nacionalidad</th>
                             <th>Club</th>
-                            <th>Categoria</th>
+                            <!-- <th>Categoria</th> -->
                             <th>Estado</th>
                             <th>Opciones</th>
                         </tr>

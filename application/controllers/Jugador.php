@@ -61,8 +61,9 @@ class Jugador extends CI_Controller {
                 $row[] = '(Sin foto)';
             $row[] = ($d->sexo=='M')? 'Masculino':'Femenino';
             $row[] = $d->nacionalidad;
-            $row[] = $d->nombre_club;
-            $row[] = $d->nombre;
+            // aqui aqui
+            $row[] = $d->nombre_club.' - '.$d->nombre ;
+            // $row[] = $d->nombre;
             $row[] = ($d->estado==1)? 'Activo':'Inactivo';
             // $row[] = $d->nombre_categoria;
 

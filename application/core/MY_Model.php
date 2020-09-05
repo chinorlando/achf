@@ -612,7 +612,8 @@ class MY_Model extends CI_Model
         $this->db->join('inscripcionequipo ie', 'ie.id_equipo = ij.id_inscripcionequipo');
         $this->db->join('equipo e', 'e.id_equipo = ie.id_equipo');
         $this->db->join('club c', 'c.id_club = e.id_club');
-        $this->db->where('c.id_club', $id_equipo);
+        // $this->db->where('c.id_club', $id_equipo);
+        $this->db->where('ie.id_inscripcionequipo', $id_equipo);
         $this->db->where('e.id_categoria', $id_categoria);
         $this->db->order_by('ij.dorsal');
 

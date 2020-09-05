@@ -3,9 +3,9 @@
   <!-- /.content-wrapper -->
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      <b>Año</b> 2019
+      <b>Año</b> 2020
     </div>
-    <strong>A.CH.F. &copy; 1984 - 2019 <a href="https://adminlte.io">Carlos</a> </strong> Ortega
+    <strong>A.CH.F. &copy; 2020 <a href="https://adminlte.io">Carlos</a> </strong> Ortega
   </footer>
 
   <!-- Control Sidebar -->

@@ -18,11 +18,11 @@
           display: block; /* For Firefox */
         }
     </style>
-    <button type="button" class="btn btn-primary btn-icon icon-left"  onclick="add_row()">
+    <!-- <button type="button" class="btn btn-primary btn-icon icon-left"  onclick="add_row()">
         Adicionar <?php echo $opcion; ?>
         <i class="entypo-plus-squared"></i>
     </button>
-    <br /><br />
+    <br /><br />  -->
 
     <!-- SELECT2 EXAMPLE -->
       <div class="box box-default">

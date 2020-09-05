@@ -683,7 +683,9 @@ class Planillero extends CI_Controller {
                     <div class="icon">
                       <i class="ion ion-person-add"></i>
                     </div>
-                    <a href="'.base_url('planillero/habilitacion').'" class="small-box-footer">Habilitar jugadores <i class="fa fa-arrow-circle-right"></i></a>
+                    <!-- aqui aqui -->
+                    <a href="'.base_url("planillero/gohabilitacion/$id_partido/$id_categoria/$id_e1/$id_e2").'" class="small-box-footer">Habilitar jugadores <i class="fa fa-arrow-circle-right"></i></a>
+                    <!-- <a href="'.base_url('planillero/habilitacion').'" class="small-box-footer">Habilitar jugadores <i class="fa fa-arrow-circle-right"></i></a> -->
                   </div>
                 </div>
               </div>';
@@ -1998,7 +2000,8 @@ $textohtml .= '</div>';
                     <div class="icon">
                       <i class="ion ion-person-add"></i>
                     </div>
-                    <a href="'.base_url('registro/equipo_jugador').'" class="small-box-footer">Inscribir jugadores <i class="fa fa-arrow-circle-right"></i></a>
+                    <!-- aqui aqui -->
+                    <a href="'.base_url('jugador/equipo_jugador').'" class="small-box-footer">Inscribir jugadores <i class="fa fa-arrow-circle-right"></i></a>
                   </div>
                 </div>
               </div>';
