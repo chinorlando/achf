@@ -1,4 +1,5 @@
-<section class="content">
+<?php echo $datos ?>
+<!-- <section class="content">
   <div class="row">
     <div class="col-md-12">
       <div class="box box-info">
@@ -31,14 +32,10 @@
             </table>
           </div>
         </div>
-        <!-- <div class="box-footer clearfix">
-          <a href="javascript:void(0)" class="btn btn-sm btn-info btn-flat pull-left">Place New Order</a>
-          <a href="javascript:void(0)" class="btn btn-sm btn-default btn-flat pull-right">View All Orders</a>
-        </div> -->
       </div>
     </div>
   </div>
-</section>
+</section> -->
 
 <div class="modal fade" id="modal-arbitro">
   <div class="modal-dialog">

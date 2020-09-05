@@ -1278,46 +1278,93 @@ class Planillero extends CI_Controller {
 
     public function asignacion_arbitros()
     {
-        $partidos = $this->dbase->get_all_partidos();
+        // muestra todas las categorias donde estan habilitados los equipos con mas de cuatro equipos
+        $categorias = $this->dbase->get_categorias_habilitados();
+
+        // $partidos = $this->dbase->get_all_partidos();
         $opcion = 'Asignacion de arbitros';
         $data = array(
             'opcion'            => $opcion,
             'controllerajax'    => 'Planillero',
             'titulo_navegation' => $this->window->titulo_navegacion('Empresa',$opcion),
-            'partidos' => $partidos,
+            // 'partidos' => $partidos,
         );
 
+        
         $cent = '';
+        foreach ($categorias as $categoria) {
+            $partidos = $this->dbase->get_all_partidos($categoria->id_categoria);
+            // print_r($categoria->id_categoria);
+            // exit();
+            $i = 1;
+$cent .= '<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-info">
+        <div class="box-header with-border">
+          <h3 class="box-title">ASIGNACIÓN DE ÁRBITROS A PARTIDOS - CATEGORIA '.$categoria->nombre.'</h3>
 
-        $i = 1;
-        foreach ($partidos as $partido){
-            $color = ($partido->jornada % 2 == 0) ? "bg-teal disabled" : "bg-info disabled";
-          $cent .='<tr>
-            <td>'.$i++.'</td>
-            <td class="'.$color.'"><p style="color:#000";><b>'.$partido->jornada.'</b></p></td>
-            <td class="'.$color.'"><p style="color:#000";><b>'.$partido->local.'</b></p></td>
-            <td class="'.$color.'"><p style="color:#000";><b>VS</b></p></td>
-            <td class="'.$color.'"><p style="color:#000";><b>'.$partido->visitante.'</b></p></td>
-            <td>';
-            if (!$this->dbase->get_siexiste($partido->id_partidos)) {
-                $cent .= '<a class="btn btn-sm btn-primary id_match" href="javascript:void(0)" title="Editar asignación." onclick="add_arbitros('.$partido->id_partidos.')">Agregar datos</a>';
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          </div>
+        </div>
+        <div class="box-body">
+          <div class="table-responsive">
+            <table class="table no-margin">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Jornada Nº</th>
+                <th>Local</th>
+                <th>vs</th>
+                <th>Visitante</th>
+                <th>Acciones</th>
+                
+              </tr>
+              </thead>
+              <tbody>';
+              foreach ($partidos as $partido){
+                    $color = ($partido->jornada % 2 == 0) ? "bg-teal disabled" : "bg-info disabled";
+                  $cent .='<tr>
+                    <td>'.$i++.'</td>
+                    <td class="'.$color.'"><p style="color:#000";><b>'.$partido->jornada.'</b></p></td>
+                    <td class="'.$color.'"><p style="color:#000";><b>'.$partido->local.'</b></p></td>
+                    <td class="'.$color.'"><p style="color:#000";><b>VS</b></p></td>
+                    <td class="'.$color.'"><p style="color:#000";><b>'.$partido->visitante.'</b></p></td>
+                    <td>';
+                    if (!$this->dbase->get_siexiste($partido->id_partidos)) {
+                        $cent .= '<a class="btn btn-sm btn-primary id_match" href="javascript:void(0)" title="Editar asignación." onclick="add_arbitros('.$partido->id_partidos.')">Agregar datos</a>';
 
-            } else {
-                $estado_suspencion = $this->db->get_where('suspencion_partido', array(
-                    'id_partidos' => $partido->id_partidos,
-                ))->row();
-                // print_r($estado_suspencion);
-                // exit();
-                if (empty($estado_suspencion)) {
-                    $cent .= '<a class="btn btn-sm btn-success id_match" href="javascript:void(0)" title="Añadir árbitros, cancha, fecha y hora." onclick="edit_arbitros('.$partido->id_partidos.')">Editar</a>';
-                } else {
-                    $cent .= '<a class="btn btn-sm btn-warning id_match" href="javascript:void(0)" title="Añadir árbitros, cancha, fecha y hora." onclick="edit_arbitros_reprogramacion('.$partido->id_partidos.')">Reprogramar Partido</a>';
+                    } else {
+                        $estado_suspencion = $this->db->get_where('suspencion_partido', array(
+                            'id_partidos' => $partido->id_partidos,
+                        ))->row();
+                        // print_r($estado_suspencion);
+                        // exit();
+                        if (empty($estado_suspencion)) {
+                            $cent .= '<a class="btn btn-sm btn-success id_match" href="javascript:void(0)" title="Añadir árbitros, cancha, fecha y hora." onclick="edit_arbitros('.$partido->id_partidos.')">Editar</a>';
+                        } else {
+                            $cent .= '<a class="btn btn-sm btn-warning id_match" href="javascript:void(0)" title="Añadir árbitros, cancha, fecha y hora." onclick="edit_arbitros_reprogramacion('.$partido->id_partidos.')">Reprogramar Partido</a>';
+                        }
+                        
+
+                    }
+                    $cent .= '</td>
+                  </tr>';
                 }
                 
-
-            }
-            $cent .= '</td>
-          </tr>';
+              $cent.='</tbody>
+            </table>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</section>';
+            
         }
 
         $data['datos']  = $cent;
