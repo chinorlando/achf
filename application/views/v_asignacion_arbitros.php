@@ -166,7 +166,7 @@
     // $(".help-block").empty(); // clear error string
     $("#modal-arbitro").modal("show"); // show bootstrap modal when complete loaded
     $(".modal-title").text("Añadir árbitros"); // Set Title to Bootstrap modal title
-    $(".btnSave").text("Guardar datitos");
+    $(".btnSave").text("Guardar datos");
 
 
     $('#id_partido').val(id_partido);

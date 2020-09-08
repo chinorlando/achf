@@ -680,9 +680,22 @@ class Planillero extends CI_Controller {
 
                       <p>Jugadores no habilitados para este equipo.</p>
                     </div>
-                    <div class="icon">
-                      <i class="ion ion-person-add"></i>
-                    </div>
+                    <span class="b">
+                        <div class="icon">
+                          <!-- <i class="icon ion-person-stalker"></i> -->
+                          <i class="icon ion-android-checkbox-outline"></i>
+                          <!-- <i class="icon ion-android-checkbox-outline-blank"></i>   
+                          <i class="icon ion-android-checkbox-outline"></i> -->
+                        </div>
+                    </span>
+                    <span class="b">
+                        <div class="icon">
+                          <!-- <i class="icon ion-person-stalker"></i> -->
+                          <i class="icon ion-android-checkbox-outline"></i>
+                          <!-- <i class="icon ion-android-checkbox-outline-blank"></i>   
+                          <i class="icon ion-android-checkbox-outline"></i> -->
+                        </div>
+                    </span>
                     <!-- aqui aqui -->
                     <a href="'.base_url("planillero/gohabilitacion/$id_partido/$id_categoria/$id_e1/$id_e2").'" class="small-box-footer">Habilitar jugadores <i class="fa fa-arrow-circle-right"></i></a>
                     <!-- <a href="'.base_url('planillero/habilitacion').'" class="small-box-footer">Habilitar jugadores <i class="fa fa-arrow-circle-right"></i></a> -->
@@ -2038,7 +2051,7 @@ $textohtml .= '</div>';
             if (count($jugad_equi) == 0) {
                   $cent .= '<div class="row">
                 <div class="col-lg-12 col-xs-12">
-                  <div class="small-box bg-yellow">
+                  <div class="small-box bg-blue">
                     <div class="inner">
                       <h3>'.count($jugad_equi).'</h3>
 
