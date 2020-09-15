@@ -151,6 +151,13 @@ class MY_Model extends CI_Model
         }
     }
 
+    public function get_datatables_jug_all()
+    {
+        $this->db->select('j.id_jugador, p.nombres, p.apellido_paterno, p.apellido_materno');
+        $this->db->from('jugador j');
+        $this->db->join('persona p', 'p.id_persona = j.id_persona');
+    }
+
     public function get_datatables_jug()
     {
         // $this->db->select('jugador.id_jugador, persona.id_persona, persona.nombres, persona.apellido_paterno, persona.apellido_materno, inscripcionjugador.posicion, categoria.nombre as nombre_categoria, club.nombre_club, jugador.estado');

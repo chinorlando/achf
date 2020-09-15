@@ -32,7 +32,7 @@ class Jugador_model extends MY_Model {
 	public function save_ju($data, $dataJugador)
     {
 
-    	$this->db->trans_start(true);
+    	$this->db->trans_start();
 		
         $data = $this->security->xss_clean($data);
         $this->db->insert('persona', $data);

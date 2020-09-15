@@ -65,6 +65,7 @@
                 <div class="modal-body form">
                     <form action="#" id="form" class="form-horizontal">
                         <input type="hidden" value="" name="id_jugador"/> 
+                        <input type="hidden" value="0" name="cont_amarilla"/> 
                         <div class="form-body">
                             <div class="form-group">
                                 <label class="control-label col-md-3">Nombres</label>

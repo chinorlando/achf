@@ -407,7 +407,7 @@ class Jugador extends CI_Controller {
 
     public function get_all_jugadores()
     {
-        $this->dbase->get_datatables_jug();
+        $this->dbase->get_datatables_jug_all();
         $query = $this->db->get();
         $list = $query->result();
         echo json_encode($list);
