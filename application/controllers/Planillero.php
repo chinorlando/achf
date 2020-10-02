@@ -1715,7 +1715,7 @@ $textohtml .= '<div class="col-md-12">';
 
 
                 <div class="input-group">
-                    <input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]">
+                    <input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]" style="display: none;">
                     <span class="input-group-addon">
                       <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$val->precio.'" value="'.$val->precio.'" class="flat-red concepto_valores">
                     </span>
@@ -1962,7 +1962,11 @@ $textohtml .= '</div>';
 
                 
             }
-            echo json_encode(array("status" => TRUE));
+            $output = array(
+                "status" => TRUE,
+                "id_pagogeneral" => $id_pagogeneral,
+            );
+            echo json_encode($output);
         } else {
             echo json_encode(array("status" => FALSE));
         }

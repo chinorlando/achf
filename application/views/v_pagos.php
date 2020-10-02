@@ -79,6 +79,9 @@
 		</form>
 		<div class="box-footer">
 	  <button type="submit" class="btn btn-info pull-right" onclick="pagar_concepto()">Pagar</button>
+	  <button type="button" onclick="pdf_pago();" id="button" class="btn btn-success pull-left" >Imprimir PAGO</button>
+	  <input class="form-control monto" type="hidden" name="pagogral" id="pagogral">
+
 	</div>
 	</div>
 </section>
@@ -108,7 +111,9 @@
 
 
 <script type="text/javascript">
+	$('#button').hide();
 	$(document).ready(function(){
+		
 		$.get(CFG.url + 'planillero/get_clubs', function(data) {
 			var datos = $.parseJSON(data);
 			$.each(datos.clubs, function(index, val) {
@@ -447,6 +452,8 @@
 		  var datos = $.parseJSON(data);
 		  if (datos.status) {
 			alert('Datos guardados exitosamente.');
+			$('#button').show();
+			$("#pagogral").val(datos.id_pagogeneral);
 		  } else {
 		  	alert('Debe seleccionar por lo menos una opción.')
 		  }
@@ -457,7 +464,15 @@
 		}
 	  });
 	}
+	function pdf_pago(){
+          var pagogral = $('#pagogral').val();
+          var id_club = $('#club').val();
+          var id_categoria = $('#categoria').val();
+		  
+          window.open(CFG.url + 'Reporte/pdf_pago_id/'+pagogral+'/'+id_club+'/'+id_categoria,'_blank'); 
+		  //$('#button').hide();
 
+        }
 	///////////////////// pagos de concepto////////////////////////////////
 	function mostrar_amarillas_concepto(id_jugador, id_partido) {
 		id_club = $('#club').val();

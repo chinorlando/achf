@@ -66,6 +66,15 @@ where t.id_torneo = '$id_torneo' and eq.id_categoria = '$id_categoria' and eq.id
         return $query->result();
     }
 
+    public function get_pago_general_id($id_pagogeneral)
+    {   
+        $this->db->select('*');
+        $this->db->from('pagogeneral');
+		$this->db->where('id_pagogeneral', $id_pagogeneral);
+    	$query = $this->db->get();
+        return $query->result();
+    }
+
    	public function get_pago($id_pagogeneral)
     {   
         $this->db->select('*');
