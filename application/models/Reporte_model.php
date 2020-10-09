@@ -25,7 +25,7 @@ class Reporte_model extends CI_Model {
 	public function get_inscripcion_equipo($id_categoria)
     {   
         $this->db->select('*');
-        $this->db->from('inscripcionequipo i');
+        // $this->db->from('inscripcionequipo i');
         $this->db->from('equipo e ', 'e.id_equipo = i.id_equipo');
 		$this->db->where('e.id_categoria', $id_categoria);
     	$query = $this->db->get();

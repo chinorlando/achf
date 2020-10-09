@@ -188,7 +188,7 @@ class MY_Model extends CI_Model
         // $this->db->join('persona p', 'p.id_persona = j.id_persona');
         // $this->db->join('categoria ct', 'ct.id_categoria = e.id_categoria');
 
-        // $this->db->select('j.id_jugador, ij.dorsal, p.nombres, p.apellido_paterno, p.apellido_materno, p.foto, ij.posicion, ct.nombre as nombre_categoria, c.nombre_club as nombre_club, j.estado, p.fecha_nacimiento, j.c_i, j.n_registro_fbf, p.sexo, p.nacionalidad');
+        // $this->db->select('j.id_jugador, ij.dorsal, p.nombres, p.apellido_paterno, p.apellido_materno, p.foto, ij.posicion, ct.nombre as nombre_categoria, c.nombre_club as nombre_club, j.estado, p.fecha_nacimiento, j1238.c_i, j.n_registro_fbf, p.sexo, p.nacionalidad');
         // $this->db->from('inscripcionjugador ij');
         // $this->db->join('inscripcionequipo e', 'e.id_inscripcionequipo = ij.id_inscripcionequipo');
         // $this->db->join('club c', 'c.id_club = e.id_club');
@@ -1179,17 +1179,17 @@ class MY_Model extends CI_Model
 
     public function get_motivo($id_categoria, $id_concepto)
     {
-        // $sql = "select pc.id_precioconcepto, motivo.id_motivo, pc.precio, motivo.descripcion from precio_concepto pc
-        //     join motivo on motivo.id_motivo = pc.id_motivo 
-        //     where pc.id_categoria = ? and pc.id_concepto = ?";
-        // $query = $this->db->query($sql, array($id_categoria, $id_concepto)); 
-        // return $query->result();
-
         $sql = "select pc.id_precioconcepto, motivo.id_motivo, pc.precio, motivo.descripcion from precio_concepto pc
             join motivo on motivo.id_motivo = pc.id_motivo 
-            where pc.id_concepto = ?";
-        $query = $this->db->query($sql, array($id_concepto)); 
+            where pc.id_categoria = ? and pc.id_concepto = ?";
+        $query = $this->db->query($sql, array($id_categoria, $id_concepto)); 
         return $query->result();
+
+        // $sql = "select pc.id_precioconcepto, motivo.id_motivo, pc.precio, motivo.descripcion from precio_concepto pc
+        //     join motivo on motivo.id_motivo = pc.id_motivo 
+        //     where pc.id_concepto = ?";
+        // $query = $this->db->query($sql, array($id_concepto)); 
+        // return $query->result();
     }
     public function get_motivo_cuatro($id_categoria, $id_concepto)
     {
@@ -1239,7 +1239,7 @@ class MY_Model extends CI_Model
     {
         $this->db->select('id_inscripcionequipo');
         $this->db->from('inscripcionequipo i');
-        $this->db->from('equipo eq', 'eq.id_equipo = i.id_equipo');
+        $this->db->join('equipo eq', 'eq.id_equipo = i.id_equipo');
         $this->db->where('i.id_torneo',$id_torneo);
         $this->db->where('eq.id_categoria', $id_categoria);
         $this->db->where('eq.id_club', $id_club);

@@ -328,9 +328,9 @@ create table pagogeneral(
 CREATE TABLE transferencias (
   id_transferencias int AUTO_INCREMENT PRIMARY KEY,
   fecha date NOT NULL,
-  id_jugador int(11) NOT NULL,
-  id_club int(11) NOT NULL,
-  id_club_destino int(11) NOT NULL,
+  id_jugador int NOT NULL,
+  id_club int NOT NULL,
+  id_club_destino int NOT NULL,
   id_precioconcepto int not null,
   pagado tinyint NOT NULL DEFAULT '0',
 
