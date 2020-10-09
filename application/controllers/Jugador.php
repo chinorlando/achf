@@ -62,7 +62,13 @@ class Jugador extends CI_Controller {
             $row[] = ($d->sexo=='M')? 'Masculino':'Femenino';
             $row[] = $d->nacionalidad;
             // aqui aqui
-            $row[] = $d->nombre_club.' - '.$d->nombre ;
+            // para transferencia
+            $get_id_club = $this->db->get_where('inscripcionjugador', array('id_jugador' => $d->id_jugador))->row()->id_inscripcionequipo;
+            $_club = $this->db->get_where('club', array('id_club' => $get_id_club))->row()->nombre_club;
+            $row[] = $_club;
+            // hasta aqui para transferencia
+            
+            // $row[] = $d->nombre_club.' - '.$d->nombre ;
             // $row[] = $d->nombre;
             $row[] = ($d->estado==1)? 'Activo':'Inactivo';
             // $row[] = $d->nombre_categoria;

@@ -117,6 +117,7 @@ class MY_Model extends CI_Model
     {
         // $this->db->from($this->table);
         $this->get_datatables_jug();
+        // $this->get_datatables_jug_probando();
         // print_r($this->get_datatables_jug());
         // exit();
         $i = 0;
@@ -205,6 +206,19 @@ class MY_Model extends CI_Model
         $this->db->join('categoria ct', 'ct.id_categoria = eq.id_categoria');
     }
 
+    // sin uso
+    public function get_datatables_jug_probando()
+    {
+        // $this->db->select('j.id_jugador, ij.dorsal, p.nombres, p.apellido_paterno, p.apellido_materno, p.foto, ij.posicion, ct.nombre as nombre_categoria, c.nombre_club as nombre_club, j.estado, p.fecha_nacimiento, j.c_i, j.n_registro_fbf, p.sexo, p.nacionalidad, ct.nombre');
+        $this->db->from('inscripcionjugador ij');
+        $this->db->join('inscripcionequipo e', 'e.id_inscripcionequipo = ij.id_inscripcionequipo');
+        // $this->db->join('equipo eq', 'eq.id_equipo = e.id_equipo');
+        $this->db->join('club c', 'c.id_club = eq.id_club');
+        $this->db->join('jugador j', 'j.id_jugador = ij.id_jugador');
+        // $this->db->join('persona p', 'p.id_persona = j.id_persona');
+        // $this->db->join('categoria ct', 'ct.id_categoria = eq.id_categoria');
+    }
+
     public function get_jug_pdf($id_jugador)
     {
 
@@ -263,6 +277,19 @@ class MY_Model extends CI_Model
         return $query->result();
     }
 
+    public function get_jugador_transferido($id_jugador, $id_club)
+    {
+        $this->db->from('transferencias');
+        $this->db->join('jugador', 'jugador.id_jugador = transferencias.id_jugador');
+        $this->db->join('club', 'club.id_club = transferencias.id_club_destino');
+        $this->db->join('persona','persona.id_persona = jugador.id_persona');
+        $this->db->where('jugador.id_jugador', $id_jugador);
+        $this->db->where('club.id_club', $id_club);
+        $this->db->order_by('id_transferencias', 'desc');
+        $this->db->limit(1);
+        $query = $this->db->get();
+        return $query->row();
+    }
     // public function get_equipos()
     // {
     //     $this->db->select('id_equipo, nombre_equipo');
@@ -309,11 +336,21 @@ class MY_Model extends CI_Model
     // }
     public function get_club_actual($id_jugador)
     {
-        // $this->db->select();
+        // // $this->db->select();
+        // $this->db->from('inscripcionjugador i');
+        // $this->db->join('inscripcionequipo', 'inscripcionequipo.id_inscripcionequipo =i.id_inscripcionequipo');
+        // $this->db->join('equipo eq', 'eq.id_equipo = inscripcionequipo.id_equipo');
+        // $this->db->join('club', 'club.id_club  = eq.id_club');
+        // // $this->db->order_by('fecha', 'desc');
+        // // $this->db->limit(1);
+        // $this->db->where('i.id_jugador', $id_jugador);
+        // $query = $this->db->get();
+        // return $query->row();
+
         $this->db->from('inscripcionjugador i');
-        $this->db->join('inscripcionequipo', 'inscripcionequipo.id_inscripcionequipo =i.id_inscripcionequipo');
-        $this->db->join('equipo eq', 'eq.id_equipo = inscripcionequipo.id_equipo');
-        $this->db->join('club', 'club.id_club  = eq.id_club');
+        // $this->db->join('inscripcionequipo', 'inscripcionequipo.id_inscripcionequipo =i.id_inscripcionequipo');
+        // $this->db->join('equipo eq', 'eq.id_equipo = inscripcionequipo.id_equipo');
+        $this->db->join('club', 'club.id_club  = i.id_inscripcionequipo');
         // $this->db->order_by('fecha', 'desc');
         // $this->db->limit(1);
         $this->db->where('i.id_jugador', $id_jugador);
@@ -1142,11 +1179,25 @@ class MY_Model extends CI_Model
 
     public function get_motivo($id_categoria, $id_concepto)
     {
+        // $sql = "select pc.id_precioconcepto, motivo.id_motivo, pc.precio, motivo.descripcion from precio_concepto pc
+        //     join motivo on motivo.id_motivo = pc.id_motivo 
+        //     where pc.id_categoria = ? and pc.id_concepto = ?";
+        // $query = $this->db->query($sql, array($id_categoria, $id_concepto)); 
+        // return $query->result();
+
+        $sql = "select pc.id_precioconcepto, motivo.id_motivo, pc.precio, motivo.descripcion from precio_concepto pc
+            join motivo on motivo.id_motivo = pc.id_motivo 
+            where pc.id_concepto = ?";
+        $query = $this->db->query($sql, array($id_concepto)); 
+        return $query->result();
+    }
+    public function get_motivo_cuatro($id_categoria, $id_concepto)
+    {
         $sql = "select pc.id_precioconcepto, motivo.id_motivo, pc.precio, motivo.descripcion from precio_concepto pc
             join motivo on motivo.id_motivo = pc.id_motivo 
             where pc.id_categoria = ? and pc.id_concepto = ?";
         $query = $this->db->query($sql, array($id_categoria, $id_concepto)); 
-        return $query->result();
+        return $query->row();
     }
 
     public function get_idtorneo_by_club_categoria($id_club, $id_categoria)

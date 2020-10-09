@@ -1628,8 +1628,24 @@ $textohtml .= '<div class="col-md-12">';
   $textohtml .= '</div>';
 $textohtml .= '</div>';
                 break;
+            // case 4:
+            //     $motivos = $this->dbase->get_motivo_cuatro($id_categoria, $id_concepto);
+            //     // print_r($motivos);
+            //     // exit();
+            //     // foreach ($motivos as $val) {
+                    
 
+            //         $textohtml.=
+            //         '<input type="checkbox" value="'.$motivos->id_precioconcepto.'" name="precioconcepto[]" style="display:none;">
+            //         <label>
+            //           <input type="hidden" name="cantidad[]" value="1">
+            //           <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$motivos->precio.'" value="'.$motivos->precio.'" class="flat-red monto_motivo"> '  .$motivos->descripcion.
+            //         '</label><br>';
+            //     // }
+            //     break;
             case 5:
+            // print_r('expression');
+            // exit();
 
                 $precioconcepto = $this->db->get_where('precio_concepto', array(
                     'id_concepto' => $id_concepto,
@@ -1697,15 +1713,18 @@ $textohtml .= '<div class="col-md-12">';
                 'pagado' => 0,
             ))->result();
         if (count($transferencias)>0) {
-            // print_r('itero');
             foreach ($transferencias as $value) {
                 // count($trasnferencias);
-                $jugador = $this->db->get_where('jugador', array(
-                    'id_jugador' => $value->id_jugador,
-                ))->row()->id_persona;
-                $persona = $this->db->get_where('persona', array(
-                    'id_persona' => $jugador,
-                ))->row();
+
+                // $jugador = $this->db->get_where('jugador', array(
+                //     'id_jugador' => $value->id_jugador,
+                // ))->row()->id_persona;
+                // $persona = $this->db->get_where('persona', array(
+                //     'id_persona' => $jugador,
+                // ))->row();
+
+                $persona = $this->dbase->get_jugador_transferido($value->id_jugador, $id_club);
+
                 // print_r($persona);
                 // exit();
             $textohtml .= '<tr>';
@@ -1849,14 +1868,17 @@ $textohtml .= '</div>';
 
                 break;
             default:
-                foreach ($motivos as $val) {
+                $motivos = $this->dbase->get_motivo_cuatro($id_categoria, $id_concepto);
+                // print_r($motivos->id_precioconcepto);
+                // exit();
+                // foreach ($motivos as $val) {
                     $textohtml.=
-                    '<input type="checkbox" value="'.$val->id_precioconcepto.'" name="precioconcepto[]" style="display:none;">
+                    '<input type="checkbox" value="'.$motivos->id_precioconcepto.'" name="precioconcepto[]" style="display:none;">
                     <label>
                       <input type="hidden" name="cantidad[]" value="1">
-                      <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$val->precio.'" value="'.$val->precio.'" class="flat-red monto_motivo"> '  .$val->descripcion.
+                      <input type="checkbox" name="check_monto[]" tu-attr-precio="'.$motivos->precio.'" value="'.$motivos->precio.'" class="flat-red monto_motivo"> '  .$motivos->descripcion.
                     '</label><br>';
-                }
+                // }
                 break;
         }
         $textohtml.='</div>

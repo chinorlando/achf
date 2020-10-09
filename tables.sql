@@ -360,9 +360,12 @@ create table inscripcionjugador(
 	peso float not null,
 	id_jugador int not null,
 	id_inscripcionequipo int not null,
+  -- añadido para usar en transferencia
+  id_club int not null,
 
 	constraint fk_inscripcionjugador_jugador foreign key(id_jugador) references jugador(id_jugador),
-	constraint fk_inscripcionjugador_inscripcionequipo foreign key(id_inscripcionequipo) references inscripcionequipo(id_inscripcionequipo)
+	constraint fk_inscripcionjugador_inscripcionequipo foreign key(id_inscripcionequipo) references inscripcionequipo(id_inscripcionequipo),
+  constraint fk_inscripcionjugador_club foreign key(id_club) references club(id_club)
 );
 
 create table resultado_partido(
