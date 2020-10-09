@@ -464,12 +464,17 @@
 		}
 	  });
 	}
+
 	function pdf_pago(){
           var pagogral = $('#pagogral').val();
           var id_club = $('#club').val();
           var id_categoria = $('#categoria').val();
-		  
-          window.open(CFG.url + 'Reporte/pdf_pago_id/'+pagogral+'/'+id_club+'/'+id_categoria,'_blank'); 
+          var id = $('#jugador').val();
+		  if(id==null){
+            window.open(CFG.url + 'Reporte/pdf_pago_id/'+pagogral+'/'+id_club+'/'+id_categoria,'_blank'); 
+		  }else{
+            window.open(CFG.url + 'Reporte/pdf_pago_trans_id/'+pagogral+'/'+id_club+'/'+id_categoria+'/'+id,'_blank'); 
+		  }
 		  //$('#button').hide();
 
         }

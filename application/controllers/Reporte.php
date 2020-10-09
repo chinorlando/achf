@@ -1284,6 +1284,122 @@ Sucre – Bolivia</b></span></td>
 
     }
 
+    public function pdf_pago_trans_id($id_pagogeral,$id_club,$id_categoria,$id_jugador)
+    {
+        $detalle_pago=$this->Reporte_model->get_club($id_club);
+        $detalle_pago_cat=$this->Reporte_model->get_categoria($id_categoria);
+        $detalle_pago_equipo=$this->Reporte_model->get_pago_general_id($id_pagogeral);
+        $dato = $this->dbase->get_jug_pdf($id_jugador);
+        $this->load->library('Pdf');
+        $pdf = $this->pdf->load();
+
+        $tz = 'America/La_Paz';
+        $timestamp = time();
+        $dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
+        $dt->setTimestamp($timestamp); //adjust the object to correct timestamp
+        $note = '';
+
+        $note .='
+        <html>
+        <title>'.$detalle_pago[0]->nombre_club.'</title>
+        <head>
+        <style>
+        .barcodecell {
+        text-align: center;
+        vertical-align: middle;
+        padding: 0;
+        }
+
+        </style>
+        </head>
+        <body>
+ 
+        ';
+        $pagos= $this->Reporte_model->get_pago($id_pagogeral);
+
+        $note .='
+
+         <table width="100%"><tr>
+        <td width="100%" align="center"><div><span style="color:black; font-size:15pt;  font-weight: ;
+        font-style: normal;"><b>RECIBO DE OFICIAL</b></span></div></td>
+        </tr></table>
+        <table width="100%" style="font-family:serif; font-size: 10pt; color: #000;">   
+        <tr>
+        <td width="60%"><div><span style="color:black; font-size:10pt;"></span></div></td>
+        <td width="20%"><span style="color:white; font-size:10pt; font-weight: normal;
+        font-style: normal;">abc</span></td>
+        <td width="20%" style="background: #e5e5e5;" align="center"><div><span style="color:black; font-size:12pt;"><b> Por Bs.- '.$detalle_pago_equipo[0]->montototal.'</b></span></div></td>
+
+        </tr>
+        </table>
+        ';  
+
+        $note .='<table  >';       
+        $note .='<tr  style="background: #;">';    
+        $note .='<td width="30%" align="center"><div><span style="color:black; font-size:10pt;"><b></b></span></div></td>';    
+        $note .='<td width="70%" align="center"><div><span style="color:black; font-size:10pt;"><b></b></span></div></td>'; 
+        $note .='</tr>';  
+        $mat="";
+
+            //$conceptos= $this->Reporte_model->get_pagos_equipo_detalle($pagos[0]->id_precioconcepto);   
+            foreach($pagos as $p){ 
+                $conceptos= $this->Reporte_model->get_pagos_equipo_detalle($p->id_precioconcepto);   
+                $mat .= "<strong>- ".$p->cantidad." cant. Bs.".$p->monto." Por concepto de ".$conceptos[0]->concepto.",</strong> ".$conceptos[0]->descripcion."<br>";
+                }     
+            $note .=' <tr>
+                        <td><div><span style="color:black; font-size:10pt;"><b>Recibida de:</b></span></div></td>
+                        <td align="left"><div><span style="color:black; font-size:10pt;">Club <b>'.$detalle_pago[0]->nombre_club.'</b>, Categoria <b>'.$detalle_pago_cat[0]->nombre.'</b></span></div></td>
+                      </tr>
+                      <tr>
+                      <td><div><span style="color:black; font-size:10pt;"><b>La suma de:</b></span></div></td>
+                      <td align="left"><div><span style="color:black; font-size:10pt;">'.$this->string_literal_conversion($detalle_pago_equipo[0]->montototal).' bolivianos 00/100</span></div></td>
+                      </tr>
+                      <tr>
+                      <td><div><span style="color:black; font-size:10pt;"><b>Por concepto de :</b></span></div></td>
+                      <td align="left"><div><span style="color:black; font-size:10pt;"> '.$mat.'</span></div></td>
+                      </tr>
+                    ';  
+
+
+
+      
+        $note .='</table>
+        <table width="100%" ><tr>
+        <td align="center"><div><span style="color:black; font-size:10pt; ">Jugador, <b>'.$dato[0]->nombres.' '.$dato[0]->apellido_paterno.' '.$dato[0]->apellido_materno.'</b></span></div></td>  
+        </tr></table>
+        <table width="100%" ><tr>
+        <td width="100%" align="right"><div><span style="color:black; font-size:10pt; font-family:courier; font-weight: normal;
+        font-style: normal;">Sucre, '.$this->fechaCastellano($dt->format('d-m-Y')).'</span></div></td>  
+        </tr></table>
+        <br>
+        
+        ';
+
+    $note .='</body>
+            </html>';
+    $pdf=new mPDF('c','letter','','',25,20,36,10,10,10);
+    $pdf->SetDisplayMode('fullpage');
+    $pdf->list_indent_first_level = 0; 
+        $header = '
+        <table width="100%" style="border-bottom: 1px solid #000000; vertical-align: bottom; font-family:
+        serif; font-size: 9pt; color: #000;"><tr>
+        <td width="20%" align="center"><img src="'.base_url().'/assets/uploads/reporte/asoc.png" width="70px" /></td>
+        <td width="60%" align="center"><div><span style="color:black; font-size:15pt; font-weight: normal;
+        font-style: normal;"><b>ASOCIACION CHUQUISAQUEÑA DE</b></span><br><span style="color:black; font-size:15pt; font-weight: normal;
+        font-style: normal;"><b>FUTBOL</b></span></div></td>
+        <td width="20%" class="barcodecell"><barcode code="'.$id_club.' '.$dt.'" type="QR" class="barcode" size="0.5"
+        error="M"/></span><br><span style="color:black; font-size:5pt; font-weight: normal;
+        font-style: normal;"><b>Calle Junín Nº 744 telf. 6451271 – 6455460 – fax. (4)6455460
+Sucre – Bolivia</b></span></td>
+        </tr></table>
+        ';
+    $pdf->SetHTMLHeader($header); 
+    $pdf->WriteHTML($note);
+    $pdf->Output(''.$detalle_pago[0]->nombre_club.'.pdf','I');
+
+
+
+    }
 
     public function string_literal_conversion($number) {
         $this->sumar = $number;

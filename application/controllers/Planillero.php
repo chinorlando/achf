@@ -1740,7 +1740,7 @@ $textohtml .= '<div class="col-md-12">';
                     </span>
                     <input type="hidden" min="1" class="form-control" name="cantidad[]" value="1" disabled>
                     <input type="text" class="form-control" name="'.$value->id_jugador.'" value="'.$persona->nombres.' '.$persona->apellido_paterno.' '.$persona->apellido_materno.'" disabled>
-                    <input type="hidden" name="jugador[]" value="'.$value->id_jugador.'">
+                    <input type="hidden" id="jugador" name="jugador[]" value="'.$value->id_jugador.'">
                 </div>';
 
 
@@ -1806,7 +1806,7 @@ $textohtml .= '<div class="col-md-12">';
                     </span>
                     <input type="hidden" min="1" class="form-control" name="cantidad[]" value="1" disabled>
                     <input type="text" class="form-control" name="'.$value->id_jugador.'" value="'.$persona->nombres.' '.$persona->apellido_paterno.' '.$persona->apellido_materno.'" disabled>
-                    <input type="hidden" name="jugador[]" value="'.$value->id_jugador.'">
+                    <input type="hidden" id="jugador" name="jugador[]" value="'.$value->id_jugador.'">
                 </div>';
 
 
